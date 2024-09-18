@@ -1,0 +1,37 @@
+﻿<html>
+    <head>
+        <script>
+        function init() {
+            var data = [1, 8, 5, 7, 2, 6, 7, 4, 0];
+            var r0 = data.length;   // r0 = 9
+            var r1 = data.indexOf(2);   // r1 = 4
+            var r2 = data.lastIndexOf(7);   // r2 = 6
+            var r3 = data.splice(2, 4); // r3 = [5,7,2,6]
+            var r4 = data.sort();   // r4 = [0,1,4,7,8]
+            var r5 = data.push(9); // r5 = 6
+            var r6 = data.pop(); // r6 = 9
+            var r7 = data.every(function (n) {  // r7 = true
+                return n < 10;
+            });
+            var r8 = data.every(function (n) {  // r8 = false
+                return n < 5;
+            });
+            var r9 = data.some(function (n) {   // r9 = true
+                return n == 4;
+            });
+            var r10 = data.some(function (n) {  // r10 = false
+                return n == 3;
+            }); 
+            var r11 = data.filter(function (n) {    // r11 = [0,4,8]
+                return n % 2 == 0;
+            });
+            data.forEach(function (n) {
+                console.log("n=" + n);
+            });
+        }
+
+        </script>
+    </head>
+    <body onload="init()">
+    </body>
+</html>

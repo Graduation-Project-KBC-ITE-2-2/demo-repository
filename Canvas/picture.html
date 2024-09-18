@@ -1,0 +1,22 @@
+﻿<html>
+    <head>
+        <script>
+        var ctx;
+        function init() {
+            var canvas = document.getElementById("canvas");
+            ctx = canvas.getContext("2d");
+
+            var ship = document.getElementById("ship");
+            var photo = document.getElementById("photo");
+            ctx.drawImage(ship, 10, 10);
+            ctx.drawImage(ship, 10, 100, 50, 50);
+            ctx.drawImage(photo, 260, 480, 200, 150, 150, 10, 200, 150);
+        }
+        </script>
+    </head>
+    <body onload="init()">
+        <canvas id="canvas" width="600" height="400"></canvas>
+        <img id="photo" src="picture2.jpg" style="display:none" />
+        <img id="ship" src="ship.png" style="display:none" />
+    </body>
+</html>

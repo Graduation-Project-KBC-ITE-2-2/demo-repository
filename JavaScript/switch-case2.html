@@ -1,0 +1,27 @@
+﻿<html>
+    <head>
+        <script>
+            function keydown(e) {
+                var s = "";
+                if (e.keyCode == 37) {
+                    s = "左";
+                } else if (e.keyCode == 38) {
+                    s = "上"; 
+                } else if (e.keyCode == 39) {
+                    s = "右";
+                } else if (e.keyCode == 40) {
+                    s = "下";
+                } else  {
+                    s = "それ以外";
+                }
+
+                document.getElementById("info").textContent = s;
+            }
+
+            window.addEventListener('keydown', keydown);
+        </script>
+    </head>
+    <body>
+        <p id="info"></p>
+    </body>
+</html>

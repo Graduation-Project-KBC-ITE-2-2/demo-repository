@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>memorizer</title>
+    <style>
+        button {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+        }
+        
+        #message {
+            width: 300px;
+            font-size: 50px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        var round = 0;
+        var questions = [];
+        var qCount = 0;
+        var qTimer = NaN;
+        var answers = [];
+        var sounds = [];
+
+        function gobj(id) { return document.getElementById(id) }
+
+        function init() {
+            buttons = document.querySelectorAll("button")
+            for (var i = 0 ; i < buttons.length ; i++) {
+                buttons[i].onclick = function (e) {
+                    if (qTimer) { return; }
+                    var index = e.target.id.charAt(1);
+                    blink(index);
+                    answer(index);
+                }
+                sounds[i] = new Audio("sound" + (i + 1) + ".mp3");
+                sounds[i].preload = "auto";
+                sounds[i].load();
+            }
+            nextRound();
+        }
+
+        function showMessage(mess) {
+            gobj("message").textContent = mess;
+        }
+
+        function blink(index) {
+            var fgcolors = ["#F00", "#FF0", "#0F0", "#00F"];
+            var bgcolors = ["#600", "#660", "#060", "#006"];
+
+            gobj("b" + index).style.backgroundColor = fgcolors[index];
+            sounds[index].currentTime = 0;
+            sounds[index].play();
+
+            setTimeout(function () {
+                for (var i = 0 ; i < 4 ; i++) {
+                    gobj("b"+i).style.backgroundColor = bgcolors[i];
+                }
+            }, 400)
+        }
+
+        function nextRound() {
+            round++;
+            showMessage("round:" + round);
+            var r = Math.floor(Math.random() * 4);
+            questions[questions.length] = r;
+            answers = [];
+            qCount = 0;
+            qTimer = setInterval(showQuizItem, 600);
+        }
+
+        function showQuizItem() {
+            blink(questions[qCount]);
+            if (++qCount >= questions.length) {
+                clearInterval(qTimer);
+                qTimer = NaN;
+                showMessage("start answer");
+            }
+        }
+
+        function answer(val) {
+            answers.push(val);
+            var mistake = false;
+            for (var i = 0 ; i < answers.length ; i++) {
+                if (answers[i] != questions[i]) {
+                    mistake = true;
+                    break
+                }
+            }
+
+            if (mistake) {
+                showMessage("Game Over:" + round);
+            }else if(answers.length == questions.length){
+                showMessage("GOOD");
+                setTimeout(nextRound, 2000);
+            }
+        }
+    </script>
+</head>
+
+<body onload="init()">
+    <p id="message"></p>
+    <div>
+        <button id="b0" style="background-color:#600"></button>
+        <button id="b1" style="background-color:#660"></button>
+        <br />
+        <button id="b2" style="background-color:#060"></button>
+        <button id="b3" style="background-color:#006"></button>
+    </div>
+</body>
+
+</html>

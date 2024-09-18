@@ -1,0 +1,19 @@
+﻿<html>
+    <head>
+        <script>
+function calc() {
+    var w = document.getElementById("weight").value;
+    var h = document.getElementById("height").value;
+    var r = w / (h * h); // BMI指数＝体重(kg) ÷ (身長(m) Ｘ 身長(m))
+    document.getElementById("result").textContent = "あなたのBMLは" + r + "です";
+}
+        </script>
+    </head>
+    <body>
+        <h1>BMIの計算</h1>
+        体重(kg)：<input id="weight" /><br />
+        身長(m) ：<input id="height" /><br />
+        計算：<button onclick="calc()">計算</button>
+        <p id="result"></p>
+    </body>
+</html>

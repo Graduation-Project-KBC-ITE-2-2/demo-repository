@@ -1,0 +1,28 @@
+﻿<html>
+    <head>
+        <script>
+        function minmax() {
+            var n = document.getElementById("randomRange").value;
+            var a = Math.min(3, n);
+            var b = Math.max(3, n);
+            var c = Math.max(3, Math.min(6, n));
+            var s = "n=" + n + " min(3, n)=" + a + " max(3, n)=" + b + " c=" + c;
+            document.getElementById("info").textContent = s;
+        }
+        function random() {
+            var n = document.getElementById("randomRange").value;
+            var a = Math.random();
+            var b = Math.floor(a * n);
+            var s = "n=" + n + " a=" + a + " b=" + b;
+            document.getElementById("info").textContent = s;
+            Math.sqrt(n)
+        }
+        </script>
+    </head>
+    <body>
+        <input type="range" min="0" max="10" id="randomRange" />
+        <button onclick="minmax()">min/max</button>
+        <button onclick="random()">random</button>
+        <p id="info"></p>
+    </body>
+</html>

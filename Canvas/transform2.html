@@ -1,0 +1,29 @@
+﻿<html>
+    <head>
+        <script>
+        var ctx;
+        function init() {
+            var canvas = document.getElementById("canvas");
+            ctx = canvas.getContext("2d");
+            ctx.fillStyle = "red";
+            ctx.fillRect(10, 10, 80, 50);
+
+            ctx.save();
+            ctx.translate(100, 0);
+            ctx.scale(1.5, 0.5);
+            ctx.fillStyle = "green";
+            ctx.fillRect(10, 10, 80, 50);
+            ctx.restore();
+
+            ctx.save();
+            ctx.transform(0.8, -0.2, -0.3, 0.8, 250, 50);
+            ctx.fillStyle = "blue";
+            ctx.fillRect(10, 10, 80, 50);
+            ctx.restore();
+        }
+        </script>
+    </head>
+    <body onload="init()">
+        <canvas id="canvas" width="600" height="400"></canvas>
+    </body>
+</html>

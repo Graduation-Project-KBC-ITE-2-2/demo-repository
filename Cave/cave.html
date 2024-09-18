@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Cave</title>
+    <meta charset="utf-8" />
+    <style>
+        #main {
+            width: 800px;
+            height: 600px;
+            background-color: #00cc00;
+            position: absolute;
+            overflow: hidden;
+        }
+
+        #ship {
+            top: 250px;
+            left: 0px;
+            width: 150px;
+            height: 97px;
+            position: absolute;
+            z-index: 100;
+        }
+
+        #bang {
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            z-index: 101;
+            visibility: hidden;
+        }
+    </style>
+    <script type="text/javascript">
+    "use strict";
+    var y = 250, v = 0, keyDown = false, WALLS = 80, score = 0;
+    var walls = [], slope = 0, timer, ship, main;
+
+    function init() {
+        main = document.getElementById('main');
+        ship = document.getElementById('ship');
+
+        for (var i = 0 ; i < WALLS ; i++) {
+            walls[i] = document.createElement("div");
+            walls[i].style.position = "absolute";
+            walls[i].style.top = "100px";
+            walls[i].style.left = i * 10 + "px";
+            walls[i].style.width = "10px";
+            walls[i].style.height = "400px";
+            walls[i].style.backgroundColor = "#333333";
+            main.appendChild(walls[i]);
+        }
+
+        slope = Math.floor(Math.random() * 5) + 1;
+        timer = setInterval(mainloop, 50);
+        window.addEventListener('keydown', function () { keyDown = true; });
+        window.addEventListener('keyup', function () { keyDown = false; });
+    }
+
+    function hitTest(){
+        var st = parseInt(ship.style.top) + 10;
+        var sh = parseInt(ship.style.height);
+        var sb = st + sh - 20;
+
+        var wt = parseInt(walls[14].style.top);
+        var wh = parseInt(walls[14].style.height);
+        var wb = wh + wt;
+
+        return (st < wt) || (sb > wb );
+    }
+
+    function mainloop() {
+        if (hitTest()) {
+            clearInterval(timer);
+            document.getElementById('bang').style.top = (y - 40) + "px";
+            document.getElementById('bang').style.visibility = "visible";
+            return;
+        }
+
+        score += 10;
+        document.getElementById('score').innerHTML = score.toString();
+
+        v += keyDown ? -3 : 3;
+        y += v;
+        ship.style.top = y + 'px';
+
+        var edge = walls[WALLS - 1].style;
+        var t = parseInt(edge.top);
+        var h = parseInt(edge.height);
+        var b = h + t;
+        t += slope;
+        b += slope;
+        if ((t < 0) && (slope < 0) || (b > 600) && (slope > 0)) {
+            slope = (Math.floor(Math.random() * 5) + 1) * (slope < 0 ? 1 : -1);
+            edge.top = (t + 10) + "px";
+            edge.height = (h - 20) + "px";
+        } else {
+            edge.top = t + "px";
+        }
+
+        for (var i = 0 ; i < WALLS - 1 ; i++) {
+            walls[i].style.top = walls[i + 1].style.top;
+            walls[i].style.height = walls[i + 1].style.height;
+        }
+    }
+
+    </script>
+</head>
+
+<body onload="init()">
+    <h1>Score:<span id="score"></span></h1>
+    <div id="main">
+        <img id="ship" src="ship.png" style="height:97px;" />
+        <img id="bang" src="bang.png" />
+    </div>
+</body>
+</html>

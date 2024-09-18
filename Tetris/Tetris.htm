@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Tetris</title>
+    <meta charset="utf-8" />
+    <script type="text/javascript">
+    "use strict";
+    var ctx, W = 12, H = 22, field, block, nextBlock, keyevents = [];
+    var interval = 40, count, score, timer;
+
+    var colors = ['black', 'orange', 'blue', 'aqua',
+        'lime', 'fuchsia', 'yellow', 'red', 'gray'];
+
+    var blocks = [
+        [
+            [
+                0, 0, 1,
+                1, 1, 1,
+                0, 0, 0
+            ], [
+                0, 1, 0,
+                0, 1, 0,
+                0, 1, 1
+            ], [
+                0, 0, 0,
+                1, 1, 1,
+                1, 0, 0
+            ], [
+                1, 1, 0,
+                0, 1, 0,
+                0, 1, 0
+            ],
+        ], [
+            [
+                2, 0, 0,
+                2, 2, 2,
+                0, 0, 0
+            ], [
+                0, 2, 2,
+                0, 2, 0,
+                0, 2, 0
+            ], [
+                0, 0, 0,
+                2, 2, 2,
+                0, 0, 2
+            ], [
+                0, 2, 0,
+                0, 2, 0,
+                2, 2, 0
+            ]
+        ], [
+            [
+                0, 3, 0,
+                3, 3, 3,
+                0, 0, 0
+            ], [
+                0, 3, 0,
+                0, 3, 3,
+                0, 3, 0
+            ], [
+                0, 0, 0,
+                3, 3, 3,
+                0, 3, 0
+            ], [
+                0, 3, 0,
+                3, 3, 0,
+                0, 3, 0
+            ]
+        ], [
+            [
+                4, 4, 0,
+                0, 4, 4,
+                0, 0, 0
+            ], [
+                0, 0, 4,
+                0, 4, 4,
+                0, 4, 0
+            ], [
+                0, 0, 0,
+                4, 4, 0,
+                0, 4, 4
+            ], [
+                0, 4, 0,
+                4, 4, 0,
+                4, 0, 0
+            ]
+        ], [
+            [
+                0, 5, 5,
+                5, 5, 0,
+                0, 0, 0
+            ], [
+                0, 5, 0,
+                0, 5, 5,
+                0, 0, 5
+            ], [
+                0, 0, 0,
+                0, 5, 5,
+                5, 5, 0
+            ], [
+                5, 0, 0,
+                5, 5, 0,
+                0, 5, 0
+            ]
+        ], [
+            [
+                6, 6,
+                6, 6
+            ], [
+                6, 6,
+                6, 6
+            ], [
+                6, 6,
+                6, 6
+            ], [
+                6, 6,
+                6, 6
+            ]
+        ], [
+            [
+                0, 7, 0, 0,
+                0, 7, 0, 0,
+                0, 7, 0, 0,
+                0, 7, 0, 0
+            ], [
+                0, 0, 0, 0,
+                7, 7, 7, 7,
+                0, 0, 0, 0,
+                0, 0, 0, 0
+            ], [
+                0, 0, 7, 0,
+                0, 0, 7, 0,
+                0, 0, 7, 0,
+                0, 0, 7, 0
+            ], [
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                7, 7, 7, 7,
+                0, 0, 0, 0
+            ]
+        ]
+    ];
+
+    function Block() {
+        this.turn = rand(4);                    // 向き
+        this.type = blocks[rand(blocks.length)];
+        this.data = this.type[this.turn];
+
+        this.w = Math.sqrt(this.data.length);   // 2 or 3 or 4
+        this.x = rand(6 - this.w) + 2;          // 落下開始時のx座標
+        this.y = 1 - this.w;
+        this.fire = interval + count;
+
+        this.update = function () {
+            // 一番下に到達？
+            if (isHit(this.x, this.y + 1, this.turn)) {
+                processBlockCells(function (x, y, value) {
+                    field[y][x] = value;
+                });
+
+                var erased = eraseLine();
+                if (erased > 0) {
+                    score += Math.pow(2, erased) * 10;
+                }
+
+                keyevents = [];
+                goNextBlock();
+            }
+
+            // ブロックを1行下へ移動
+            if (this.fire < count) {
+                this.fire = count + interval;
+                this.y++;
+            }
+
+            // キーイベントの処理
+            while (keyevents.length > 0) {
+                var code = keyevents.shift();
+                var dx = 0, dy = 0, nd = this.turn;
+
+                switch (code) {
+                    case 32: nd = (nd + 1) % 4; break;
+                    case 37: dx = -1; break;
+                    case 39: dx = +1; break;
+                    case 40: dy = +1; break;
+                    default: continue;
+                }
+
+                if (!isHit(this.x + dx, this.y + dy, nd)) {
+                    this.x = this.x + dx;
+                    this.y = this.y + dy;
+                    this.turn = nd;
+                    this.data = this.type[this.turn];
+                }
+            }
+        };
+
+        this.draw = function (ctx) {
+            processBlockCells(function (x, y, value) {
+                ctx.fillStyle = colors[value];
+                ctx.fillRect(50 + x * 25, 25 + y * 25, 24, 24);
+            });
+        }
+    }
+
+    function rand(r) {
+        return Math.floor(Math.random() * r);
+    }
+
+    function processBlockCells(func) {
+        for (var i = 0 ; i < block.data.length ; i++) {
+            var x = i % block.w;
+            var y = Math.floor(i / block.w);
+            var v = block.data[i];
+            if (0 <= y + block.y && y + block.y < H &&
+                0 <= x + block.x && x + block.x < W && v != 0) {
+                func(x + block.x, y + block.y, v);
+            }
+        }
+    }
+
+    function init() {
+        var canvas = document.getElementById('canvas');
+        ctx = canvas.getContext('2d');
+        ctx.font = "20pt Arial";
+
+        addEventListener('keydown', function (e) { keyevents.push(e.keyCode) });
+
+        count = 0;
+        score = 0;
+
+        // フィールドの初期化
+        field = new Array(H);
+        for (var y = 0 ; y < H ; y++) {
+            field[y] = new Array(W);
+            for (var x = 0 ; x < W ; x++) {
+                field[y][x] = (x == 0 || x == W - 1) ? 8 : 0;
+            }
+        }
+        for (var i = 0 ; i < W ; i++) {
+            field[H - 1][i] = 8;
+        }
+
+        // ブロックの初期化
+        goNextBlock();
+
+        // メインループの開始
+        timer = setInterval(mainLoop, 10);
+    }
+
+    function mainLoop() {
+        count++;
+
+        // スピードアップ
+        if (count % 1000 == 0) {
+            interval = Math.max(1, interval - 1);
+        }
+
+        // ブロックの位置を更新
+        block.update();
+
+        // ゲームオーバーの判定
+        if (isGameOver()) {
+            clearInterval(timer);
+            timer = NaN;
+        }
+
+        draw();
+    }
+
+    function isGameOver() {
+        var filled = 0;
+        field[0].forEach(function (c) {
+            if (c != 0) { filled++ }
+        });
+        return filled > 2;
+    }
+
+    function goNextBlock() {
+        block = nextBlock || new Block();
+        nextBlock = new Block();
+    }
+
+    function isHit(x, y, r) {
+        var data = block.type[r];
+        for (var i = 0 ; i < block.w ; i++) {
+            for (var j = 0 ; j < block.w ; j++) {
+                if (i + y >= 0 && j + x >= 0 && i + y < H && j + x < W &&
+                    field[i + y][j + x] != 0 && data[i * block.w + j] != 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function eraseLine() {
+        var erased = 0;
+        for (var y = 20 ; y >= 0 ; y--) {   // 下から上へ
+            if (field[y].every(function (v) { return v != 0 })) {
+                erased++;
+                field.splice(y, 1);             // 1行削除
+                field.unshift(new Array(W));    // 1行追加
+                for (var i = 0 ; i < W ; i++) {
+                    field[0][i] = (i == 0 || i == W - 1) ? 8 : 0;
+                }
+                y++;    // 消去した行からもう一度チェック
+            }
+        }
+        return erased;
+    }
+
+    function draw() {
+        // 背景の塗りつぶし
+        ctx.fillStyle = 'rgb(0,0,0)';
+        ctx.fillRect(0, 0, 600, 600);
+
+        // フィールドの描画
+        for (var y = 0 ; y < H ; y++) {
+            for (var x = 0 ; x < W ; x++) {
+                var v = field[y][x];
+                ctx.fillStyle = colors[v];
+                ctx.fillRect(50 + x * 25, 25 + y * 25, 24, 24);
+            }
+        }
+
+        // 落下中のブロックの描画
+        block.draw(ctx);
+
+        // 次に出現するブロックの描画
+        nextBlock.data.forEach(function (v, i, data) {
+            var w = Math.sqrt(data.length);
+            var x = i % w;
+            var y = Math.floor(i / w);
+            ctx.fillStyle = colors[v];
+            ctx.fillRect(400 + x * 25, 300 + y * 25, 24, 24);
+        });
+
+        // 各種情報の描画
+        ctx.fillStyle = 'rgb(0,255,0)';
+        ctx.fillText('score:', 400, 130);
+        ctx.fillText('next:', 400, 270);
+        ctx.fillText(('0000000' + score).slice(-7), 400, 170);
+        if (isNaN(timer)) {
+            ctx.fillText('GAME OVER', 380, 70);
+        }
+    }
+    </script>
+</head>
+
+<body onload="init()">
+    <div>
+        <canvas id="canvas" width="600" height="600" />
+    </div>
+</body>
+</html>

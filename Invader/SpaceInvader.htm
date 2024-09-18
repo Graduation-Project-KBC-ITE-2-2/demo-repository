@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script type="text/javascript">
+    "use strict";
+var ctx, ship, beam, aliens = [], bombs = [],
+    score = 0, stage = 1, clock = 0, mainT = NaN, alienT = NaN;
+
+function Beam() {
+    this.x = 0;
+    this.y = -100;
+    this.offset = 0;
+    this.even = false;
+    this.isEven = function () { return this.even; }
+}
+
+function Bomb() {
+    this.x = 0;
+    this.y = 600;
+    this.offset = 48;
+    this.even = false;
+    this.time = rand(200) + 50;
+    this.isEven = function () { return this.even; }
+}
+
+function Alien(x, y, point, offset) {
+    this.x = x;
+    this.y = y;
+    this.point = point;
+    this.offset = offset;
+    this.isEven = function () { return Alien.isEven; }
+}
+
+function Ship() {
+    this.x = 0;
+    this.y = 550;
+    this.offset = 192;
+    this.moveL = false;
+    this.moveR = false;
+    this.isEven = function () { return true; }
+}
+
+var bitmap = {
+    draw: function (ctx) {
+        if (!this.strip) {
+            this.strip = document.getElementById('strip');
+        }
+        ctx.drawImage(this.strip,
+            this.offset + (this.isEven() ? 0 : 24), 0, 24, 24,
+            this.x, this.y, 24, 24);
+    }
+}
+
+Ship.prototype = Beam.prototype = Alien.prototype = Bomb.prototype = bitmap;
+
+Alien.isEven = false;
+Alien.isDown = false;
+Alien.isLeft = false;
+Alien.interval = 1000;
+
+function rand(max) {
+    return Math.floor(Math.random() * max);
+}
+
+function init() {
+    ctx = document.getElementById('canvas').getContext('2d');
+    ctx.font = "20pt Arial";
+    score = 0, stage = 1;
+
+    addEventListener('keydown', keyDown, true);
+    addEventListener('keyup', keyUp, true);
+
+    start();
+}
+
+function start() {
+    ship = new Ship();
+    beam = new Beam();
+    clock = 0;
+    Alien.interval = 1000 - stage * 50;
+
+    for (var i = 0 ; i < 4 ; i++) {
+        var offset = (i < 2) ? 96 : 144;
+        for (var j = 0 ; j < 10 ; j++) {
+            aliens.push(new Alien(100 + j*50, i*50 + 50*stage, (4 - i) * 10, offset));
+        }
+        bombs.push(new Bomb());
+    }
+
+    if (isNaN(alienT)) {
+        alienT = setTimeout(alienLoop, Alien.interval);
+    }
+    if (isNaN(mainT)) {
+        mainT = setInterval(mainLoop, 50);
+    }
+}
+
+function keyDown(evt) {
+    if (evt.keyCode == 37) ship.moveL = true;
+    if (evt.keyCode == 39) ship.moveR = true;
+    if (evt.keyCode == 32 && beam.y < 0) {
+        beam.y = 520; beam.x = ship.x;
+    }
+}
+
+function keyUp(evt) {
+    if (evt.keyCode == 37) ship.moveL = false;
+    if (evt.keyCode == 39) ship.moveR = false;
+}
+
+function alienLoop() {
+    var minX = Infinity, maxX = 0, maxY = 0;
+
+    Alien.isEven = !Alien.isEven;
+
+    // update aliens' position
+    aliens.forEach(function (e) {
+        e.x += Alien.isDown ? 0 : (Alien.isLeft ? -10 : 10);
+        e.y += Alien.isDown ? 20 : 0;
+    });
+
+    aliens.forEach(function (e) {
+        minX = Math.min(minX, e.x);
+        maxX = Math.max(maxX, e.x);
+        maxY = Math.max(maxY, e.y);
+    });
+
+    if (Alien.isDown) {
+        Alien.isDown = false;
+    } else if (minX < 20) {
+        Alien.isDown = true;
+        Alien.isLeft = false;
+    } else if (maxX > 560) {
+        Alien.isDown = true;
+        Alien.isLeft = true;
+    }
+
+    if (maxY > 550) {
+        gameOver();
+    } else {
+        Alien.interval = Math.max(50, Alien.interval - 5);
+        setTimeout(alienLoop, Alien.interval);
+    }
+}
+
+function gameOver() {
+    clearInterval(mainT); mainT = NaN;
+    clearTimeout(alienT); alienT = NaN;
+    draw();
+}
+
+function mainLoop() {
+    clock++;
+
+    if (aliens.length == 0) {
+        if (clock > 100) {
+            stage++;
+            start();
+        }
+        return;
+    }
+
+    // update beam and check if it hits an alien
+    var hit = -1;
+    if (beam.y > -30) {
+        beam.y -= 15;
+        beam.even = !beam.even;
+        aliens.forEach(function (e, i) {
+            if (e.x - 15 < beam.x && beam.x < e.x + 15 &&
+                e.y - 10 < beam.y && beam.y < e.y + 20) {
+                hit = i; beam.y = -100; score += e.point;
+                return;
+            }
+        });
+    }
+    if (hit >= 0) {
+        aliens.splice(hit, 1);
+
+        // stage clear
+        if (aliens.length == 0) {
+            clock = 0;
+            draw();
+            return;
+        }
+    }
+
+    // update bombs and check if it hits the ship
+    bombs.forEach(function (b) {
+        if (b.time < clock) {
+            var a = aliens[rand(aliens.length)];
+            b.x = a.x, b.y = a.y + 30;
+            b.time += rand(200) + 50;
+        }
+        else if (b.y < 600) {
+            b.y += 10
+        }
+
+        b.even = !b.even;
+        if (b.x - 15 < ship.x && ship.x < b.x + 15 && 530 < b.y && b.y < 550) {
+            gameOver();
+        }
+    });
+
+    // move the ship
+    if (ship.moveR) { ship.x = Math.min(ship.x + 5, 570); }
+    if (ship.moveL) { ship.x = Math.max(ship.x - 5, 0); }
+
+    draw();
+}
+
+function draw() {
+    // fill background
+    ctx.fillStyle = 'rgb(0,0,0)';
+    ctx.fillRect(0, 0, 600, 600);
+
+    // draw aliens
+    aliens.forEach(function (a) { a.draw(ctx); });
+
+    // draw ship
+    ship.draw(ctx);
+
+    // draw beam
+    beam.draw(ctx);
+
+    // draw bombs
+    bombs.forEach(function (b) { b.draw(ctx); });
+
+    // draw score
+    ctx.fillStyle = 'rgb(0,255,0)';
+    ctx.fillText(('0000000' + score).slice(-7), 470, 30);
+
+    if (aliens.length == 0) {
+        ctx.fillText('STAGE CLEAR', 200, 150);
+    }
+
+    if (isNaN(mainT)) {
+        ctx.fillText('GAME OVER', 220, 150);
+    }
+}
+    </script>
+</head>
+<body onload="init();">
+    <canvas id="canvas" width="600" height="600" />
+    <img id="strip" src="strip.png" style="display:none;" />
+</body>
+</html>
