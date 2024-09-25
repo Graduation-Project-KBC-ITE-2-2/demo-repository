@@ -3,6 +3,24 @@
 <head>
     <title>Tetris</title>
     <meta charset="utf-8" />
+    <style>
+        /* 追加するCSSコード */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* ビューポートの高さを100%に設定 */
+            display: flex;
+            justify-content: center; /* 水平方向に中央寄せ */
+            align-items: center;     /* 垂直方向に中央寄せ */
+            overflow: hidden; /* スクロールバーを非表示にする（任意） */
+        }
+
+        canvas {
+            border: 1px solid black; /* キャンバスに枠線を追加（任意） */
+            display: block;
+            margin: 0 auto; /* キャンバスを中央揃え */
+        }
+    </style>
     <script type="text/javascript">
     "use strict";
     var ctx, W = 12, H = 22, field, block, nextBlock, keyevents = [];
@@ -249,24 +267,25 @@
     }
 
     function mainLoop() {
-        count++;
+    count++;
 
-        // スピードアップ
-        if (count % 1000 == 0) {
-            interval = Math.max(1, interval - 1);
-        }
+    // スピードアップ
+    if (count % 1000 == 0) {
+        interval = Math.max(1, interval - 1);
+    }
 
+    // ゲームオーバーの判定
+    if (isGameOver()) {
+        clearInterval(timer);
+        timer = NaN;
+    } else {
         // ブロックの位置を更新
         block.update();
-
-        // ゲームオーバーの判定
-        if (isGameOver()) {
-            clearInterval(timer);
-            timer = NaN;
-        }
-
-        draw();
     }
+
+    draw();
+}
+
 
     function isGameOver() {
         var filled = 0;
@@ -345,6 +364,27 @@
             ctx.fillText('GAME OVER', 380, 70);
         }
     }
+    // 画面サイズに合わせてキャンバスをスケーリングする関数
+function adjustCanvasScale() {
+    var canvas = document.getElementById('canvas');
+    var scale = window.innerHeight / canvas.height;
+    canvas.style.transform = 'scale(' + scale + ')';
+    canvas.style.transformOrigin = 'top left';
+    // キャンバスの親要素のサイズを調整してスクロールバーを防ぐ
+    canvas.parentElement.style.width = canvas.width * scale + 'px';
+    canvas.parentElement.style.height = canvas.height * scale + 'px';
+}
+
+// ページ読み込み時にキャンバスを調整し、ゲームを開始する
+window.addEventListener('load', function() {
+    adjustCanvasScale();
+    init(); // ゲーム開始
+});
+
+// ウィンドウサイズ変更時にキャンバスを再調整する
+window.addEventListener('resize', function() {
+    adjustCanvasScale();
+});
     </script>
 </head>
 
