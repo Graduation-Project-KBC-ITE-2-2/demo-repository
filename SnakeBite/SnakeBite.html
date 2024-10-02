@@ -1,16 +1,24 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>SnakeBite</title>
     <meta charset="utf-8" />
+    <style>
+        #score-board {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+    </style>
     <script type="text/javascript">
         "use strict";	
         var W, H, S = 20;
         var snake = [], foods = [];
         var keyCode = 0;
         var point = 0;
+        var highScores = JSON.parse(localStorage.getItem('highScores')) || [0, 0, 0]; // ハイスコア3位までを取得
         var timer = NaN;
         var ctx;
+        var gameOver = false; // ゲームオーバーのフラグ
 
         // Pointオブジェクト
         function Point(x, y) {
@@ -27,15 +35,25 @@
             ctx.font = "20px sans-serif";
 
             // 蛇の初期化
-            snake.push(new Point(W / 2, H / 2));
+            snake = [new Point(W / 2, H / 2)];
 
             // 餌の初期化
+            foods = [];
+            point = 0;
+            gameOver = false;  // ゲームオーバーフラグをリセット
+
             for (var i = 0 ; i < 10 ; i++) {
                 addFood();
             }
 
-            timer = setInterval("tick()", 200);
+            if (timer) {
+                clearInterval(timer);
+            }
+
+            timer = setInterval(tick, 200);
             window.onkeydown = keydown;
+
+            updateScoreBoard(); // スコアボードの更新
         }
 
         // 餌の追加
@@ -71,6 +89,8 @@
         }
 
         function tick() {
+            if (gameOver) return; // ゲームオーバーならtick処理をしない
+
             var x = snake[0].x;
             var y = snake[0].y;
 
@@ -85,6 +105,7 @@
             // 自分 or 壁に衝突？
             if (isHit(snake, x, y) || x < 0 || x >= W || y < 0 || y >= H) {
                 clearInterval(timer);
+                gameOver = true;  // ゲームオーバー
                 paint();
                 return;
             }
@@ -100,12 +121,11 @@
             }
 
             paint();
+            updateScoreBoard(); // スコアボードを更新
         }
 
         function paint() {
             ctx.clearRect(0, 0, W * S, H * S);
-            ctx.fillStyle = "rgb(256,0,0)";
-            ctx.fillText(point, S, S * 2);
             ctx.fillStyle = "rgb(0,0,255)";
 
             foods.forEach(function (p) {
@@ -114,6 +134,27 @@
             snake.forEach(function (p) {
                 ctx.fillText("*", p.x * S, (p.y + 1) * S);
             });
+
+            if (gameOver) {
+                ctx.fillStyle = "rgb(255,0,0)";
+                ctx.font = "40px sans-serif";
+                ctx.fillText("ゲームオーバー", W * S / 4, H * S / 2);
+
+                // ハイスコアを更新
+                if (point > highScores[2]) {
+                    highScores.push(point);
+                    highScores.sort(function(a, b){return b - a;}); // 降順にソート
+                    highScores = highScores.slice(0, 3); // 上位3つを保持
+                    localStorage.setItem('highScores', JSON.stringify(highScores));
+                }
+                updateScoreBoard(); // ゲームオーバー後もスコアボードを更新
+            }
+        }
+
+        // スコアボードを更新する関数
+        function updateScoreBoard() {
+            document.getElementById('current-score').innerText = "Score: " + point;
+            document.getElementById('high-score').innerText = "High Scores: " + highScores.join(', ');
         }
 
         function keydown(event) {
@@ -122,7 +163,14 @@
     </script>
 </head>
 
-<body onload="init()">
+<body>
     <canvas id="field" width="400" height="400" style="background:#cccccc"></canvas>
+    <br>
+    <div id="score-board">
+        <div id="current-score">Score: 0</div>
+        <div id="high-score">High Scores: 0, 0, 0</div>
+    </div>
+    <br>
+    <button onclick="init()">スタート</button>
 </body>
 </html>
