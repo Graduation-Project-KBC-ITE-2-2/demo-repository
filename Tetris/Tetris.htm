@@ -3,6 +3,53 @@
 <head>
     <title>Tetris</title>
     <meta charset="utf-8" />
+    <style>
+        /* CSSスタイル */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* ビューポートの高さを100%に設定 */
+            display: flex;
+            justify-content: center; /* 水平方向に中央寄せ */
+            align-items: center;     /* 垂直方向に中央寄せ */
+            overflow: hidden; /* スクロールバーを非表示にする */
+        }
+
+        #canvas {
+            border: 1px solid black; /* キャンバスに枠線を追加 */
+            display: block;
+            margin: 0 auto; /* キャンバスを中央揃え */
+        }
+
+        /* モーダルウィンドウのスタイル */
+        .modal {
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5); /* 背景を暗くする */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 上下の位置調整 */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px; /* モーダルウィンドウの幅 */
+            text-align: center;
+        }
+
+        /* ボタンのスタイル */
+        #retryButton, #returnButton {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
     <script type="text/javascript">
     "use strict";
     var ctx, W = 12, H = 22, field, block, nextBlock, keyevents = [];
@@ -224,10 +271,13 @@
         ctx = canvas.getContext('2d');
         ctx.font = "20pt Arial";
 
-        addEventListener('keydown', function (e) { keyevents.push(e.keyCode) });
-
         count = 0;
         score = 0;
+        interval = 40; // ゲームスピードをリセット
+        keyevents = []; // キーイベントのリセット
+
+        // モーダルウィンドウを非表示にする
+        document.getElementById('gameOverModal').style.display = 'none';
 
         // フィールドの初期化
         field = new Array(H);
@@ -245,28 +295,35 @@
         goNextBlock();
 
         // メインループの開始
+        if (timer) {
+            clearInterval(timer);
+        }
         timer = setInterval(mainLoop, 10);
     }
 
     function mainLoop() {
-        count++;
+    count++;
 
-        // スピードアップ
-        if (count % 1000 == 0) {
-            interval = Math.max(1, interval - 1);
-        }
+    // スピードアップ
+    if (count % 1000 === 0) {
+        interval = Math.max(1, interval - 1);
+    }
 
+    // ゲームオーバーの判定
+    if (isGameOver()) {
+        clearInterval(timer);
+        timer = NaN;
+
+        // モーダルウィンドウを表示
+        document.getElementById('gameOverModal').style.display = 'block';
+    } else {
         // ブロックの位置を更新
         block.update();
-
-        // ゲームオーバーの判定
-        if (isGameOver()) {
-            clearInterval(timer);
-            timer = NaN;
-        }
-
-        draw();
     }
+
+    draw();
+}
+
 
     function isGameOver() {
         var filled = 0;
@@ -311,23 +368,26 @@
     }
 
     function draw() {
-        // 背景の塗りつぶし
-        ctx.fillStyle = 'rgb(0,0,0)';
-        ctx.fillRect(0, 0, 600, 600);
+    // 背景の塗りつぶし
+    ctx.fillStyle = 'rgb(0,0,0)';
+    ctx.fillRect(0, 0, 600, 600);
 
-        // フィールドの描画
-        for (var y = 0 ; y < H ; y++) {
-            for (var x = 0 ; x < W ; x++) {
-                var v = field[y][x];
-                ctx.fillStyle = colors[v];
-                ctx.fillRect(50 + x * 25, 25 + y * 25, 24, 24);
-            }
+    // フィールドの描画
+    for (var y = 0; y < H; y++) {
+        for (var x = 0; x < W; x++) {
+            var v = field[y][x];
+            ctx.fillStyle = colors[v];
+            ctx.fillRect(50 + x * 25, 25 + y * 25, 24, 24);
         }
+    }
 
-        // 落下中のブロックの描画
+    // 落下中のブロックの描画
+    if (block) {
         block.draw(ctx);
+    }
 
-        // 次に出現するブロックの描画
+    // 次に出現するブロックの描画
+    if (nextBlock) {
         nextBlock.data.forEach(function (v, i, data) {
             var w = Math.sqrt(data.length);
             var x = i % w;
@@ -335,22 +395,79 @@
             ctx.fillStyle = colors[v];
             ctx.fillRect(400 + x * 25, 300 + y * 25, 24, 24);
         });
-
-        // 各種情報の描画
-        ctx.fillStyle = 'rgb(0,255,0)';
-        ctx.fillText('score:', 400, 130);
-        ctx.fillText('next:', 400, 270);
-        ctx.fillText(('0000000' + score).slice(-7), 400, 170);
-        if (isNaN(timer)) {
-            ctx.fillText('GAME OVER', 380, 70);
-        }
     }
+
+    // 各種情報の描画
+    ctx.fillStyle = 'rgb(0,255,0)';
+    ctx.fillText('score:', 400, 130);
+    ctx.fillText(('0000000' + score).slice(-7), 400, 170);
+    ctx.fillText('next:', 400, 270);
+
+    // 外枠のスタイル設定
+    ctx.strokeStyle = 'white'; // 枠線の色
+    ctx.lineWidth = 2;         // 枠線の太さ
+
+    // SCORE の外枠を描画
+    ctx.strokeRect(390, 100, 180, 100); // x, y, 幅, 高さ
+
+    // NEXT の外枠を描画
+    ctx.strokeRect(390, 250, 160, 160); // x, y, 幅, 高さ
+
+    if (isNaN(timer)) {
+        ctx.fillText('GAME OVER', 380, 70);
+    }
+
+    
+}
+
+    // リトライボタンの処理
+    function retryGame() {
+        init();
+    }
+
+    // ゲーム一覧に戻るボタンの処理
+    function returnToIndex() {
+        window.location.href = '../index.html';
+    }
+    // 画面サイズに合わせてキャンバスをスケーリングする関数
+    function adjustCanvasScale() {
+        var canvas = document.getElementById('canvas');
+        var scale = window.innerHeight / canvas.height;
+        canvas.style.transform = 'scale(' + scale + ')';
+        canvas.style.transformOrigin = 'top left';
+        // キャンバスの親要素のサイズを調整してスクロールバーを防ぐ
+        canvas.parentElement.style.width = canvas.width * scale + 'px';
+        canvas.parentElement.style.height = canvas.height * scale + 'px';
+    }
+    // キーイベントのリスナーを一度だけ登録
+    window.addEventListener('keydown', function (e) {
+        keyevents.push(e.keyCode);
+    });
+
+    // ページ読み込み時にキャンバスを調整し、ゲームを開始する
+    window.addEventListener('load', function() {
+        adjustCanvasScale();
+        init(); // ゲーム開始
+    });
+
+    // ウィンドウサイズ変更時にキャンバスを再調整する
+    window.addEventListener('resize', function() {
+        adjustCanvasScale();
+    });
     </script>
 </head>
 
-<body onload="init()">
-    <div>
-        <canvas id="canvas" width="600" height="600" />
+<body>
+    <div style="position: relative;">
+        <canvas id="canvas" width="600" height="600"></canvas>
+        <!-- モーダルウィンドウ -->
+        <div id="gameOverModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h2>ゲームオーバー</h2>
+                <button id="retryButton" onclick="retryGame()">リトライ</button>
+                <button id="returnButton" onclick="returnToIndex()">ゲーム一覧に戻る</button>
+            </div>
+        </div>
     </div>
 </body>
 </html>
