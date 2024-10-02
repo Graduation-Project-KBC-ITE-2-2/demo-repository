@@ -4,11 +4,19 @@
     <title>Cave</title>
     <meta charset="utf-8" />
     <style>
+        body {
+            display: flex;
+            justify-content: center; /* 水平方向の中央揃え */
+            align-items: center; /* 垂直方向の中央揃え */
+            height: 100vh; /* ビューポートの高さに合わせる */
+            margin: 0; /* デフォルトのマージンをリセット */
+        }
+
         #main {
             width: 800px;
             height: 600px;
             background-color: #00cc00;
-            position: absolute;
+            position: relative; /* 絶対位置ではなく相対位置に変更 */
             overflow: hidden;
         }
 
@@ -28,15 +36,69 @@
             z-index: 101;
             visibility: hidden;
         }
+
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: red;
+            visibility: hidden;
+            z-index: 102;
+        }
+
+        #startButton, #retryButton {
+            position: absolute;
+            top: 620px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #highScores {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #retryButton {
+            visibility: hidden; /* ゲームオーバー時に表示される */
+        }
     </style>
     <script type="text/javascript">
     "use strict";
     var y = 250, v = 0, keyDown = false, WALLS = 80, score = 0;
     var walls = [], slope = 0, timer, ship, main;
+    var highScores = JSON.parse(localStorage.getItem('highScores')) || [0, 0, 0]; // ハイスコア3位までを取得
 
     function init() {
+        // 初期化時にゲームオーバー表示を非表示にする
+        document.getElementById('gameOver').style.visibility = "hidden";
+        document.getElementById('bang').style.visibility = "hidden";
+        document.getElementById('retryButton').style.visibility = "hidden"; // ゲーム再開ボタンを非表示
+        document.getElementById('startButton').style.visibility = "hidden"; // スタートボタンも非表示
+        
+        score = 0; // スコアをリセット
+        document.getElementById('score').textContent = score; // スコア表示を初期化
+        
+        // 前回の壁をリセットするために、古い壁を削除
+        for (var i = 0; i < walls.length; i++) {
+            if (walls[i]) {
+                main.removeChild(walls[i]);
+            }
+        }
+        walls = []; // 配列も空にする
+
+        // 壁の作成と船の位置のリセット
         main = document.getElementById('main');
         ship = document.getElementById('ship');
+        y = 250; // 船の初期位置
+        v = 0; // 船の速度もリセット
+        ship.style.top = y + 'px'; // 船の位置をリセット
 
         for (var i = 0 ; i < WALLS ; i++) {
             walls[i] = document.createElement("div");
@@ -53,6 +115,9 @@
         timer = setInterval(mainloop, 50);
         window.addEventListener('keydown', function () { keyDown = true; });
         window.addEventListener('keyup', function () { keyDown = false; });
+
+        // ハイスコア表示を更新
+        updateHighScores();
     }
 
     function hitTest(){
@@ -72,11 +137,20 @@
             clearInterval(timer);
             document.getElementById('bang').style.top = (y - 40) + "px";
             document.getElementById('bang').style.visibility = "visible";
+            
+            // ゲームオーバーの表示
+            document.getElementById('gameOver').style.visibility = "visible";
+
+            // ゲーム再開ボタンを表示
+            document.getElementById('retryButton').style.visibility = "visible";
+
+            // スコアを保存してハイスコアを更新
+            saveHighScore(score);
             return;
         }
 
         score += 10;
-        document.getElementById('score').innerHTML = score.toString();
+        document.getElementById('score').textContent = score; // スコアを更新
 
         v += keyDown ? -3 : 3;
         y += v;
@@ -102,14 +176,45 @@
         }
     }
 
+    // スコアを保存してハイスコアリストを更新
+    function saveHighScore(newScore) {
+        highScores.push(newScore);
+        highScores.sort(function(a, b){return b - a;}); // 降順にソート
+        highScores = highScores.slice(0, 3); // 上位3つを保持
+        localStorage.setItem('highScores', JSON.stringify(highScores));
+
+        // ハイスコア表示を更新
+        updateHighScores();
+    }
+
+    // ハイスコアを表示
+    function updateHighScores() {
+        var highScoreBoard = document.getElementById('highScores');
+        highScoreBoard.innerHTML = "High Scores: " + highScores.join(', ');
+    }
+
+    // ページが読み込まれた後にハイスコアを表示
+    window.onload = function() {
+        updateHighScores();
+    };
     </script>
 </head>
 
-<body onload="init()">
-    <h1>Score:<span id="score"></span></h1>
+<body>
+    <h1>Score:<span id="score">0</span></h1>
     <div id="main">
         <img id="ship" src="ship.png" style="height:97px;" />
         <img id="bang" src="bang.png" />
+        <div id="gameOver">ゲームオーバー</div>
     </div>
+
+    <!-- ゲームスタートボタン -->
+    <button id="startButton" onclick="init()">Start</button>
+
+    <!-- ゲーム再開ボタン -->
+    <button id="retryButton" onclick="init()">Retry</button>
+
+    <!-- ハイスコア表示 -->
+    <div id="highScores">High Scores: 0, 0, 0</div>
 </body>
 </html>
