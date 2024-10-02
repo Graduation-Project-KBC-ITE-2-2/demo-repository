@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ミニゲーム集</title>
+    <!-- Google Fontsの追加 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2); /* 背景にグラデーションを追加 */
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background-color: #333;
+            padding: 20px 0;
+        }
+
+        .header {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .header li {
+            margin: 0 20px;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            padding: 15px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .header a:hover {
+            background-color: #555;
+        }
+
+        h1 {
+            color: #333;
+            margin-top: 50px;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* タイトルに軽い影を追加 */
+        }
+
+        .game-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* レスポンシブなグリッドレイアウト */
+            gap: 20px;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .game-item {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s; /* ホバー時のアニメーション */
+        }
+
+        .game-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .game-item a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .game-item a:hover {
+            color: #007BFF;
+        }
+
+        .auth-buttons {
+            margin: 30px 0;
+        }
+
+        .auth-button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .auth-button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <ul class="header">
+            <li><a href="Asteroid/asteroid.htm">Asteroid</a></li>
+            <li><a href="Blocks/blocks.htm">Blocks</a></li>
+            <li><a href="MineSweeper/minesweeper.html">MineSweeper</a></li>
+            <li><a href="Cave/cave.html">Cave</a></li>
+            <li><a href="MissileCommand/missilecommand.htm">MissileCommand</a></li>
+            <li><a href="Qix/Qix.htm">Qix</a></li>
+            <li><a href="Invader/SpaceInvader.htm">Invader</a></li>
+            <li><a href="Memorizer/memorizer.html">Memorizer</a></li>
+            <li><a href="SnakeBite/SnakeBite.html">SnakeBite</a></li>
+            <li><a href="Tetris/Tetris.htm">Tetris</a></li>
+        </ul>
+    </header>
+
+    <h1>ミニゲーム集へようこそ！</h1>
+
+    <div class="game-list">
+        <div class="game-item">
+            <a href="Asteroid/asteroid.htm">Asteroid</a>
+        </div>
+        <div class="game-item">
+            <a href="Blocks/blocks.htm">Blocks</a>
+        </div>
+        <div class="game-item">
+            <a href="MineSweeper/minesweeper.html">MineSweeper</a>
+        </div>
+        <div class="game-item">
+            <a href="Cave/cave.html">Cave</a>
+        </div>
+        <div class="game-item">
+            <a href="MissileCommand/missilecommand.htm">MissileCommand</a>
+        </div>
+        <div class="game-item">
+            <a href="Qix/Qix.htm">Qix</a>
+        </div>
+        <div class="game-item">
+            <a href="Invader/SpaceInvader.htm">Invader</a>
+        </div>
+        <div class="game-item">
+            <a href="Memorizer/memorizer.html">Memorizer</a>
+        </div>
+        <div class="game-item">
+            <a href="SnakeBite/SnakeBite.html">SnakeBite</a>
+        </div>
+        <div class="game-item">
+            <a href="Tetris/Tetris.htm">Tetris</a>
+        </div>
+    </div>
+
+    <div class="auth-buttons">
+        <button class="auth-button" onclick="location.href='login.html'">ログイン</button>
+        <button class="auth-button" onclick="location.href='register.html'">新規登録</button>
+    </div>
+
+</body>
+</html>
