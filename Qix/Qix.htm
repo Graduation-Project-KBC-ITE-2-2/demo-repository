@@ -6,6 +6,8 @@
     <script type="text/javascript">
     "use strict";
     var timer = NaN, areas = [], score = 0, enemy, ship, ctx;
+    var highScore = 0; // ハイスコアを記録する変数を追加
+    var gameOver = false; // ゲームオーバーのフラグを追加
 
     function Rect(left, top, right, bottom) {
         this.left = left;
@@ -233,6 +235,7 @@
         ship = new Ship();
         score = 0;
         areas = [];
+        gameOver = false; // ゲームオーバーを初期化
 
         var canvas = document.getElementById('canvas');
         ctx = canvas.getContext('2d');
@@ -253,13 +256,18 @@
     }
 
     function mainLoop() {
-        enemy.update();
-        ship.update();
+        if (!gameOver) {
+            enemy.update();
+            ship.update();
 
-        if (ship.dx != 0 || ship.dy != 0) {
-            if (enemy.isHit()) {
-                clearInterval(timer);
-                timer = NaN;
+            if (ship.dx != 0 || ship.dy != 0) {
+                if (enemy.isHit()) {
+                    gameOver = true;
+                    // ハイスコアの更新
+                    if (score > highScore) {
+                        highScore = score;
+                    }
+                }
             }
         }
 
@@ -283,10 +291,14 @@
         // 各種メッセージ
         ctx.fillStyle = 'green';
         var s = Math.floor(score / (600 * 600) * 10000);
-        ctx.fillText('score:' + (s / 100) + '%', 400, 620);
+        ctx.fillText('Score: ' + (s / 100) + '%', 400, 620);
 
-        if (isNaN(timer)) {
-            ctx.fillText('GAME OVER', 220, 650);
+        // ハイスコアの表示
+        var hs = Math.floor(highScore / (600 * 600) * 10000);
+        ctx.fillText('High Score: ' + (hs / 100) + '%', 400, 650);
+
+        if (gameOver) {
+            ctx.fillText('GAME OVER', 220, 680);
         }
     }
     </script>
