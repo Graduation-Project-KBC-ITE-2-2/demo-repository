@@ -6,56 +6,48 @@
     <style>
         /* CSSスタイル */
         body {
-            margin: 0; /* ページ全体の外側の余白をなくします。*/
-            padding: 0; /*ページ内の余白もなくします。*/
-            height: 100vh; /* ビューポートの高さを100%に設定しています。
-             vhはビューポートの高さの単位で、100vhは画面の高さ全体を意味します。 */
-            display: flex; /* フレックスボックスを使って要素を配置します。
-             フレックスボックスは要素の配置や中央揃えが簡単に行えるレイアウト方法です。*/
-            justify-content: center; /* フレックスボックスの要素を水平方向に中央揃えします。 */
-            align-items: center;     /* フレックスボックスの要素を垂直方向に中央揃えします。 */
-            overflow: hidden; /* ぺージのスクロールバーが表示されないようにします。 */
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
         #canvas {
-            border: 1px solid black; /* キキャンバス要素に黒の1ピクセル幅の枠線をつけます。 */
-            display: block; /*canvas要素をブロック要素にします。
-             これはデフォルトのインライン要素をブロックに変更し、他の要素と分かれて表示されるようにします。*/
-            margin: 0 auto; /* キキャンバスを左右の中央に配置します。
-             autoは、左右の余白を自動調整して中央揃えにする効果があります。 */
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
         }
 
         /* モーダルウィンドウのスタイル */
-         /* モーダルウィンドウとは、ユーザーの操作を一時的に中断し、
-          特定のアクションを促すために表示されるポップアップウィンドウの一種です。 */
         .modal {
-            position: fixed; /* モーダルウィンドウがスクロールしても常に画面の同じ位置に固定されます。 */
-            z-index: 1; /* 他の要素の上にモーダルが表示されるように、スタッキング順序を設定します
-             （z-indexが高いほど前面に表示されます）。 */
-            left: 0; /* モーダルウィンドウの位置を画面の左上に固定します。 */
-            top: 0; /* モーダルウィンドウの位置を画面の左上に固定します。 */
-            width: 100%; /* モーダルが画面全体を覆うようにします。 */
-            height: 100%; /* モーダルが画面全体を覆うようにします。 */
-            overflow: auto; /* モーダル内で内容が画面に収まりきらない場合にスクロール可能にします。 */
-            background-color: rgba(0,0,0,0.5); /* 背景を半透明の黒で覆い、画面全体に暗い効果を与えます。 */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
         }
 
         .modal-content {
-            background-color: #fefefe; /* モーダルの背景色を白（薄いグレー）に設定します。 */
-            margin: 15% auto; /* 上モーダルウィンドウを上下で15%中央寄せ、左右は自動で中央揃えにします。 */
-            padding: 20px; /* モーダルの内部に20ピクセルの余白を追加します。 */
-            border: 1px solid #888; /* モーダルに薄いグレーの1ピクセル幅の枠線をつけます。 */
-            width: 300px; /* モーダルの幅を300ピクセルに固定します。 */
-            text-align: center; /* 上モーダル内のテキストを中央揃えにします。 */
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            text-align: center;
         }
 
         /* ボタンのスタイル */
         #retryButton, #returnButton {
-            margin: 10px; /* ボタンの外側に10ピクセルの余白を追加します。 */
-            padding: 10px 20px; /* ボタン内のテキスト周りに、上下10ピクセル、左右20ピクセルの余白を追加します。
-            */
-            font-size: 16px; /* ボタン内の文字サイズを16ピクセルに設定します。 */
-            cursor: pointer; /* ボタンにマウスを乗せるとポインター（手の形）が表示されます。 */
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
         }
     </style>
     <script type="text/javascript">
@@ -63,8 +55,8 @@
     var ctx, W = 12, H = 22, field, block, nextBlock, keyevents = [];
     var interval = 40, count, score, timer;
 
-    var colors = ['black', 'orange', 'blue', 'aqua',
-        'lime', 'fuchsia', 'yellow', 'red', 'gray'];
+    // 標準的なテトリスの配色に変更
+    var colors = ['black', 'orange', 'blue', 'purple', 'green', 'red', 'yellow', 'cyan', 'gray'];
 
     var blocks = [
         [
