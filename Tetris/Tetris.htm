@@ -408,21 +408,24 @@
 
     // 各種情報の描画
     ctx.fillStyle = 'rgb(0,255,0)';
-    ctx.fillText('score', 400, 110);
-    ctx.fillText(('0000000' + score).slice(-7), 400, 150);
-    ctx.fillText('best score', 400, 190);  // ベストスコアのラベル
-    ctx.fillText(('0000000' + bestScore).slice(-7), 400, 230);  // ベストスコアを表示
-    ctx.fillText('next:', 400, 270);
+    ctx.fillText('YOUR SCORE', 400, 110);
+    ctx.fillText(('0000000' + score).slice(-7), 440, 150);
+    ctx.fillText('BEST SCORE', 400, 190);  // ベストスコアのラベル
+    ctx.fillText(('0000000' + bestScore).slice(-7), 440, 230);  // ベストスコアを表示
+    ctx.fillText('next', 380, 270);
 
     // 外枠のスタイル設定
     ctx.strokeStyle = 'white'; // 枠線の色
     ctx.lineWidth = 1;         // 枠線の太さ
 
     // SCORE の外枠を描画
-    ctx.strokeRect(390, 85, 160, 150); // x, y, 幅, 高さ
+    ctx.strokeRect(390, 125, 200, 30); // x, y, 幅, 高さ
+
+    // BEST SCORE の外枠を描画
+    ctx.strokeRect(390, 205, 200, 30); // x, y, 幅, 高さ
 
     // NEXT の外枠を描画
-    ctx.strokeRect(390, 250, 160, 160); // x, y, 幅, 高さ
+    ctx.strokeRect(380, 290, 120, 120); // x, y, 幅, 高さ
 
     if (isNaN(timer)) {
         ctx.fillText('GAME OVER', 380, 70);
