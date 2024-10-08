@@ -292,6 +292,7 @@
         }
 
         // ブロックの初期化
+        nextBlock = null;
         goNextBlock();
 
         // メインループの開始
@@ -314,7 +315,7 @@
     // ゲームオーバーの判定
     if (isGameOver()) {
         clearInterval(timer);
-        timer = NaN;
+        timer = null;
 
         // ベストスコアの更新
         if (score > bestScore) {
@@ -377,6 +378,12 @@
 }
 
     function draw() {
+
+    // ゲームオーバー時のテキスト表示
+    if (!timer) { // isNaN(timer) ではなく !timer を使用
+        ctx.fillText('GAME OVER', 410, 70);
+    }    
+    
     // 背景の塗りつぶし
     ctx.fillStyle = 'rgb(0,0,0)';
     ctx.fillRect(0, 0, 700, 600);
