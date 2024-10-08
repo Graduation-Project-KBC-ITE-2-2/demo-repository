@@ -32,10 +32,22 @@
         this.x = 0;
         this.y = 0;
 
+        // ★ 点滅用のプロパティを追加
+        this.blinkInterval = 500; // 点滅間隔（ミリ秒）
+        this.lastBlinkTime = Date.now();
+        this.visible = true;
+
         this.update = function () {
             this.theta = (this.theta + this.delta) % (Math.PI * 2);
             this.x = Math.cos(this.theta) * this.r;
             this.y = Math.sin(this.theta) * this.r;
+
+            // ★ 点滅の状態を更新
+            var currentTime = Date.now();
+            if (currentTime - this.lastBlinkTime >= this.blinkInterval) {
+                this.visible = !this.visible; // 表示状態を反転
+                this.lastBlinkTime = currentTime;
+            }
         }
 
         this.isHit = function (cx, cy) {
@@ -51,6 +63,9 @@
         }
 
         this.draw = function (ctx, cx, cy) {
+            if (!this.visible) {
+                return; // 非表示状態の場合、描画しない
+            }
             ctx.strokeStyle = 'red';
             ctx.beginPath();
             ctx.moveTo(cx - this.x, cy - this.y);
@@ -73,6 +88,12 @@
         this.count = 0;
         this.limit = rand(20) + 50;
 
+        /// ★ 点滅用のプロパティを追加
+        this.blinkInterval = 500; // 点滅間隔（ミリ秒）
+        this.lastBlinkTime = Date.now();
+        this.visible = true;
+
+
         this.update = function () {
             if (++this.count > this.limit) {
                 // 次の移動場所の設定
@@ -91,6 +112,13 @@
             this.edges.forEach(function (e) {
                 e.update();
             });
+
+            // ★ 点滅の状態を更新
+            var currentTime = Date.now();
+            if (currentTime - this.lastBlinkTime >= this.blinkInterval) {
+                this.visible = !this.visible; // 表示状態を反転
+                this.lastBlinkTime = currentTime;
+            }
         };
 
         this.isHit = function () {
@@ -101,6 +129,10 @@
         }
 
         this.draw = function (ctx) {
+            if (!this.visible) {
+                return; // 非表示状態の場合、描画しない
+            }
+           
             for (var i = 0 ; i < this.edges.length ; i++) {
                 this.edges[i].draw(ctx, this.x, this.y);
             }
