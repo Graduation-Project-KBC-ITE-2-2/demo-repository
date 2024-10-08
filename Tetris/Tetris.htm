@@ -307,13 +307,15 @@
                 var code = keyevents.shift();
                 var dx = 0, dy = 0, nd = this.turn;
 
+                // 修正後
                 switch (code) {
-                    case 32: nd = (nd + 1) % 4; break;
-                    case 37: dx = -1; break;
-                    case 39: dx = +1; break;
-                    case 40: dy = +1; break;
+                    case 'Space': nd = (nd + 1) % 4; break;
+                    case 'ArrowLeft': dx = -1; break;
+                    case 'ArrowRight': dx = +1; break;
+                    case 'ArrowDown': dy = +1; break;
                     default: continue;
                 }
+
 
                 if (!isHit(this.x + dx, this.y + dy, nd)) {
                     this.x = this.x + dx;
@@ -388,8 +390,12 @@
         adjustCanvasScale();
         // キーイベントのリスナーを登録
         window.addEventListener('keydown', function (e) {
-            keyevents.push(e.keyCode);
-        });
+        // デフォルトの動作を防ぐ
+        if (['Space', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(e.code)) {
+            e.preventDefault();
+        }
+        keyevents.push(e.code);
+    });
     }
 
     var bestScore = localStorage.getItem('bestScore') || 0; // ローカルストレージからベストスコアを取得
