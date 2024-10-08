@@ -113,15 +113,15 @@ function tick() {
 function paint() {
     ctx.clearRect(0, 0, W * S, H * S);
     ctx.fillStyle = "rgb(256,0,0)";
-    ctx.fillText("Score: " + point, S, S * 2);
-    ctx.fillText("Best Score: " + bestScore, S, S * 3);  // ベストスコアを表示
+    ctx.fillText("Score " + point, S, S * 2);
+    ctx.fillText("Best Score " + bestScore, S, S * 3);  // ベストスコアを表示
 
     ctx.fillStyle = "rgb(0,0,255)";
     foods.forEach(function (p) {
-        ctx.fillText("+", p.x * S, (p.y + 1) * S);
+        ctx.fillText("🐀", p.x * S, (p.y + 1) * S);
     });
     snake.forEach(function (p) {
-        ctx.fillText("*", p.x * S, (p.y + 1) * S);
+        ctx.fillText("🐍", p.x * S, (p.y + 1) * S);
     });
 }
 
