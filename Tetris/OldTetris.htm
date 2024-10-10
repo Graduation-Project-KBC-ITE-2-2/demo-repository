@@ -1,0 +1,605 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>テトリス</title>
+    <meta charset="utf-8" />
+    <style>
+        /* CSSスタイル */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        /* ヘッダーのスタイル */
+        header {
+            padding: 0;
+            position: relative;
+            z-index: 5; /* モーダルより下に表示されないように z-index を設定 */
+        }
+
+        .header {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+        }
+
+        .header li {
+            margin: 0 20px;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            padding-top: 10px;
+            padding-bottom: 5px; 
+            padding-left: 15px;
+            padding-right: 15px; 
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .header a:hover {
+            background-color: #555;
+        }
+
+        #canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 30px auto 0; /* ヘッダーとの間にマージンを追加 */
+            background-color: black;
+        }
+
+        /* モーダルウィンドウのスタイル */
+        .modal {
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #333;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        /* ボタンのスタイル */
+        #retryButton, #returnButton, #startButton {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: white;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        #retryButton:hover, #returnButton:hover, #startButton:hover {
+            background-color: #ccc;
+        }
+    </style>
+    <script type="text/javascript">
+    "use strict";
+    var ctx, W = 12, H = 22, field, block, nextBlock, keyevents = [];
+    var interval = 40, count, score, timer;
+
+    // 標準的なテトリスの配色に変更
+    var colors = ['#000000', '#FFA500', '#0000FF', '#800080', '#008000', '#FF0000', '#FFFF00', '#00FFFF', '#808080'];
+
+    var blocks = [
+        [
+            [
+                0, 0, 1,
+                1, 1, 1,
+                0, 0, 0
+            ], [
+                0, 1, 0,
+                0, 1, 0,
+                0, 1, 1
+            ], [
+                0, 0, 0,
+                1, 1, 1,
+                1, 0, 0
+            ], [
+                1, 1, 0,
+                0, 1, 0,
+                0, 1, 0
+            ],
+        ], [
+            [
+                2, 0, 0,
+                2, 2, 2,
+                0, 0, 0
+            ], [
+                0, 2, 2,
+                0, 2, 0,
+                0, 2, 0
+            ], [
+                0, 0, 0,
+                2, 2, 2,
+                0, 0, 2
+            ], [
+                0, 2, 0,
+                0, 2, 0,
+                2, 2, 0
+            ]
+        ], [
+            [
+                0, 3, 0,
+                3, 3, 3,
+                0, 0, 0
+            ], [
+                0, 3, 0,
+                0, 3, 3,
+                0, 3, 0
+            ], [
+                0, 0, 0,
+                3, 3, 3,
+                0, 3, 0
+            ], [
+                0, 3, 0,
+                3, 3, 0,
+                0, 3, 0
+            ]
+        ], [
+            [
+                4, 4, 0,
+                0, 4, 4,
+                0, 0, 0
+            ], [
+                0, 0, 4,
+                0, 4, 4,
+                0, 4, 0
+            ], [
+                0, 0, 0,
+                4, 4, 0,
+                0, 4, 4
+            ], [
+                0, 4, 0,
+                4, 4, 0,
+                4, 0, 0
+            ]
+        ], [
+            [
+                0, 5, 5,
+                5, 5, 0,
+                0, 0, 0
+            ], [
+                0, 5, 0,
+                0, 5, 5,
+                0, 0, 5
+            ], [
+                0, 0, 0,
+                0, 5, 5,
+                5, 5, 0
+            ], [
+                5, 0, 0,
+                5, 5, 0,
+                0, 5, 0
+            ]
+        ], [
+            [
+                6, 6,
+                6, 6
+            ], [
+                6, 6,
+                6, 6
+            ], [
+                6, 6,
+                6, 6
+            ], [
+                6, 6,
+                6, 6
+            ]
+        ], [
+            [
+                0, 7, 0, 0,
+                0, 7, 0, 0,
+                0, 7, 0, 0,
+                0, 7, 0, 0
+            ], [
+                0, 0, 0, 0,
+                7, 7, 7, 7,
+                0, 0, 0, 0,
+                0, 0, 0, 0
+            ], [
+                0, 0, 7, 0,
+                0, 0, 7, 0,
+                0, 0, 7, 0,
+                0, 0, 7, 0
+            ], [
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+                7, 7, 7, 7,
+                0, 0, 0, 0
+            ]
+        ]
+    ];
+
+    // drawBlock 関数と lightenColor 関数を追加
+    function drawBlock(x, y, colorIndex) {
+        var baseColor = colors[colorIndex];
+
+        // グラデーションの作成
+        var grd = ctx.createLinearGradient(x, y, x + 24, y + 24);
+        grd.addColorStop(0, lightenColor(baseColor, 0.3)); // 明るい色
+        grd.addColorStop(1, baseColor); // 基本色
+
+        ctx.fillStyle = grd;
+        ctx.fillRect(x, y, 24, 24);
+
+        // ブロックの枠線を描画（任意）
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.strokeRect(x, y, 24, 24);
+    }
+
+    function lightenColor(color, percent) {
+        var num = parseInt(color.replace("#", ""), 16),
+            amt = Math.round(2.55 * percent * 100),
+            R = (num >> 16) + amt,
+            G = (num >> 8 & 0x00FF) + amt,
+            B = (num & 0x0000FF) + amt;
+
+        return "#" + (
+            0x1000000 +
+            (R < 255 ? (R < 0 ? 0 : R) : 255) * 0x10000 +
+            (G < 255 ? (G < 0 ? 0 : G) : 255) * 0x100 +
+            (B < 255 ? (B < 0 ? 0 : B) : 255)
+        ).toString(16).slice(1);
+    }
+
+    function Block() {
+        this.turn = rand(4);                    // 向き
+        this.type = blocks[rand(blocks.length)];
+        this.data = this.type[this.turn];
+
+        this.w = Math.sqrt(this.data.length);   // 2 or 3 or 4
+        this.x = rand(6 - this.w) + 2;          // 落下開始時のx座標
+        this.y = 1 - this.w;
+        this.fire = interval + count;
+
+        this.update = function () {
+            // 一番下に到達？
+            if (isHit(this.x, this.y + 1, this.turn)) {
+                processBlockCells(function (x, y, value) {
+                    field[y][x] = value;
+                });
+
+                var erased = eraseLine();
+                if (erased > 0) {
+                    score += Math.pow(2, erased) * 10;
+                }
+
+                keyevents = [];
+                goNextBlock();
+            }
+
+            // ブロックを1行下へ移動
+            if (this.fire < count) {
+                this.fire = count + interval;
+                this.y++;
+            }
+
+            // キーイベントの処理
+            while (keyevents.length > 0) {
+                var code = keyevents.shift();
+                var dx = 0, dy = 0, nd = this.turn;
+
+                // 修正後
+                switch (code) {
+                    case 'Space': nd = (nd + 1) % 4; break;
+                    case 'ArrowLeft': dx = -1; break;
+                    case 'ArrowRight': dx = +1; break;
+                    case 'ArrowDown': dy = +1; break;
+                    default: continue;
+                }
+
+
+                if (!isHit(this.x + dx, this.y + dy, nd)) {
+                    this.x = this.x + dx;
+                    this.y = this.y + dy;
+                    this.turn = nd;
+                    this.data = this.type[this.turn];
+                }
+            }
+        };
+
+        this.draw = function (ctx) {
+            processBlockCells(function (x, y, value) {
+                drawBlock(50 + x * 25, 25 + y * 25, value);
+            });
+        }
+
+    }
+
+    function rand(r) {
+        return Math.floor(Math.random() * r);
+    }
+
+    function processBlockCells(func) {
+        for (var i = 0; i < block.data.length; i++) {
+            var x = i % block.w;
+            var y = Math.floor(i / block.w);
+            var v = block.data[i];
+            if (0 <= y + block.y && y + block.y < H &&
+                0 <= x + block.x && x + block.x < W && v != 0) {
+                func(x + block.x, y + block.y, v);
+            }
+        }
+    }
+
+    function init() {
+        var canvas = document.getElementById('canvas');
+        ctx = canvas.getContext('2d');
+        ctx.font = "20pt Arial";
+
+        count = 0;
+        score = 0;
+        interval = 40; // ゲームスピードをリセット
+        keyevents = []; // キーイベントのリセット
+
+        // モーダルウィンドウを非表示にする
+        document.getElementById('tutorial').style.display = 'none';
+        document.getElementById('gameOverModal').style.display = 'none';
+
+        // フィールドの初期化
+        field = new Array(H);
+        for (var y = 0; y < H; y++) {
+            field[y] = new Array(W);
+            for (var x = 0; x < W; x++) {
+                field[y][x] = (x == 0 || x == W - 1) ? 8 : 0;
+            }
+        }
+        for (var i = 0; i < W; i++) {
+            field[H - 1][i] = 8;
+        }
+
+        // ブロックの初期化
+        nextBlock = null;
+        goNextBlock();
+
+        // メインループの開始
+        if (timer) {
+            clearInterval(timer);
+        }
+        timer = setInterval(mainLoop, 10);
+
+        // キャンバスの調整とキーイベントのリスナー登録
+        adjustCanvasScale();
+        // キーイベントのリスナーを登録
+        window.addEventListener('keydown', function (e) {
+        // デフォルトの動作を防ぐ
+        if (['Space', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(e.code)) {
+            e.preventDefault();
+        }
+        keyevents.push(e.code);
+    });
+    }
+
+    var bestScore = localStorage.getItem('bestScore') || 0; // ローカルストレージからベストスコアを取得
+
+    function mainLoop() {
+        count++;
+
+        // スピードアップ
+        if (count % 1000 === 0) {
+            interval = Math.max(1, interval - 1);
+        }
+
+        // ゲームオーバーの判定
+        if (isGameOver()) {
+            clearInterval(timer);
+            timer = null;
+
+            // ベストスコアの更新
+            if (score > bestScore) {
+                bestScore = score;
+                localStorage.setItem('bestScore', bestScore); // 新しいベストスコアを保存
+            }
+
+            // モーダルウィンドウを表示
+            document.getElementById('gameOverModal').style.display = 'flex';
+        } else {
+            // ブロックの位置を更新
+            block.update();
+        }
+
+        draw();
+    }
+
+    function isGameOver() {
+        var filled = 0;
+        field[0].forEach(function (c) {
+            if (c != 0) { filled++ }
+        });
+        return filled > 2;
+    }
+
+    function goNextBlock() {
+        block = nextBlock || new Block();
+        nextBlock = new Block();
+    }
+
+    function isHit(x, y, r) {
+        var data = block.type[r];
+        for (var i = 0; i < block.w; i++) {
+            for (var j = 0; j < block.w; j++) {
+                if (i + y >= 0 && j + x >= 0 && i + y < H && j + x < W &&
+                    field[i + y][j + x] != 0 && data[i * block.w + j] != 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function eraseLine() {
+        var erased = 0;
+        for (var y = 20; y >= 0; y--) {   // 下から上へ
+            if (field[y].every(function (v) { return v != 0; })) {
+                erased++;
+                field.splice(y, 1);             // 1行削除
+                // 新しい空行を正しく追加
+                var newLine = new Array(W).fill(0);
+                newLine[0] = 8; // 左壁
+                newLine[W - 1] = 8; // 右壁
+                field.unshift(newLine);    // 1行追加
+                y++;    // 消去した行からもう一度チェック
+            }
+        }
+        return erased;
+    }
+
+    function draw() {
+        // 背景の塗りつぶし
+        ctx.fillStyle = 'rgb(0,0,0)';
+        ctx.fillRect(0, 0, 700, 600);
+
+        // フィールドの描画
+        for (var y = 0; y < H; y++) {
+            for (var x = 0; x < W; x++) {
+                var v = field[y][x];
+                if (v != 0) {
+                    drawBlock(50 + x * 25, 25 + y * 25, v);
+                }
+            }
+        }
+
+        // 落下中のブロックの描画
+        if (block) {
+            block.draw(ctx);
+        }
+
+        // 次に出現するブロックの描画
+        if (nextBlock) {
+            nextBlock.data.forEach(function (v, i, data) {
+                if (v != 0) {
+                    var w = Math.sqrt(data.length);
+                    var x = i % w;
+                    var y = Math.floor(i / w);
+                    drawBlock(400 + x * 25, 300 + y * 25, v);
+                }
+            });
+        }
+
+        // 各種情報の描画
+        ctx.fillStyle = 'rgb(0,255,0)';
+        ctx.fillText('YOUR SCORE', 400, 110);
+        ctx.fillText(('0000000' + score).slice(-7), 440, 150);
+        ctx.fillText('BEST SCORE', 400, 190);  // ベストスコアのラベル
+        ctx.fillText(('0000000' + bestScore).slice(-7), 440, 230);  // ベストスコアを表示
+        ctx.fillText('next', 380, 270);
+
+        // 外枠のスタイル設定
+        ctx.strokeStyle = 'white'; // 枠線の色
+        ctx.lineWidth = 1;         // 枠線の太さ
+
+        // SCORE の外枠を描画
+        ctx.strokeRect(390, 125, 200, 30); // x, y, 幅, 高さ
+
+        // BEST SCORE の外枠を描画
+        ctx.strokeRect(390, 205, 200, 30); // x, y, 幅, 高さ
+
+        // NEXT の外枠を描画
+        ctx.strokeRect(380, 290, 120, 120); // x, y, 幅, 高さ
+
+        // ゲームオーバー時のテキスト表示
+        if (!timer) {
+            ctx.fillText('GAME OVER', 410, 70);
+        }
+    }
+
+    // リトライボタンの処理
+    function retryGame() {
+        init();
+    }
+
+    // ゲーム一覧に戻るボタンの処理
+    function returnToIndex() {
+        window.location.href = '../index.html';
+    }
+
+    // 画面サイズに合わせてキャンバスをスケーリングする関数
+    function adjustCanvasScale() {
+        var canvas = document.getElementById('canvas');
+        var scale = window.innerHeight / canvas.height;
+        canvas.style.transform = 'scale(' + scale + ')';
+        canvas.style.transformOrigin = 'top left';
+        // キャンバスの親要素のサイズを調整してスクロールバーを防ぐ
+        canvas.parentElement.style.width = canvas.width * scale + 'px';
+        canvas.parentElement.style.height = canvas.height * scale + 'px';
+    }
+
+    // スタートボタンのクリックでゲームを開始
+    function startGame() {
+        init(); // ゲーム開始
+    }
+
+    // ウィンドウサイズ変更時にキャンバスを再調整する
+    window.addEventListener('resize', function () {
+        adjustCanvasScale();
+    });
+    </script>
+</head>
+
+<body>
+    <!-- ヘッダー（ナビゲーションバー） -->
+    <header>
+        <ul class="header">
+            <li class="asteroid"><a href="/demo-repository-main/Asteroid/asteroid.htm">Asteroid</a></li>
+            <li class="Blocks"><a href="/demo-repository-main/Blocks/blocks.htm">Blocks</a></li>
+            <li class="MineSweeper"><a href="/demo-repository-main/MineSweeper/minesweeper.html">MineSweeper</a></li>
+            <li class="Cave"><a href="/demo-repository-main/Cave/cave.html">Cave</a></li>
+            <li class="MissileCommand"><a href="/demo-repository-main/MissileCommand/missilecommand.htm">MissileCommand</a></li>
+            <li class="Qix"><a href="/demo-repository-main/Qix/Qix.htm">Qix</a></li>
+            <li class="Memorizer"><a href="/demo-repository-main/Memorizer/memorizer.html">Memorizer</a></li>
+            <li class="SnakeBite"><a href="/demo-repository-main/SnakeBite/SnakeBite.html">SnakeBite</a></li>
+            <li class="Tetris"><a href="/demo-repository-main/Tetris/Tetris.htm">Tetris</a></li>
+            <li class="Index"><a href="/demo-repository-main/index.html">Index</a></li>
+        </ul>
+    </header>
+
+    <div style="position: relative;">
+        <canvas id="canvas" width="600" height="600"></canvas>
+        <!-- チュートリアルモーダルウィンドウ -->
+        <div id="tutorial" class="modal">
+            <div class="modal-content">
+                <h1>ゲームのチュートリアル</h1>
+                <p>このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。</p>
+                <p>ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。</p>
+                <button id="startButton" onclick="startGame()">スタート</button>
+            </div>
+        </div>
+        <!-- ゲームオーバーモーダルウィンドウ -->
+        <div id="gameOverModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h2>ゲームオーバー</h2>
+                <button id="retryButton" onclick="retryGame()">リトライ</button>
+                <button id="returnButton" onclick="returnToIndex()">ゲーム一覧に戻る</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
