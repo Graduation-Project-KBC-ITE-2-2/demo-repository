@@ -284,8 +284,7 @@ function init() {
     }
     timer = setInterval(mainLoop, 10);
 
-    // キャンバスの調整とキーイベントのリスナー登録
-    adjustCanvasScale();
+    
     // キーイベントのリスナーを登録
     window.addEventListener('keydown', function (e) {
     // デフォルトの動作を防ぐ
@@ -439,23 +438,11 @@ function returnToIndex() {
     window.location.href = '../index.html';
 }
 
-// 画面サイズに合わせてキャンバスをスケーリングする関数
-function adjustCanvasScale() {
-    var canvas = document.getElementById('canvas');
-    var scale = window.innerHeight / canvas.height;
-    canvas.style.transform = 'scale(' + scale + ')';
-    canvas.style.transformOrigin = 'top left';
-    // キャンバスの親要素のサイズを調整してスクロールバーを防ぐ
-    canvas.parentElement.style.width = canvas.width * scale + 'px';
-    canvas.parentElement.style.height = canvas.height * scale + 'px';
-}
+
 
 // スタートボタンのクリックでゲームを開始
 function startGame() {
     init(); // ゲーム開始
 }
 
-// ウィンドウサイズ変更時にキャンバスを再調整する
-window.addEventListener('resize', function () {
-    adjustCanvasScale();
-});
+
