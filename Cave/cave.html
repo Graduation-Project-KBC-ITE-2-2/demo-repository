@@ -3,218 +3,48 @@
 <head>
     <title>Cave</title>
     <meta charset="utf-8" />
-    <style>
-        body {
-            display: flex;
-            justify-content: center; /* 水平方向の中央揃え */
-            align-items: center; /* 垂直方向の中央揃え */
-            height: 100vh; /* ビューポートの高さに合わせる */
-            margin: 0; /* デフォルトのマージンをリセット */
-        }
-
-        #main {
-            width: 800px;
-            height: 600px;
-            background-color: #00cc00;
-            position: relative; /* 絶対位置ではなく相対位置に変更 */
-            overflow: hidden;
-        }
-
-        #ship {
-            top: 250px;
-            left: 0px;
-            width: 150px;
-            height: 97px;
-            position: absolute;
-            z-index: 100;
-        }
-
-        #bang {
-            width: 200px;
-            height: 200px;
-            position: absolute;
-            z-index: 101;
-            visibility: hidden;
-        }
-
-        #gameOver {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 48px;
-            color: red;
-            visibility: hidden;
-            z-index: 102;
-        }
-
-        #startButton, #retryButton {
-            position: absolute;
-            top: 620px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 10px 20px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        #highScores {
-            margin-top: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        #retryButton {
-            visibility: hidden; /* ゲームオーバー時に表示される */
-        }
-    </style>
-    <script type="text/javascript">
-    "use strict";
-    var y = 250, v = 0, keyDown = false, WALLS = 80, score = 0;
-    var walls = [], slope = 0, timer, ship, main;
-    var highScores = JSON.parse(localStorage.getItem('highScores')) || [0, 0, 0]; // ハイスコア3位までを取得
-
-    function init() {
-        // 初期化時にゲームオーバー表示を非表示にする
-        document.getElementById('gameOver').style.visibility = "hidden";
-        document.getElementById('bang').style.visibility = "hidden";
-        document.getElementById('retryButton').style.visibility = "hidden"; // ゲーム再開ボタンを非表示
-        document.getElementById('startButton').style.visibility = "hidden"; // スタートボタンも非表示
-        
-        score = 0; // スコアをリセット
-        document.getElementById('score').textContent = score; // スコア表示を初期化
-        
-        // 前回の壁をリセットするために、古い壁を削除
-        for (var i = 0; i < walls.length; i++) {
-            if (walls[i]) {
-                main.removeChild(walls[i]);
-            }
-        }
-        walls = []; // 配列も空にする
-
-        // 壁の作成と船の位置のリセット
-        main = document.getElementById('main');
-        ship = document.getElementById('ship');
-        y = 250; // 船の初期位置
-        v = 0; // 船の速度もリセット
-        ship.style.top = y + 'px'; // 船の位置をリセット
-
-        for (var i = 0 ; i < WALLS ; i++) {
-            walls[i] = document.createElement("div");
-            walls[i].style.position = "absolute";
-            walls[i].style.top = "100px";
-            walls[i].style.left = i * 10 + "px";
-            walls[i].style.width = "10px";
-            walls[i].style.height = "400px";
-            walls[i].style.backgroundColor = "#333333";
-            main.appendChild(walls[i]);
-        }
-
-        slope = Math.floor(Math.random() * 5) + 1;
-        timer = setInterval(mainloop, 50);
-        window.addEventListener('keydown', function () { keyDown = true; });
-        window.addEventListener('keyup', function () { keyDown = false; });
-
-        // ハイスコア表示を更新
-        updateHighScores();
-    }
-
-    function hitTest(){
-        var st = parseInt(ship.style.top) + 10;
-        var sh = parseInt(ship.style.height);
-        var sb = st + sh - 20;
-
-        var wt = parseInt(walls[14].style.top);
-        var wh = parseInt(walls[14].style.height);
-        var wb = wh + wt;
-
-        return (st < wt) || (sb > wb );
-    }
-
-    function mainloop() {
-        if (hitTest()) {
-            clearInterval(timer);
-            document.getElementById('bang').style.top = (y - 40) + "px";
-            document.getElementById('bang').style.visibility = "visible";
-            
-            // ゲームオーバーの表示
-            document.getElementById('gameOver').style.visibility = "visible";
-
-            // ゲーム再開ボタンを表示
-            document.getElementById('retryButton').style.visibility = "visible";
-
-            // スコアを保存してハイスコアを更新
-            saveHighScore(score);
-            return;
-        }
-
-        score += 10;
-        document.getElementById('score').textContent = score; // スコアを更新
-
-        v += keyDown ? -3 : 3;
-        y += v;
-        ship.style.top = y + 'px';
-
-        var edge = walls[WALLS - 1].style;
-        var t = parseInt(edge.top);
-        var h = parseInt(edge.height);
-        var b = h + t;
-        t += slope;
-        b += slope;
-        if ((t < 0) && (slope < 0) || (b > 600) && (slope > 0)) {
-            slope = (Math.floor(Math.random() * 5) + 1) * (slope < 0 ? 1 : -1);
-            edge.top = (t + 10) + "px";
-            edge.height = (h - 20) + "px";
-        } else {
-            edge.top = t + "px";
-        }
-
-        for (var i = 0 ; i < WALLS - 1 ; i++) {
-            walls[i].style.top = walls[i + 1].style.top;
-            walls[i].style.height = walls[i + 1].style.height;
-        }
-    }
-
-    // スコアを保存してハイスコアリストを更新
-    function saveHighScore(newScore) {
-        highScores.push(newScore);
-        highScores.sort(function(a, b){return b - a;}); // 降順にソート
-        highScores = highScores.slice(0, 3); // 上位3つを保持
-        localStorage.setItem('highScores', JSON.stringify(highScores));
-
-        // ハイスコア表示を更新
-        updateHighScores();
-    }
-
-    // ハイスコアを表示
-    function updateHighScores() {
-        var highScoreBoard = document.getElementById('highScores');
-        highScoreBoard.innerHTML = "High Scores: " + highScores.join(', ');
-    }
-
-    // ページが読み込まれた後にハイスコアを表示
-    window.onload = function() {
-        updateHighScores();
-    };
-    </script>
+    <link rel="stylesheet" type="text/css" href="styles.css"> 
 </head>
 
 <body>
-    <h1>Score:<span id="score">0</span></h1>
+    <!-- ヘッダーを上に表示する -->
+    <header>
+        <ul class="header">
+            <li class="asteroid"><a href="/demo-repository-main/Asteroid/asteroid.htm">Asteroid</a></li>
+            <li class="Blocks"><a href="/demo-repository-main/Blocks/blocks.htm">Blocks</a></li>
+            <li class="Cave"><a href="/demo-repository-main/Cave/cave.html">Cave</a></li>
+            <li class="Invader"><a href="/demo-repository-main/Invader/SpaceInvader.htm">Invader</a></li>
+            <li class="MissileCommand"><a href="/demo-repository-main/MissileCommand/missilecommand.htm">MissileCommand</a></li>
+            <li class="Qix"><a href="/demo-repository-main/Qix/Qix.htm">Qix</a></li>
+            <li class="Memorizer"><a href="/demo-repository-main/Memorizer/memorizer.html">Memorizer</a></li>
+            <li class="SnakeBite"><a href="/demo-repository-main/SnakeBite/SnakeBite.html">SnakeBite</a></li>
+            <li class="Tetris"><a href="/demo-repository-main/Tetris/Tetris.htm">Tetris</a></li>
+            <li class="Index"><a href="/demo-repository-main/index.html">Index</a></li>
+        </ul>
+    </header>
+
+    <div id="modal">
+        <div class="modal-content">
+            <h1>チュートリアル</h1>
+            <p>このゲームでは、隙間を避けながら宇宙船を操縦します。<br>
+            上キーを押して上昇し、下キーを押して下降します。</p>
+            <button id="startButton" onclick="startGame()">スタート</button>
+        </div>
+    </div>
+
     <div id="main">
         <img id="ship" src="ship.png" style="height:97px;" />
         <img id="bang" src="bang.png" />
         <div id="gameOver">ゲームオーバー</div>
+        <div id="score">Score: 0</div> <!-- スコア要素を1つだけ残します -->
     </div>
-
-    <!-- ゲームスタートボタン -->
-    <button id="startButton" onclick="init()">Start</button>
 
     <!-- ゲーム再開ボタン -->
     <button id="retryButton" onclick="init()">Retry</button>
 
     <!-- ハイスコア表示 -->
     <div id="highScores">High Scores: 0, 0, 0</div>
+
+    <script src="script.js"></script>
 </body>
 </html>
