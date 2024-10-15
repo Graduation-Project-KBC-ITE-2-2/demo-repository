@@ -24,14 +24,13 @@
             while (true) {
                 var x = Math.floor(Math.random() * W);
                 var y = Math.floor(Math.random() * H);
-                if (!cell[x][y].bomb) {
-                    cell[x][y].bomb = true;
+                if (!cell[y][x].bomb) { // 修正: yとxの位置を交換
+                    cell[y][x].bomb = true; // 修正: yとxの位置を交換
                     break;
                 }
             }
         }
     }
-    
 
     function count(x, y) {
         var b = 0;
@@ -46,24 +45,25 @@
     }
 
     function open(x, y) {
-        for (var j = y - 1; j <= y + 1; j++) {
-            for (var i = x - 1; i <= x + 1; i++) {
-                if (cell[j] && cell[j][i]) {
-                    var c = cell[j][i];
-                    if (c.opened || c.bomb) {
-                        continue;
-                    }
-                    flip(c);
-                    var n = count(i, j);
-                    if (n == 0) {
-                        open(i, j);
-                    } else {
-                        c.textContent = n;
-                    }
+    for (var j = y - 1; j <= y + 1; j++) {
+        for (var i = x - 1; i <= x + 1; i++) {
+            if (cell[j] && cell[j][i]) {
+                var c = cell[j][i];
+                if (c.opened || c.bomb) {
+                    continue;
+                }
+                flip(c);
+                var n = count(i, j); // xとyの順番を修正
+                if (n == 0) {
+                    open(i, j);
+                } else {
+                    c.textContent = n;
+                    c.style.color = "black"; // 数字を見やすくするための色変更
                 }
             }
         }
     }
+}
 
     function flip(cell) {
         cell.className = "cell open";
@@ -81,7 +81,7 @@
                     if (td.bomb) {
                         td.textContent = "+";
                     }
-                })
+                });
             });
             document.getElementById("title").textContent = "Game Over";
         } else {
@@ -97,5 +97,5 @@
         // ゲーム盤の初期化
         init();
     }
-    
-    
+
+    document.getElementById("startButton").addEventListener("click", startGame); // ゲーム開始ボタンにイベントリスナーを追加
