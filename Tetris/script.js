@@ -2,6 +2,8 @@
 "use strict";
 var ctx, W = 12, H = 22, field, block, nextBlock, keyevents = [];
 var interval = 40, count, score, timer;
+// サウンドオブジェクトの作成
+var dropSound = new Audio('block_touch_sound.wav');
 
 // 標準的なテトリスの配色に変更
 var colors = ['#000000', '#FFA500', '#0000FF', '#800080', '#008000', '#FF0000', '#FFFF00', '#00FFFF', '#808080'];
@@ -181,31 +183,33 @@ function Block() {
     this.update = function () {
         // 一番下に到達？
         if (isHit(this.x, this.y + 1, this.turn)) {
+            // ブロックが固定された瞬間にサウンドを再生
+            dropSound.play();
+    
             processBlockCells(function (x, y, value) {
                 field[y][x] = value;
             });
-
+        
             var erased = eraseLine();
             if (erased > 0) {
                 score += Math.pow(2, erased) * 10;
             }
-
+        
             keyevents = [];
             goNextBlock();
         }
-
+        
         // ブロックを1行下へ移動
         if (this.fire < count) {
             this.fire = count + interval;
             this.y++;
         }
-
+        
         // キーイベントの処理
         while (keyevents.length > 0) {
             var code = keyevents.shift();
             var dx = 0, dy = 0, nd = this.turn;
-
-            // 修正後
+        
             switch (code) {
                 case 'Space': nd = (nd + 1) % 4; break;
                 case 'ArrowLeft': dx = -1; break;
@@ -213,8 +217,7 @@ function Block() {
                 case 'ArrowDown': dy = +1; break;
                 default: continue;
             }
-
-
+        
             if (!isHit(this.x + dx, this.y + dy, nd)) {
                 this.x = this.x + dx;
                 this.y = this.y + dy;
@@ -223,6 +226,8 @@ function Block() {
             }
         }
     };
+    
+    
 
     this.draw = function (ctx) {
         processBlockCells(function (x, y, value) {
