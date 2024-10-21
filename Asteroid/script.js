@@ -1,10 +1,9 @@
-import { getUserEmail,saveScoreAndEmail,displayDataInHTMLRealtime } from '../firebaseConfig.js'
-
-
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
 
 "use strict";
 var ctx, ship, shots = [], rocks = [], level = 1,
-    score = 0, clock = 0, timer = NaN, bg, bgX = 0, bgY = 0;
+    score = 0, clock = 0, timer = NaN, bg, bgX = 0, bgY = 0,
+    bgm; // BGM用変数を追加
 
 function Rock(x, y, s) {
     this.cx = x;
@@ -81,6 +80,12 @@ window.init = function() {
         shots.push(new Shot());
     }
 
+    // BGMを追加して再生する
+    bgm = new Audio('Space_Drifting.mp3');
+    bgm.loop = true;  // BGMをループ再生
+    bgm.volume = 0.5;  // 音量を調整
+    bgm.play();  // BGMを再生
+
     // キーイベントハンドラーの初期化
     window.addEventListener('keydown', function (e) {
         switch (e.keyCode) {
@@ -107,9 +112,6 @@ window.init = function() {
         timer = setInterval(mainLoop, 50);
     }
 }
-
-
-
 
 function start() {
     rocks = [];
@@ -252,10 +254,10 @@ async function draw() {
         ctx.drawImage(bang, ship.getX() - 50, ship.getY() - 50, 200, 200);
         const title = document.title;
         const userEmail = await getUserEmail();
-        await saveScoreAndEmail( title, score, userEmail);
-
+        await saveScoreAndEmail(title, score, userEmail);
     }
 }
+
 const title = document.title;
 
 displayDataInHTMLRealtime(title);
