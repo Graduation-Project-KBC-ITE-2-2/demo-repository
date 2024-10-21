@@ -3,7 +3,7 @@ import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../f
 "use strict";
 var ctx, ship, shots = [], rocks = [], level = 1,
     score = 0, clock = 0, timer = NaN, bg, bgX = 0, bgY = 0,
-    bgm; // BGM用変数を追加
+    bgm, beamSound; // BGM用変数とビーム音用変数を追加
 
 function Rock(x, y, s) {
     this.cx = x;
@@ -81,10 +81,13 @@ window.init = function() {
     }
 
     // BGMを追加して再生する
-    bgm = new Audio('Space_Drifting.mp3');
+    bgm = new Audio('Space_Drifting.mp3'); // https://dova-s.jp/bgm/download20439.html
     bgm.loop = true;  // BGMをループ再生
     bgm.volume = 0.5;  // 音量を調整
     bgm.play();  // BGMを再生
+
+    // ビーム効果音を初期化
+    beamSound = new Audio('datto.mp3'); // https://dova-s.jp/se/download061.html
 
     // キーイベントハンドラーの初期化
     window.addEventListener('keydown', function (e) {
@@ -93,7 +96,7 @@ window.init = function() {
             case 38: ship.keyF = true; break;
             case 39: ship.keyR = true; break;
             case 40: ship.keyB = true; break;
-            case 32: ship.keyH = true; break;
+            case 32: ship.keyH = true; break; // スペースキーで発射
         }
     });
     window.addEventListener('keyup', function (e) {
@@ -194,6 +197,7 @@ function mainLoop() {
             }
         }
         else if (!fire && ship.keyH) {
+            // ビーム発射
             shot.count = 0;
             shot.cx = ship.cx;
             shot.cy = ship.cy;
@@ -201,6 +205,10 @@ function mainLoop() {
             shot.dx = ship.dx + shot.power * Math.cos(shot.r);
             shot.dy = ship.dy + shot.power * Math.sin(shot.r);
             fire = true;
+
+            // ビーム発射音を再生
+            beamSound.currentTime = 0; // 再生位置をリセット
+            beamSound.play();
         }
     });
 
