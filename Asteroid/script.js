@@ -240,10 +240,17 @@ function showRetryButton() {
     retryButton.style.zIndex = '1000';
 
     retryButton.onclick = function() {
+        score = 0;  // スコアのリセット
+        score = 0;  // スコアの初期化
+        clock = 0; 
+        timer = NaN;
+    
         document.getElementById('modal').style.display = 'none';
         document.body.removeChild(retryButton);
         window.init();  // ゲームを再スタート
+        score = 0;  // スコアのリセット
     };
+    
 
     // ボタンを画面に追加
     document.body.appendChild(retryButton);
@@ -251,6 +258,7 @@ function showRetryButton() {
     // Rキーでもリトライ可能にする
     window.addEventListener('keydown', function(e) {
         if (e.key === 'r' || e.key === 'R') {
+            score = 0;  // スコアのリセット
             document.getElementById('modal').style.display = 'none';
             document.body.removeChild(retryButton);
             window.init();  // ゲームを再スタート
@@ -265,7 +273,7 @@ async function draw() {
     ctx.drawImage(bg, bgX, bgY, 400, 400, 0, 0, 800, 800);
 
     // 弾丸の描画
-    ctx.fillStyle = 'rgb(0,255,255)';
+    ctx.fillText(('0000000' + score).slice(-7), 670, 30);
     shots.forEach(function (shot) {
         if (shot.count < shot.maxCount) {
             ctx.fillRect(shot.getX(), shot.getY(), shot.w, shot.h);
