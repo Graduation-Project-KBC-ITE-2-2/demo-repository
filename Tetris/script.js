@@ -296,7 +296,9 @@ function init() {
     if (['Space', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(e.code)) {
         e.preventDefault();
     }
-    keyevents.push(e.code);
+    if (!keyevents.includes(e.code)) { // キーイベントが重複しないようにする
+        keyevents.push(e.code);
+    }
 });
 }
 
@@ -436,6 +438,7 @@ function draw() {
 // リトライボタンの処理
 function retryGame() {
     init();
+    keyevents = []; // キーイベントのリセット
 }
 
 // ゲーム一覧に戻るボタンの処理
@@ -449,5 +452,6 @@ function returnToIndex() {
 function startGame() {
     init(); // ゲーム開始
 }
+
 
 
