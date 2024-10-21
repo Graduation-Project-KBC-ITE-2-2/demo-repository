@@ -1,3 +1,7 @@
+import { getUserEmail,saveScoreAndEmail,displayDataInHTMLRealtime } from '../firebaseConfig.js'
+
+
+
 "use strict";
 var ctx, ship, shots = [], rocks = [], level = 1,
     score = 0, clock = 0, timer = NaN, bg, bgX = 0, bgY = 0;
@@ -61,7 +65,7 @@ Shot.prototype = Ship.prototype = Rock.prototype = {
 
 function rand(r) { return Math.floor(Math.random() * r) }
 
-function init() {
+window.init = function() {
     // モーダルを非表示にする
     document.getElementById('modal').style.display = 'none';
 
@@ -103,6 +107,8 @@ function init() {
         timer = setInterval(mainLoop, 50);
     }
 }
+
+
 
 
 function start() {
@@ -209,7 +215,7 @@ function mainLoop() {
     draw();
 }
 
-function draw() {
+async function draw() {
     // 背景を描画
     ctx.drawImage(bg, bgX, bgY, 400, 400, 0, 0, 800, 800);
 
@@ -244,5 +250,12 @@ function draw() {
     if (isNaN(timer)) {
         ctx.fillText('GAME OVER', 320, 150);
         ctx.drawImage(bang, ship.getX() - 50, ship.getY() - 50, 200, 200);
+        const title = document.title;
+        const userEmail = await getUserEmail();
+        await saveScoreAndEmail( title, score, userEmail);
+
     }
 }
+const title = document.title;
+
+displayDataInHTMLRealtime(title);

@@ -4,25 +4,14 @@
     <title>Blocks Game</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
+    <script type= "module"src="script.js" defer></script>
 </head>
 
 <body>
     <!-- ヘッダーを上に固定表示する -->
-    <header>
-        <ul class="header">
-            <li class="asteroid"><a href="/demo-repository-main/Asteroid/asteroid.htm">Asteroid</a></li>
-            <li class="Blocks"><a href="/demo-repository-main/Blocks/blocks.htm">Blocks</a></li>
-            <li class="Cave"><a href="/demo-repository-main/Cave/cave.html">Cave</a></li>
-            <li class="Invader"><a href="/demo-repository-main/Invader/SpaceInvader.htm">Invader</a></li>
-            <li class="MissileCommand"><a href="/demo-repository-main/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-            <li class="Qix"><a href="/demo-repository-main/Qix/Qix.htm">Qix</a></li>
-            <li class="Memorizer"><a href="/demo-repository-main/Memorizer/memorizer.html">Memorizer</a></li>
-            <li class="SnakeBite"><a href="/demo-repository-main/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-            <li class="Tetris"><a href="/demo-repository-main/Tetris/Tetris.htm">Tetris</a></li>
-            <li class="Index"><a href="/demo-repository-main/index.html">Index</a></li>
-        </ul>
-    </header>
+    <div id="header"></div>
+    <script type="module" src="/vite-one/main.js"></script>
 
     <!-- 統合されたチュートリアルと難易度選択 -->
     <div id="tutorialModal">
@@ -30,13 +19,21 @@
             <h1>チュートリアル</h1>
             <p>このゲームでは、パドルを操作してボールを弾き、ブロックを全て壊してください。</p>
             <p>難易度を選択してください：</p>
-            <button class="difficulty-button" onclick="startGame('Easy')">Easy</button>
-            <button class="difficulty-button" onclick="startGame('Normal')">Normal</button>
-            <button class="difficulty-button" onclick="startGame('Hard')">Hard</button>
+            <button class="difficulty-button" onclick="window.startGame('Easy')">Easy</button>
+            <button class="difficulty-button" onclick="window.startGame('Normal')">Normal</button>
+            <button class="difficulty-button" onclick="window.startGame('Hard')">Hard</button>
         </div>
     </div>
 
     <canvas id="canvas" width="600" height="600"></canvas>
     
+            <!-- ゲームの横に表示する要素 -->
+            <div class="parent">
+                <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
+                <div class="overlay-text">
+                    ランキング<br>
+                    <div id="scorelist"></div>
+                </div>
+            </div>
 </body>
 </html>

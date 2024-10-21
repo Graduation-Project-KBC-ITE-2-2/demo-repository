@@ -3,25 +3,14 @@
 <head>
     <title>Cave</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="styles.css"> 
+    <link rel="stylesheet" href="styles.css"> 
+    <script src="script.js"></script>
 </head>
 
 <body>
     <!-- ヘッダーを上に表示する -->
-    <header>
-        <ul class="header">
-            <li class="asteroid"><a href="/demo-repository-main/Asteroid/asteroid.htm">Asteroid</a></li>
-            <li class="Blocks"><a href="/demo-repository-main/Blocks/blocks.htm">Blocks</a></li>
-            <li class="Cave"><a href="/demo-repository-main/Cave/cave.html">Cave</a></li>
-            <li class="Invader"><a href="/demo-repository-main/Invader/SpaceInvader.htm">Invader</a></li>
-            <li class="MissileCommand"><a href="/demo-repository-main/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-            <li class="Qix"><a href="/demo-repository-main/Qix/Qix.htm">Qix</a></li>
-            <li class="Memorizer"><a href="/demo-repository-main/Memorizer/memorizer.html">Memorizer</a></li>
-            <li class="SnakeBite"><a href="/demo-repository-main/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-            <li class="Tetris"><a href="/demo-repository-main/Tetris/Tetris.htm">Tetris</a></li>
-            <li class="Index"><a href="/demo-repository-main/index.html">Index</a></li>
-        </ul>
-    </header>
+    <header id="header"></header>
+    <script type="module" src="/main.js"></script>
 
     <div id="modal">
         <div class="modal-content">
@@ -45,6 +34,6 @@
     <!-- ハイスコア表示 -->
     <div id="highScores">High Scores: 0, 0, 0</div>
 
-    <script src="script.js"></script>
+    
 </body>
 </html>

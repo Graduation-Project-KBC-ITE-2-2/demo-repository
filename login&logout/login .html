@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン画面</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script type="module" src="./login.js"></script>
+    <link rel="stylesheet" href="login.css">"
+</head>
+<body>
+    <div id="success-message" style="color: green;"></div> <!-- 成功メッセージ用 -->
+    <div id="error-message" style="color: red;"></div> 
+
+    <div class="login-container">
+        <h1>ログイン</h1>
+        <input type="email" id="email" placeholder="メールアドレス" required>
+        <input type="password" id="password" placeholder="パスワード" required>
+        <button id="login-button" class="auth-button">ログイン</button>
+        <div id="error-message" class="error-message"></div>
+    </div>
+
+   
+
+
+</body>
+</html>

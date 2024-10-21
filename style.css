@@ -1,0 +1,281 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2); /* 背景にグラデーションを追加 */
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+header {
+  background-color: #333;
+  padding: 20px 0;
+}
+
+.header {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.header li {
+  margin: 0 20px;
+}
+
+.header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 15px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.header a:hover {
+  background-color: #555;
+}
+
+h1 {
+  color: #333;
+  margin-top: 50px;
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* タイトルに軽い影を追加 */
+}
+
+.game-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* レスポンシブなグリッドレイアウト */
+  gap: 20px;
+  max-width: 1000px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+.game-item {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s; /* ホバー時のアニメーション */
+}
+
+.game-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.game-item a {
+  color: #333;
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.game-item a:hover {
+  color: #007BFF;
+}
+
+.auth-buttons {
+  margin: 30px 0;
+}
+
+.auth-button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+}
+
+.auth-button:hover {
+  background-color: #555;
+}
+
+.account-name {
+  background-color: #4285F4; /* Googleの青色 */
+  color: #fff; /* 白い文字 */
+  border-radius: 50%; /* 丸くする */
+  width: 50px; /* 幅を50pxに調整 */
+  height: 50px; /* 高さを50pxに調整 */
+  display: flex;
+  justify-content: center; /* 中央揃え */
+  align-items: center; /* 中央揃え */
+  font-weight: bold; /* 太字 */
+  font-size: 24px; /* フォントサイズを24pxに調整 */
+  margin-left: 10px; /* マージンを調整 */
+}
+
+
+     
+     /* アカウントコンテナとドロップダウンメニューの基本スタイル */
+      .account-container {
+          position: relative;
+          display: inline-block;
+      }
+
+      /* ドロップダウンメニューのスタイル */
+      .dropdown-menu {
+          display: none; /* 初期状態では非表示 */
+          position: absolute;
+          top: 60px; /* アカウント名のすぐ下に表示 */
+          right: 0;
+          background-color: white;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+          padding: 15px;
+          z-index: 10;
+      }
+
+      /* ニックネームフォームのスタイル */
+      .nickname-input {
+          display: block; /* 常に表示 */
+      }
+
+      .nickname-input input {
+          width: 200px; /* 幅を100%に設定 */
+          padding: 8px; /* 内部パディングを追加 */
+          border: 1px solid #ccc; /* ボーダーを設定 */
+          border-radius: 4px; /* 角を丸くする */
+          margin-bottom: 10px; /* ボタンとの間にマージンを追加 */
+      }
+
+      .nickname-input button {
+          width: 100%; /* 幅を100%に設定 */
+          padding: 8px; /* 内部パディングを追加 */
+          border: none; /* ボーダーなし */
+          border-radius: 4px; /* 角を丸くする */
+          background-color: #4285F4; /* ボタンの背景色 */
+          color: white; /* ボタンの文字色 */
+          cursor: pointer; /* カーソルをポインターに変更 */
+          transition: background-color 0.3s; /* ホバー時の背景色変更を追加 */
+      }
+
+      .nickname-input button:hover {
+          background-color: #3367D6; /* ホバー時の色 */
+      }
+      body {
+          font-family: 'Roboto', sans-serif;
+          background: linear-gradient(135deg, #f5f7fa, #c3cfe2); /* 背景にグラデーションを追加 */
+          margin: 0;
+          padding: 0;
+          text-align: center;
+      }
+
+      header {
+          background-color: #333;
+          padding: 10px 20px; /* 上下の余白を少し減らす */
+          display: flex;
+          justify-content: space-between; /* 左右の要素を配置 */
+          align-items: center; /* 中央揃え */
+      }
+
+      .header {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-wrap: wrap; /* 要素が折り返すように */
+          justify-content: center; /* 中央揃え */
+          max-width: 100%; /* ヘッダーの最大幅を設定 */
+          overflow: hidden; /* はみ出す要素を非表示 */
+      }
+
+      .header li {
+          margin: 0 10px; /* マージンを調整 */
+      }
+
+      .header a {
+          color: white;
+          text-decoration: none;
+          font-weight: bold;
+          font-size: 15px;
+          padding: 10px 15px; /* パディングを調整 */
+          border-radius: 5px;
+          transition: background-color 0.3s ease;
+      }
+
+      .header a:hover {
+          background-color: #555;
+      }
+
+      .account-name {
+          background-color: #4285F4; /* Googleの青色 */
+          color: #fff; /* 白い文字 */
+          border-radius: 50%; /* 丸くする */
+          width: 50px; /* 幅を50pxに調整 */
+          height: 50px; /* 高さを50pxに調整 */
+          display: flex;
+          justify-content: center; /* 中央揃え */
+          align-items: center; /* 中央揃え */
+          font-weight: bold; /* 太字 */
+          font-size: 24px; /* フォントサイズを24pxに調整 */
+          margin-left: 10px; /* マージンを調整 */
+      }
+
+      h1 {
+          color: #333;
+          margin-top: 50px;
+          font-size: 2.5rem;
+          letter-spacing: 2px;
+          text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2); /* タイトルに軽い影を追加 */
+      }
+
+      .game-list {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* レスポンシブなグリッドレイアウト */
+          gap: 20px;
+          max-width: 1000px;
+          margin: 50px auto;
+          padding: 0 20px;
+      }
+
+      .game-item {
+          background-color: #ffffff;
+          padding: 20px;
+          border-radius: 12px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s, box-shadow 0.3s; /* ホバー時のアニメーション */
+      }
+
+      .game-item:hover {
+          transform: translateY(-10px);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .game-item a {
+          color: #333;
+          text-decoration: none;
+          font-size: 1.2rem;
+          font-weight: bold;
+      }
+
+      .game-item a:hover {
+          color: #007BFF;
+      }
+
+      .auth-buttons {
+          margin: 30px 0;
+      }
+
+      .auth-button {
+          padding: 10px 20px;
+          margin: 5px;
+          border: none;
+          border-radius: 5px;
+          background-color: #333;
+          color: white;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+          font-size: 1rem;
+      }
+
+      .auth-button:hover {
+          background-color: #555;
+      }

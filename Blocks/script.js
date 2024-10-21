@@ -1,3 +1,6 @@
+import { getUserEmail,saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js'
+
+
 "use strict";
 
 var ctx, paddle, ball, timer, blocks = [];
@@ -60,6 +63,7 @@ function init() {
 
     if (isNaN(timer)) {
         timer = setInterval(mainLoop, 15);
+
     }
 
     setInterval(function () {
@@ -68,7 +72,7 @@ function init() {
     }, 1000);
 }
 
-function startGame(selectedDifficulty) {
+ window.startGame = function(selectedDifficulty) {
     // ゲームが終了した後に再スタートする場合に備えて、timerをクリア
     if (timer) {
         clearInterval(timer);
@@ -117,7 +121,7 @@ function start() {
     ball.dy = -ball.speed * Math.sin(Math.PI / 4);
 }
 
-function mainLoop() {
+async function mainLoop() {
     if (paddle.keyL) {
         paddle.x = Math.max(0, paddle.x - 10);
     }
@@ -148,7 +152,11 @@ function mainLoop() {
     if (ball.y + ball.r > HEIGHT) {
         clearInterval(timer);
         timer = NaN;
+        const title = document.title; // ゲームのタイトルを取得
+        const userEmail = await getUserEmail(); // ユーザーのメールを取得
+        await saveScoreAndEmail(title, score, userEmail); // スコアとメールを保存
         alert("ゲームオーバー！再挑戦してください。");
+
         return;
     }
 
@@ -188,3 +196,7 @@ function draw() {
     ctx.fillStyle = 'white';
     ctx.fillText('スコア: ' + score + ' | 時間: ' + elapsedTime + '秒 | 難易度: ' + difficulty, 20, 30);
 }
+
+const title = document.title;
+
+displayDataInHTMLRealtime(title);
