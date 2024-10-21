@@ -229,10 +229,15 @@ function showRetryButton() {
     // リトライボタンを生成
     let retryButton = document.createElement('button');
     retryButton.id = 'retryButton';
-    retryButton.innerText = 'リトライ';
+    retryButton.innerHTML = 'リトライ<span style="opacity: 0.5;">(R)</span>';
     
     // `startButton` のスタイルを適用する
-    retryButton.className = 'startButton';
+    retryButton.className = 'common-button';
+    retryButton.style.position = 'fixed';
+    retryButton.style.top = '50%';
+    retryButton.style.left = '50%';
+    retryButton.style.transform = 'translate(-50%, -50%)';
+    retryButton.style.zIndex = '1000';
 
     retryButton.onclick = function() {
         document.getElementById('modal').style.display = 'none';
@@ -242,7 +247,17 @@ function showRetryButton() {
 
     // ボタンを画面に追加
     document.body.appendChild(retryButton);
+
+    // Rキーでもリトライ可能にする
+    window.addEventListener('keydown', function(e) {
+        if (e.key === 'r' || e.key === 'R') {
+            document.getElementById('modal').style.display = 'none';
+            document.body.removeChild(retryButton);
+            window.init();  // ゲームを再スタート
+        }
+    });
 }
+
 
 
 async function draw() {
