@@ -2,5 +2,5 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/vite-one/', // GitHubリポジトリ名を入力
+  base: '/demo-repository/', // GitHubリポジトリ名を入力
 });
