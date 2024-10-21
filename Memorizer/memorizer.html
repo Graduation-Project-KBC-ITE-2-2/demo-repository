@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <title>memorizer</title>
@@ -19,19 +19,18 @@
         </div>
     </div>
 
-    <p id="message"></p>
-    <p id="bestScore"></p> <!-- ベストスコアを表示する要素を追加 -->
-    <div>
+    <!-- メッセージとボタンを同じ親要素に配置 -->
+    <div id="gameArea" style="position: relative;">
+        <p id="message"></p> <!-- メッセージ要素をゲームエリア内に配置 -->
         <button id="b0" style="background-color:#600" data-index="0"></button>
         <button id="b1" style="background-color:#660" data-index="1"></button>
         <br />
         <button id="b2" style="background-color:#060" data-index="2"></button>
         <button id="b3" style="background-color:#006" data-index="3"></button>
     </div>
-    
 
+    <p id="bestScore"></p> <!-- ベストスコアを表示する要素 -->
+    
     <script src="script.js"></script>
-    
 </body>
-
 </html>

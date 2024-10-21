@@ -4,7 +4,7 @@ var qCount = 0;
 var qTimer = NaN;
 var answers = [];
 var sounds = [];
-var bestScore = localStorage.getItem('bestScore') || 0;
+var bestScore = localStorage.getItem('bestScore') !== null ? parseInt(localStorage.getItem('bestScore')) : 0;
 
 function gobj(id) { return document.getElementById(id); }
 
@@ -12,6 +12,7 @@ function init() {
     const buttons = document.querySelectorAll("button[data-index]");
     buttons.forEach(button => {
         var index = button.getAttribute('data-index');
+        button.style.zIndex = "1";
         button.onclick = function(e) {
             if (qTimer) { return; }
             blink(index);
@@ -21,7 +22,9 @@ function init() {
     });
     
     // ベストスコアの表示を初期化時に行う
-    gobj("bestScore").textContent = "Best Score: " + bestScore; // ベストスコアを表示
+    gobj("bestScore").textContent = "ラウンド: " + round + " | ベストスコア: " + bestScore;
+        console.log('Best Score displayed:', bestScore);
+    console.log('Best Score displayed on init:', bestScore); // ベストスコアを表示
     showTutorial(); // チュートリアルを表示
 }
 
@@ -32,16 +35,43 @@ function showTutorial() {
 
 function hideTutorial() {
     gobj("tutorial").style.display = "none";
-    startGame();
+    setTimeout(function() {
+        startGame();
+    }, 1000); // 1秒のディレイを追加してリスタート
 }
 
 function startGame() {
-    nextRound(); // 修正: 直接ゲームを開始
+    showMessage("ゲーム開始！");
+    gobj("message").style.whiteSpace = "nowrap";
+    setTimeout(function() {
+        round = 0;
+        questions = [];
+        answers = [];
+        nextRound();
+    }, 1000); // 1秒のディレイを追加してゲームを開始
 }
 
 function showMessage(mess) {
-    gobj("message").textContent = mess;
+    const messageElem = gobj("message");
+    messageElem.textContent = mess;
+    messageElem.style.display = "flex";
+    messageElem.style.justifyContent = "center";
+    messageElem.style.alignItems = "center";
+    messageElem.style.position = "absolute"; // absoluteにしてゲームエリアに対して配置
+    messageElem.style.top = "50%";
+    messageElem.style.left = "50%";
+    messageElem.style.transform = "translate(-50%, -50%)";
+    messageElem.style.fontSize = "48px";
+    messageElem.style.color = "white";
+    messageElem.style.zIndex = "1000"; // 他の要素より上に表示するための設定
+
+    setTimeout(function() {
+        messageElem.style.display = "none";
+    }, 2000);
 }
+
+
+
 
 function blink(index) {
     var fgcolors = ["#F00", "#FF0", "#0F0", "#00F"];
@@ -59,8 +89,10 @@ function blink(index) {
 }
 
 function nextRound() {
+    gobj("bestScore").textContent = "ラウンド: " + round + " | ベストスコア: " + bestScore;
     round++;
-    showMessage("Round: " + round);
+    showMessage("ラウンド: " + round);
+    gobj("message").style.whiteSpace = "nowrap";
     var r = Math.floor(Math.random() * 4);
     questions.push(r);
     answers = [];
@@ -73,7 +105,11 @@ function showQuizItem() {
     if (++qCount >= questions.length) {
         clearInterval(qTimer);
         qTimer = NaN;
-        showMessage("Start answering!");
+        showMessage("覚えましょう！");
+    gobj("message").style.whiteSpace = "nowrap";
+    setTimeout(function() {
+        gobj("message").style.display = "none";
+    }, 1000);
     }
 }
 
@@ -92,20 +128,23 @@ function answer(val) {
     // 間違えた場合
     if (mistake) {
         showMessage("Game Over: " + round);
-        
         // ベストスコアの更新と保存
         if (round > bestScore) {
             bestScore = round;
-            localStorage.setItem('bestScore', bestScore); // ベストスコアをlocalStorageに保存
+            localStorage.setItem('bestScore', bestScore.toString());
+            console.log('Best Score saved to localStorage:', bestScore);
         }
-        
         // ベストスコアの表示更新
-        gobj("bestScore").textContent = "Best Score: " + bestScore;
-    
-    // 正解した場合
+        gobj("ベストスコア").textContent = "Best Score: " + bestScore;
     } else if (answers.length == questions.length) {
-        showMessage("GOOD");
+        showMessage("正解です");
+        // ラウンドクリア時にもベストスコアを更新
+        if (round > bestScore) {
+            bestScore = round;
+            localStorage.setItem('bestScore', bestScore.toString());
+            console.log('Best Score saved to localStorage on round clear:', bestScore);
+        }
+        gobj("bestScore").textContent = "ベストスコア: " + bestScore;
         setTimeout(nextRound, 2000); // 2秒後に次のラウンドへ
     }
 }
-

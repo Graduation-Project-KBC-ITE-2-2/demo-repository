@@ -51,15 +51,19 @@ button {
     border-radius: 10px;
     margin: 10px;
     font-size: 20px;
+    z-index: 1; /* ボタンの重なり順を低く設定 */
 }
 
 #message {
-    width: 300px;
-    font-size: 30px;
-    text-align: center;
-    margin-bottom: 20px;
+    position: fixed; /* 変更: fixed にして画面全体を基準に配置 */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
     color: white;
-    margin-top: 80px; /* ヘッダーの下に余白 */
+    z-index: 1000; /* 非常に高い値を設定して、確実にボタンより上に表示 */
+    display: none; /* 初期状態で非表示 */
+    text-align: center;
 }
 
 #tutorial {
