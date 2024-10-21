@@ -225,6 +225,26 @@ function mainLoop() {
     draw();
 }
 
+function showRetryButton() {
+    // リトライボタンを生成
+    let retryButton = document.createElement('button');
+    retryButton.id = 'retryButton';
+    retryButton.innerText = 'リトライ';
+    
+    // `startButton` のスタイルを適用する
+    retryButton.className = 'startButton';
+
+    retryButton.onclick = function() {
+        document.getElementById('modal').style.display = 'none';
+        document.body.removeChild(retryButton);
+        window.init();  // ゲームを再スタート
+    };
+
+    // ボタンを画面に追加
+    document.body.appendChild(retryButton);
+}
+
+
 async function draw() {
     // 背景を描画
     ctx.drawImage(bg, bgX, bgY, 400, 400, 0, 0, 800, 800);
@@ -263,6 +283,9 @@ async function draw() {
         const title = document.title;
         const userEmail = await getUserEmail();
         await saveScoreAndEmail(title, score, userEmail);
+        
+        // リトライボタンを表示
+        showRetryButton();
     }
 }
 

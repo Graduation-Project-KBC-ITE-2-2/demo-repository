@@ -16,7 +16,7 @@
             <p>矢印キーで宇宙船を左右に動かしたり、前進させたりすることができます。</p>
             <p>スペースキーを押すと弾を発射し、隕石を破壊することができます。</p>
             <p>隕石を避けながら、できるだけ高いスコアを目指してください！</p>
-            <button id="startButton" onclick="window.init()">ゲームを開始</button>
+            <button id="startButton" class="common-button" onclick="window.init()">ゲームを開始<span style="opacity: 0.5;"> space</span></button>
         </div>
     </div>
 
@@ -44,6 +44,17 @@
     <!-- 修正: srcを正しく指定 -->
     <script type="module" src="/demo-repository/main.js"></script>
     <script type="module" src="script.js"></script>
+    <script>
+        // スペースキーでゲームを開始できるようにイベントリスナーを追加
+        window.addEventListener('keydown', function(e) {
+            if (e.keyCode === 32) {  // スペースキーのキーコードは32
+                // モーダルが表示されているときのみゲーム開始を呼び出し
+                if (document.getElementById('modal').style.display !== 'none') {
+                    window.init();
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
