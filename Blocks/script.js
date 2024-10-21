@@ -1,5 +1,4 @@
-import { getUserEmail,saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js'
-
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
 
 "use strict";
 
@@ -34,6 +33,7 @@ function Block(x, y, i) {
     this.w = 50;
     this.h = 20;
     this.color = colors[i];
+    this.point = (6 - i) * 10;
 }
 
 // パドルとブロックそれぞれの描画メソッドを独立して定義
@@ -61,9 +61,10 @@ function init() {
     paddle = new Paddle();
     ball = new Ball();
 
+    draw();
+
     if (isNaN(timer)) {
         timer = setInterval(mainLoop, 15);
-
     }
 
     setInterval(function () {
@@ -72,7 +73,7 @@ function init() {
     }, 1000);
 }
 
- window.startGame = function(selectedDifficulty) {
+window.startGame = function(selectedDifficulty) {
     // ゲームが終了した後に再スタートする場合に備えて、timerをクリア
     if (timer) {
         clearInterval(timer);
@@ -106,6 +107,15 @@ function init() {
 function toggleKey(code, flag) {
     if (code === 37) paddle.keyL = flag;
     if (code === 39) paddle.keyR = flag;
+    if (code === 32 && !isPlaying()) {
+        ball.x = paddle.x + paddle.w / 2;
+        ball.y = paddle.y - ball.r;
+        ball.dx = ball.speed * Math.cos(Math.PI / 4);
+        ball.dy = -ball.speed * Math.sin(Math.PI / 4);
+        if (isNaN(timer)) {
+            timer = setInterval(mainLoop, 15);
+        }
+    }
 }
 
 function start() {
@@ -115,10 +125,6 @@ function start() {
             blocks.push(new Block(j * 60 + 35, i * 30 + 50, i));
         }
     }
-
-    // ボールの動きを設定
-    ball.dx = ball.speed * Math.cos(Math.PI / 4);
-    ball.dy = -ball.speed * Math.sin(Math.PI / 4);
 }
 
 async function mainLoop() {
@@ -150,14 +156,20 @@ async function mainLoop() {
 
     // ゲームオーバー判定
     if (ball.y + ball.r > HEIGHT) {
-        clearInterval(timer);
-        timer = NaN;
-        const title = document.title; // ゲームのタイトルを取得
-        const userEmail = await getUserEmail(); // ユーザーのメールを取得
-        await saveScoreAndEmail(title, score, userEmail); // スコアとメールを保存
-        alert("ゲームオーバー！再挑戦してください。");
-
-        return;
+        if (--balls > 0) {
+            ball = new Ball();
+            ball.speed = getSpeedByDifficulty(); // ボールの速度を再設定（難易度に基づく）
+            ball.dx = ball.speed * Math.cos(Math.PI / 4);
+            ball.dy = -ball.speed * Math.sin(Math.PI / 4);
+        } else {
+            clearInterval(timer);
+            timer = NaN;
+            const title = document.title; // ゲームのタイトルを取得
+            const userEmail = await getUserEmail(); // ユーザーのメールを取得
+            await saveScoreAndEmail(title, score, userEmail); // スコアとメールを保存
+            alert("ゲームオーバー！再挑戦してください。");
+            return;
+        }
     }
 
     draw();
@@ -165,12 +177,20 @@ async function mainLoop() {
     blocks = blocks.filter(function (block) {
         if (ball.x > block.x && ball.x < block.x + block.w &&
             ball.y - ball.r < block.y + block.h && ball.y + ball.r > block.y) {
-            ball.dy *= -1; // ボールのY方向を反転
-            score += 10; // スコアを加算
-            return false; // ブロックを削除
+            ball.dy *= -1;
+            score += block.point;
+            return false;
         }
-        return true; // ブロックを保持
+        return true;
     });
+
+    if (blocks.length === 0) {
+        start();
+    }
+}
+
+function isPlaying() {
+    return ball.dx !== 0 || ball.dy !== 0;
 }
 
 function draw() {
@@ -192,11 +212,31 @@ function draw() {
     ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
     ctx.fill();
 
+    // ボールの残機を右上に描画
+    for (var i = 0; i < balls; i++) {
+        ctx.fillStyle = 'yellow';
+        ctx.beginPath();
+        ctx.arc(570 - i * 30, 30, 10, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
     // スコア、時間、難易度の描画
     ctx.fillStyle = 'white';
     ctx.fillText('スコア: ' + score + ' | 時間: ' + elapsedTime + '秒 | 難易度: ' + difficulty, 20, 30);
 }
 
-const title = document.title;
+function getSpeedByDifficulty() {
+    switch (difficulty) {
+        case 'Easy':
+            return 2.5;
+        case 'Normal':
+            return 4.0;
+        case 'Hard':
+            return 5.5;
+        default:
+            return 3.0;
+    }
+}
 
+const title = document.title;
 displayDataInHTMLRealtime(title);
