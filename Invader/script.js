@@ -1,3 +1,5 @@
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+
 "use strict";
 var ctx, ship, beam, aliens = [], bombs = [],
     score = 0, stage = 1, clock = 0, mainT = NaN, alienT = NaN;
@@ -63,7 +65,7 @@ function rand(max) {
     return Math.floor(Math.random() * max);
 }
 
-function init() {
+window.init = function() {
     ctx = document.getElementById('canvas').getContext('2d');
     ctx.font = "20pt Arial";
     score = 0;
@@ -77,7 +79,7 @@ function init() {
     document.getElementById('tutorial').style.display = 'flex';
 }
 
-function start() {
+window.start = function() {
     // チュートリアルを非表示にする
     document.getElementById('tutorial').style.display = 'none';
 
@@ -230,7 +232,7 @@ function mainLoop() {
     draw();
 }
 
-function draw() {
+async function draw() {
     // 背景を描画
     ctx.drawImage(backgroundImg, 0, scrollY % 600, 600, 600);
     ctx.drawImage(backgroundImg, 0, (scrollY % 600) - 600, 600, 600); // 2つ目の背景
@@ -257,5 +259,13 @@ function draw() {
 
     if (isNaN(mainT)) {
         ctx.fillText('GAME OVER', 220, 150);
+
+        const title = document.title;
+        const userEmail = await getUserEmail();
+        await saveScoreAndEmail(title, score, userEmail);
     }
 }
+
+const title = document.title;
+
+displayDataInHTMLRealtime(title);
