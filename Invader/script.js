@@ -1,7 +1,11 @@
-
-    "use strict";
+"use strict";
 var ctx, ship, beam, aliens = [], bombs = [],
     score = 0, stage = 1, clock = 0, mainT = NaN, alienT = NaN;
+
+var backgroundImg = new Image();
+backgroundImg.src = 'cosmos-1853491_1920.jpg'; // 背景画像のパス
+
+var scrollY = 0; // 背景のY座標を管理する変数
 
 function Beam() {
     this.x = 0;
@@ -73,7 +77,6 @@ function init() {
     document.getElementById('tutorial').style.display = 'flex';
 }
 
-
 function start() {
     // チュートリアルを非表示にする
     document.getElementById('tutorial').style.display = 'none';
@@ -87,10 +90,12 @@ function start() {
     // エイリアンと爆弾を初期化
     aliens = [];
     bombs = [];
-    for (var i = 0 ; i < 4 ; i++) {
+    for (var i = 0; i < 4; i++) {
         var offset = (i < 2) ? 96 : 144;
-        for (var j = 0 ; j < 10 ; j++) {
-            aliens.push(new Alien(100 + j * 50, i * 50 + 50 * stage, (4 - i) * 10, offset));
+        for (var j = 0; j < 10; j++) {
+            // Y座標を-50から-200の範囲でランダムに設定
+            var randomY = -50 - rand(150); // -50から-200の範囲
+            aliens.push(new Alien(100 + j * 50, randomY, (4 - i) * 10, offset));
         }
         bombs.push(new Bomb());
     }
@@ -103,8 +108,6 @@ function start() {
         mainT = setInterval(mainLoop, 50);
     }
 }
-
-
 
 function keyDown(evt) {
     if (evt.keyCode == 37) ship.moveL = true;
@@ -128,6 +131,11 @@ function alienLoop() {
     aliens.forEach(function (e) {
         e.x += Alien.isDown ? 0 : (Alien.isLeft ? -10 : 10);
         e.y += Alien.isDown ? 20 : 0;
+
+        // エイリアンが画面内に入ってくる
+        if (e.y < 0) {
+            e.y += 5; // Y座標を下げる（速度を調整）
+        }
     });
 
     aliens.forEach(function (e) {
@@ -162,6 +170,9 @@ function gameOver() {
 
 function mainLoop() {
     clock++;
+
+    // 背景のY座標を少しずつ増やしてスクロール
+    scrollY += 1; // スクロールの速さを調整
 
     if (aliens.length == 0) {
         if (clock > 100) {
@@ -220,9 +231,9 @@ function mainLoop() {
 }
 
 function draw() {
-    // fill background
-    ctx.fillStyle = 'rgb(0,0,0)';
-    ctx.fillRect(0, 0, 600, 600);
+    // 背景を描画
+    ctx.drawImage(backgroundImg, 0, scrollY % 600, 600, 600);
+    ctx.drawImage(backgroundImg, 0, (scrollY % 600) - 600, 600, 600); // 2つ目の背景
 
     // draw aliens
     aliens.forEach(function (a) { a.draw(ctx); });
