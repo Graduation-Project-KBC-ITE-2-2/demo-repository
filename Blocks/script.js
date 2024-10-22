@@ -78,7 +78,7 @@ function init() {
     // 1秒ごとにボールの速度を0.1上げる処理を追加
     setInterval(function () {
         elapsedTime++; // 経過時間を更新
-        ball.speed += 0.1; // ボールの速度を増加
+        ball.speed += 0.5; // ボールの速度を増加
         if (isPlaying()) { // ゲームがプレイ中なら
             let angle = Math.atan2(ball.dy, ball.dx); // 現在の方向を取得
             ball.dx = ball.speed * Math.cos(angle); // X方向の速度を再計算
