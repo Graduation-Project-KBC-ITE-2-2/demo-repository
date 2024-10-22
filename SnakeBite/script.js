@@ -1,3 +1,5 @@
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+
 "use strict";	
 var W, H, S = 20;
 var snake = [], foods = [];
@@ -40,7 +42,7 @@ function init() {
 }
 
 // スタートボタンが押されたときにゲームを開始する関数
-function startGame() {
+window.startGame = function(){
     console.log("Start button clicked");
     if (!gameStarted) {
         console.log("Game started!");
@@ -87,7 +89,7 @@ function moveFood(x, y) {
     addFood();
 }
 
-function tick() {
+async function tick() {
     var x = snake[0].x;
     var y = snake[0].y;
 
@@ -109,7 +111,9 @@ function tick() {
             bestScore = point;
             localStorage.setItem('bestScore', bestScore);  // ベストスコアを保存
         }
-
+        const title = document.title;
+        const userEmail = await getUserEmail();
+        await saveScoreAndEmail(title, point, userEmail);
         paint(); // 最後の状態を描画
 
         // ゲームオーバーを表示
@@ -152,3 +156,7 @@ function paint() {
 function keydown(event) {
     keyCode = event.keyCode;
 }
+
+const title = document.title;
+
+displayDataInHTMLRealtime(title);
