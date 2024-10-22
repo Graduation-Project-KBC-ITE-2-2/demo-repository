@@ -4,33 +4,45 @@
     <meta charset="utf-8" />
     <title>memorizer</title>
     <link rel="stylesheet" type="text/css" href="styles.css"> 
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
 </head>
 
-<body onload="init()">
+<body onload="window.init()">
     <!-- ヘッダーを上に表示する -->
     <div id="header"></div>
-    <script type="module" src="/main.js"></script>
+
 
     <div id="tutorial">
         <div>
             <h2>チュートリアル</h2>
             <p>ボタンが点滅します。それを覚えて、順番に押してください。</p>
-            <button id="startButton" onclick="hideTutorial()">スタート</button>
+            <button id="startButton" onclick="window.hideTutorial()">スタート</button>
         </div>
     </div>
 
-    <!-- メッセージとボタンを同じ親要素に配置 -->
-    <div id="gameArea" style="position: relative;">
-        <p id="message"></p> <!-- メッセージ要素をゲームエリア内に配置 -->
-        <button id="b0" style="background-color:#600" data-index="0"></button>
-        <button id="b1" style="background-color:#660" data-index="1"></button>
-        <br />
-        <button id="b2" style="background-color:#060" data-index="2"></button>
-        <button id="b3" style="background-color:#006" data-index="3"></button>
+    <div>
+        <!-- メッセージとボタンを同じ親要素に配置 -->
+        <div id="gameArea" style="position: relative;">
+            <p id="message"></p> <!-- メッセージ要素をゲームエリア内に配置 -->
+            <button id="b0" style="background-color:#600" data-index="0"></button>
+            <button id="b1" style="background-color:#660" data-index="1"></button>
+            <br />
+            <button id="b2" style="background-color:#060" data-index="2"></button>
+            <button id="b3" style="background-color:#006" data-index="3"></button>
+        </div>
+
+        <p id="bestScore"></p> <!-- ベストスコアを表示する要素 -->
     </div>
 
-    <p id="bestScore"></p> <!-- ベストスコアを表示する要素 -->
-    
-    <script src="script.js"></script>
+    <div class="parent">
+        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
+        
+        <div class="overlay-text">
+            ランキング<br>
+            <div id="scorelist"></div>
+        </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

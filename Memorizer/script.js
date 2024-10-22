@@ -1,3 +1,6 @@
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+
+
 var round = 0;
 var questions = [];
 var qCount = 0;
@@ -8,7 +11,7 @@ var bestScore = localStorage.getItem('bestScore') !== null ? parseInt(localStora
 
 function gobj(id) { return document.getElementById(id); }
 
-function init() {
+window.init = function() {
     const buttons = document.querySelectorAll("button[data-index]");
     buttons.forEach(button => {
         var index = button.getAttribute('data-index');
@@ -33,7 +36,7 @@ function showTutorial() {
     gobj("tutorial").style.display = "flex";
 }
 
-function hideTutorial() {
+window.hideTutorial = function() {
     gobj("tutorial").style.display = "none";
     setTimeout(function() {
         startGame();
@@ -113,7 +116,7 @@ function showQuizItem() {
     }
 }
 
-function answer(val) {
+async function answer(val) {
     answers.push(val);
     var mistake = false;
     
@@ -135,7 +138,7 @@ function answer(val) {
             console.log('Best Score saved to localStorage:', bestScore);
         }
         // ベストスコアの表示更新
-        gobj("ベストスコア").textContent = "Best Score: " + bestScore;
+        // gobj("ベストスコア").textContent = "Best Score: " + bestScore;
     } else if (answers.length == questions.length) {
         showMessage("正解です");
         // ラウンドクリア時にもベストスコアを更新
@@ -147,4 +150,10 @@ function answer(val) {
         gobj("bestScore").textContent = "ベストスコア: " + bestScore;
         setTimeout(nextRound, 2000); // 2秒後に次のラウンドへ
     }
+    const title = document.title;
+    const userEmail = await getUserEmail();
+    await saveScoreAndEmail(title, bestScore, userEmail);
 }
+const title = document.title;
+console.log(title);
+displayDataInHTMLRealtime(title);
