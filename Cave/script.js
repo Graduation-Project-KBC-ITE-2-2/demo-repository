@@ -1,3 +1,5 @@
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+
 "use strict";
 var y = 250, v = 0, keyDown = false, WALLS = 80, score = 0;
 var walls = [], slope = 0, timer, ship, main;
@@ -48,7 +50,7 @@ function init() {
     updateHighScores();
 }
 
-function startGame() {
+window.startGame = function() {
     // モーダルを非表示にする
     document.getElementById('modal').style.display = 'none';
     
@@ -72,7 +74,7 @@ function hitTest(){
     return (st < wt) || (sb > wb );
 }
 
-function mainloop() {
+async function mainloop() {
     if (hitTest()) {
         clearInterval(timer);
         document.getElementById('bang').style.top = (y - 40) + "px";
@@ -114,6 +116,10 @@ function mainloop() {
         walls[i].style.top = walls[i + 1].style.top;
         walls[i].style.height = walls[i + 1].style.height;
     }
+
+    const title = document.title;
+    const userEmail = await getUserEmail();
+    await saveScoreAndEmail(title, score, userEmail);
 }
 
 // スコアを保存してハイスコアリストを更新
@@ -137,3 +143,7 @@ function updateHighScores() {
 window.onload = function() {
     updateHighScores();
 };
+
+const title = document.title;
+
+displayDataInHTMLRealtime(title);

@@ -4,7 +4,8 @@
     <title>Cave</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css"> 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
 </head>
 
 <body>
@@ -21,18 +22,29 @@
         </div>
     </div>
 
-    <div id="main">
-        <img id="ship" src="ship.png" style="height:97px;" />
-        <img id="bang" src="bang.png" />
-        <div id="gameOver">ゲームオーバー</div>
-        <div id="score">Score: 0</div> <!-- スコア要素を1つだけ残します -->
+    <div>
+        <div id="main">
+            <img id="ship" src="ship.png" style="height:97px;" />
+            <img id="bang" src="bang.png" />
+            <div id="gameOver">ゲームオーバー</div>
+            <div id="score">Score: 0</div> <!-- スコア要素を1つだけ残します -->
+        </div>
+    
+        <!-- ゲーム再開ボタン -->
+        <button id="retryButton" onclick="init()">Retry</button>
+    
+        <!-- ハイスコア表示 -->
+        <div id="highScores">High Scores: 0, 0, 0</div>
     </div>
 
-    <!-- ゲーム再開ボタン -->
-    <button id="retryButton" onclick="init()">Retry</button>
 
-    <!-- ハイスコア表示 -->
-    <div id="highScores">High Scores: 0, 0, 0</div>
+    <div class="parent">
+        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
+        <div class="overlay-text">
+            ランキング<br>
+            <div id="scorelist"></div>
+        </div>
+    </div>
 
     
 </body>
