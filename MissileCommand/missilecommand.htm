@@ -4,16 +4,27 @@
     <title>Missile Command</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
 </head>
 <body onload="init()">
     <!-- ヘッダーを上に表示する -->
     <div id="header"></div>
-    <script type="module" src="/vite-one/main.js"></script>
+
     <!-- ゲームキャンバス -->
-    <canvas id="canvas" width="800" height="600"></canvas>
-    <img id="strip" src="strip.png" style="display:none;" />
-    <img id="scope" src="scope.png" style="display:none;" />
-    <audio id="explode" src="bomb.mp3"></audio>
+     <div>
+        <canvas id="canvas" width="800" height="600"></canvas>
+        <img id="strip" src="strip.png" style="display:none;" />
+        <img id="scope" src="scope.png" style="display:none;" />
+        <audio id="explode" src="bomb.mp3"></audio>        
+     </div>
+
+     <div class="parent">
+        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
+        <div class="overlay-text">
+            ランキング<br>
+            <div id="scorelist"></div>
+        </div>
+    </div>
 
     <!-- チュートリアルモーダル -->
     <div id="tutorial">
@@ -21,9 +32,10 @@
         <h1>ゲーム説明</h1>
         <p>マウスで照準を合わせ、クリックしてミサイルを発射します。<br>
         エイリアンのミサイルを撃ち落として家を守りましょう！</p>
-        <button id="startButton" onclick="start();">スタート</button>
+        <button id="startButton" onclick="window.start();">スタート</button>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="/demo-repository/main.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
