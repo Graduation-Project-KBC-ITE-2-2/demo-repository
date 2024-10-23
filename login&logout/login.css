@@ -2,7 +2,7 @@
 body {
     font-family: 'Roboto', sans-serif;
     background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-    display: flex;
+
     justify-content: center;
     align-items: center;
     height: 100vh;
