@@ -8,7 +8,7 @@ const guestLoginButton = document.getElementById('guestLoginButton');  // ゲス
 window.onload = function() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('login') === 'success') {
-        alert('ログイン成功');
+        // alert('ログイン成功');
     }
 
     auth.onAuthStateChanged(user => {
@@ -38,7 +38,7 @@ window.onload = function() {
 
 
             
-        }
+        } 
     });
     guestLoginButton.onclick = async () => {
         console.log("ゲストログインボタンがクリックされました");  // デバッグ用
