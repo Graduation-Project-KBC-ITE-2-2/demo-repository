@@ -1,4 +1,5 @@
 import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+import { addKeyListenerForStart } from '../Key.js'
 
 "use strict";	
 var W, H, S = 20;
@@ -55,6 +56,13 @@ window.startGame = function(){
         init(); // 初期化処理
         timer = setInterval(tick, 200); // ゲームループを開始
     }
+}
+
+window.retryGame = function() {
+    document.getElementById('retryButton').style.display = 'none'; // リトライボタンを非表示
+    gameStarted = true;  // ゲーム開始フラグをリセット
+    init();  // ゲームを初期化
+    timer = setInterval(tick, 200);  // ゲームループを再開
 }
 
 // 餌の追加
@@ -127,12 +135,9 @@ async function tick() {
         return;
     }
 
-    window.retryGame = function() {
-        document.getElementById('retryButton').style.display = 'none'; // リトライボタンを非表示
-        gameStarted = true;  // ゲーム開始フラグをリセット
-        init();  // ゲームを初期化
-        timer = setInterval(tick, 200);  // ゲームループを再開
-    }
+
+
+
 
     // 頭を先頭に追加
     snake.unshift(new Point(x, y));
@@ -147,6 +152,12 @@ async function tick() {
     paint();
 }
 
+//キーで操作可能に
+window.onload = function() {
+    // コールバック関数を指定してリスナーを追加
+    addKeyListenerForStart('tutorial', startGame, 32);
+    addKeyListenerForStart('retryButton', retryGame, 32);
+};
 
 function paint() {
     ctx.clearRect(0, 0, W * S, H * S);

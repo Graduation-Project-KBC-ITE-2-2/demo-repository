@@ -29,7 +29,9 @@
             <br />
             <button id="b2" style="background-color:#060" data-index="2"></button>
             <button id="b3" style="background-color:#006" data-index="3"></button>
+            <!-- リトライボタン -->
         </div>
+        <button id="retryButton" onclick="window.retryGame()" style="display: none;">リトライ</button>
 
         <p id="bestScore"></p> <!-- ベストスコアを表示する要素 -->
     </div>
@@ -42,6 +44,7 @@
             <div id="scorelist"></div>
         </div>
     </div>
+
     <script type="module" src="/main.js"></script>
     <script type="module" src="script.js"></script>
 </body>

@@ -109,3 +109,13 @@ button {
     text-align: center;
     margin-top: 80px; /* ヘッダーの下に余白 */
 }
+
+#retryButton {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%); /* ボタンを中央に配置 */
+    padding: 10px 20px;
+    font-size: 20px;
+    display: none; /* 初期は非表示 */
+    z-index: 10; /* キャンバスより前面に表示 */
+}
