@@ -121,7 +121,17 @@ async function tick() {
         ctx.font = "40px sans-serif";
         ctx.fillText("Game Over", W * S / 4, H * S / 2);
 
+        // リトライボタンを表示
+        document.getElementById('retryButton').style.display = 'block';
+
         return;
+    }
+
+    window.retryGame = function() {
+        document.getElementById('retryButton').style.display = 'none'; // リトライボタンを非表示
+        gameStarted = true;  // ゲーム開始フラグをリセット
+        init();  // ゲームを初期化
+        timer = setInterval(tick, 200);  // ゲームループを再開
     }
 
     // 頭を先頭に追加
