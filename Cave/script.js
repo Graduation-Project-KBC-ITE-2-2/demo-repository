@@ -82,6 +82,9 @@ async function mainloop() {
         
         // ゲームオーバーの表示
         document.getElementById('gameOver').style.visibility = "visible";
+        const title = document.title;
+        const userEmail = await getUserEmail();
+        await saveScoreAndEmail(title, score, userEmail);
 
         // リトライボタンを表示
         document.getElementById('retryButton').style.display = "block"; // ここを変更
@@ -117,9 +120,7 @@ async function mainloop() {
         walls[i].style.height = walls[i + 1].style.height;
     }
 
-    const title = document.title;
-    const userEmail = await getUserEmail();
-    await saveScoreAndEmail(title, score, userEmail);
+
 }
 
 // スコアを保存してハイスコアリストを更新
