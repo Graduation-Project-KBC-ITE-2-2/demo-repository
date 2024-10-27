@@ -1,5 +1,5 @@
 import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
-
+import { addKeyListenerForStart } from '../Key.js'
 
 "use strict";
 var ctx, W = 12, H = 22, field, block, nextBlock, keyevents = [];
@@ -457,6 +457,14 @@ function draw() {
  window.startGame = function() {
     init(); // ゲーム開始
 }
+
+//キーで操作可能に
+window.onload = function() {
+    // コールバック関数を指定してリスナーを追加
+    addKeyListenerForStart('tutorial', startGame, 32);
+    addKeyListenerForStart('retryButton', retryGame, 13);
+};
+
 
 const title = document.title;
 

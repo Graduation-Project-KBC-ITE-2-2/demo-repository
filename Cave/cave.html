@@ -18,7 +18,8 @@
             <h1>チュートリアル</h1>
             <p>このゲームでは、隙間を避けながら宇宙船を操縦します。<br>
             上キーを押して上昇し、下キーを押して下降します。</p>
-            <button id="startButton" onclick="startGame()">スタート</button>
+            
+            <button id="startButton" class="common-button" onclick="window.startGame()">ゲームを開始</button>
         </div>
     </div>
 
@@ -31,7 +32,7 @@
         </div>
     
         <!-- ゲーム再開ボタン -->
-        <button id="retryButton" onclick="init()">Retry</button>
+        <button id="retryButton" onclick="window.retryGame()" style="display: none;">リトライ</button>
     
         <!-- ハイスコア表示 -->
         <div id="highScores">High Scores: 0, 0, 0</div>

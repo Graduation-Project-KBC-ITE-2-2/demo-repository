@@ -1,4 +1,5 @@
 import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+import { addKeyListenerForStart } from '../Key.js'
 
 "use strict";
 var y = 250, v = 0, keyDown = false, WALLS = 80, score = 0;
@@ -9,7 +10,6 @@ function init() {
     // 初期化時にゲームオーバー表示を非表示にする
     document.getElementById('gameOver').style.visibility = "hidden";
     document.getElementById('bang').style.visibility = "hidden";
-    document.getElementById('retryButton').style.visibility = "hidden"; // ゲーム再開ボタンを非表示
     document.getElementById('startButton').style.visibility = "hidden"; // スタートボタンも非表示
     
     score = 0; // スコアをリセット
@@ -83,8 +83,8 @@ async function mainloop() {
         // ゲームオーバーの表示
         document.getElementById('gameOver').style.visibility = "visible";
 
-        // ゲーム再開ボタンを表示
-        document.getElementById('retryButton').style.visibility = "visible";
+        // リトライボタンを表示
+        document.getElementById('retryButton').style.display = "block"; // ここを変更
 
         // スコアを保存してハイスコアを更新
         saveHighScore(score);
@@ -143,6 +143,24 @@ function updateHighScores() {
 window.onload = function() {
     updateHighScores();
 };
+
+// リトライボタンがクリックされたときの処理
+window.retryGame = function() {
+    // ゲームオーバー表示を隠す
+    document.getElementById('gameOver').style.visibility = "hidden";
+    document.getElementById('bang').style.visibility = "hidden";
+    document.getElementById('retryButton').style.display = "none"; // リトライボタンを非表示にする
+
+    // ゲームを再初期化
+    init(); // これにより、初期化関数が呼び出されてゲームが再スタートする
+};
+
+window.onload = function() {
+    
+    addKeyListenerForStart('modal', startGame, 32);
+    addKeyListenerForStart('retryButton', retryGame, 32);
+};
+
 
 const title = document.title;
 
