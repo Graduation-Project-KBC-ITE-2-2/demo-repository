@@ -1,48 +1,76 @@
 ﻿﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>テトリス</title>
+    <title>Mine Land</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css">
 </head>
 
 <body>
-    <!-- ヘッダー（ナビゲーションバー） -->
+    <!-- ヘッダーを上に表示する -->
     <div id="header"></div>
 
-
-    <div style="position: relative;">
-        <canvas id="canvas" width="600" height="600"></canvas>
-        <!-- チュートリアルモーダルウィンドウ -->
-        <div id="tutorial" class="modal">
-            <div class="modal-content">
-                <h1>チュートリアル</h1>
-                <p>このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。</p>
-                <p>ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。</p>
-                <button id="startButton" onclick="window.startGame()">スタート</button>
-            </div>
-        </div>
-        <!-- ゲームオーバーモーダルウィンドウ -->
-        <div id="gameOverModal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <h2>ゲームオーバー</h2>
-                <button id="retryButton" onclick="window.retryGame()">リトライ</button>
-                <button id="returnButton" onclick="window.returnToIndex()">ゲーム一覧に戻る</button>
-            </div>
-        </div>
-    </div>
-    <div class="parent">
-        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
-        <div class="overlay-text">
-            ランキング<br>
-            <div id="scorelist"></div>
+    <!-- ゲーム説明のセクション -->
+    <div id="tutorial" style="display: none;">
+        <div class="modal-content">
+            <h1>ゲーム説明</h1>
+            <p>爆弾を避けながらセルをクリックしてください。<br>セルが開いたら、周囲の爆弾の数が表示されます。</p>
+            <p>すべてのセルを開くか、爆弾をクリックするまでゲームは続きます！</p>
+            <button id="startButton" onclick="startGame()">スタートゲーム</button>
         </div>
     </div>
 
-    <!-- JavaScriptファイルの読み込み -->
-    <script type="module" src="/demo-repository/main.js"></script>
+    <!-- ゲームコンテナ -->
+    <div id="game-container" style="display: none;">
+        <h1 id="title">Mine Land</h1>
+        <table id="main" border="1"></table>
+    </div>
+
+    <!-- Firebase Configの読み込み -->
+    <script type="module" src="../firebaseConfig.js"></script>
+
+    <!-- ログインチェック用スクリプト -->
+    <script type="module">
+        import { auth, getCurrentUser } from '../firebaseConfig.js';
+
+        // 証言状態をチェック
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、ゲーム画面を表示
+                document.getElementById("tutorial").style.display = "block";
+                document.getElementById("game-container").style.display = "block";
+            }
+        }).catch(error => {
+            // ユーザーがログインしていない場合、ログインページにリダイレクト
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html"; // ログインページにリダイレクト
+        });
+    </script>
+
+    <!-- ゲームのスクリプト -->
+    <script type="module" src="/main.js"></script>
     <script type="module" src="script.js"></script>
 
+    <!-- テトリスゲームのコンテナ -->
+    <div id="tetris-container" style="display: none;">
+        <h1 id="tetris-title">Tetris</h1>
+        <canvas id="tetris-canvas"></canvas>
+    </div>
+
+    <!-- テトリス用スクリプト -->
+    <script type="module" src="/tetris.js"></script>
+
+    <!-- テトリス用ログインチェックスクリプト -->
+    <script type="module">
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、テトリス画面を表示
+                document.getElementById("tetris-container").style.display = "block";
+            }
+        }).catch(error => {
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html";
+        });
+    </script>
 </body>
 </html>
