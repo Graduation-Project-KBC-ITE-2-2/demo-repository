@@ -77,27 +77,28 @@ function init() {
 
     // 1秒ごとにボールの速度を0.1上げる処理を追加
     setInterval(function () {
-        elapsedTime++; // 経過時間を更新
-        ball.speed += 1.5; // ボールの速度を増加
-        if (isPlaying()) { // ゲームがプレイ中なら
+        if (isPlaying()) { // ボールが動いている場合のみ時間を更新
+            elapsedTime++; // 経過時間を更新
+            ball.speed += 1.5; // ボールの速度を増加
             let angle = Math.atan2(ball.dy, ball.dx); // 現在の方向を取得
             ball.dx = ball.speed * Math.cos(angle); // X方向の速度を再計算
             ball.dy = ball.speed * Math.sin(angle); // Y方向の速度を再計算
         }
     }, 1000); // 1秒ごとに実行
+
 }
 
 // ゲーム開始関数
-window.startGame = function(selectedDifficulty) {
+window.startGame = function (selectedDifficulty) {
     // ゲームが終了した後に再スタートする場合に備えて、timerをクリア
     if (timer) {
         clearInterval(timer); // 現在のタイマーをクリア
         timer = null; // タイマーをリセット
     }
-    
+
     // チュートリアルモーダルを非表示にする
     document.getElementById('tutorialModal').style.display = 'none';
-    
+
     // 初期化（paddle, ballなどのオブジェクトを初期化）
     init();
 
