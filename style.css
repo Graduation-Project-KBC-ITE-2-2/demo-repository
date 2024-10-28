@@ -252,7 +252,7 @@ h1 {
     
     .game-image {
         width: 100%; /* カードの幅に合わせる */
-        height: 150px; /* 画像の高さを設定 */
+        height: 190px; /* 画像の高さを設定 */
         object-fit: cover; /* 画像のトリミングを防ぎ、アスペクト比を保持 */
         border-radius: 8px; /* 画像の角を丸くする */
         margin-bottom: 15px; /* タイトルとの間隔をあける */
