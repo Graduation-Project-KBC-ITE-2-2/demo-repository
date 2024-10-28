@@ -9,31 +9,46 @@
 <body>
     <!-- ヘッダーを上に表示する -->
     <div id="header"></div>
-    <script type="module" src="/main.js"></script>
 
-    <div id="tutorial">
+    <!-- ゲーム説明のセクション -->
+    <div id="tutorial" style="display: none;">
         <div class="modal-content">
-        <h1>ゲーム説明</h1>
-        <p>爆弾を避けながらセルをクリックしてください。<br>セルが開いたら、周囲の爆弾の数が表示されます。</p>
-        <p>すべてのセルを開くか、爆弾をクリックするまでゲームは続きます！</p>
-        <button id="startButton" onclick="startGame()">スタートゲーム</button>
+            <h1>ゲーム説明</h1>
+            <p>爆弾を避けながらセルをクリックしてください。<br>セルが開いたら、周囲の爆弾の数が表示されます。</p>
+            <p>すべてのセルを開くか、爆弾をクリックするまでゲームは続きます！</p>
+            <button id="startButton" onclick="startGame()">スタートゲーム</button>
         </div>
     </div>
+
     <!-- ゲームコンテナ -->
-    <div id="game-container">
+    <div id="game-container" style="display: none;">
         <h1 id="title">Mine Land</h1>
         <table id="main" border="1"></table>
     </div>
 
-    <!-- <div class="parent">
-        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
-        <div class="overlay-text">
-            ランキング<br>
-            <div id="scorelist"></div>
-        </div>
-    </div> -->
+    <!-- Firebase Configの読み込み -->
+    <script type="module" src="/path/to/firebaseConfig.js"></script>
 
-    <script type="module" src="/demo-repository/main.js"></script>
+    <!-- ログインチェック用スクリプト -->
+    <script type="module">
+        import { auth, getCurrentUser } from '/path/to/firebaseConfig.js';
+
+        // 認証状態をチェック
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、ゲーム画面を表示
+                document.getElementById("tutorial").style.display = "block";
+                document.getElementById("game-container").style.display = "block";
+            }
+        }).catch(error => {
+            // ユーザーがログインしていない場合、ログインページにリダイレクト
+            console.error('ログインしていません:', error);
+            window.location.href = "/path/to/login.html"; // ログインページにリダイレクト
+        });
+    </script>
+
+    <!-- ゲームのスクリプト -->
+    <script type="module" src="/main.js"></script>
     <script type="module" src="script.js"></script>
 </body>
 </html>
