@@ -6,19 +6,40 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
     <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
 </head>
-<body onload="init()">
+<body>
     <!-- ヘッダーを上に表示する -->
     <div id="header"></div>
 
+    <!-- Firebase Configの読み込み -->
+    <script type="module" src="../firebaseConfig.js"></script>
+
+    <!-- ログインチェック用スクリプト -->
+    <script type="module">
+        import { auth, getCurrentUser } from '../firebaseConfig.js';
+
+        // 認証状態をチェック
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、ゲーム画面を表示
+                document.getElementById("tutorial").style.display = "block";
+                document.getElementById("canvas").style.display = "block";
+            }
+        }).catch(error => {
+            // ユーザーがログインしていない場合、ログインページにリダイレクト
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html"; // ログインページにリダイレクト
+        });
+    </script>
+
     <!-- ゲームキャンバス -->
-     <div>
+    <div style="display: none;">
         <canvas id="canvas" width="800" height="600"></canvas>
         <img id="strip" src="strip.png" style="display:none;" />
         <img id="scope" src="scope.png" style="display:none;" />
         <audio id="explode" src="bomb.mp3"></audio>        
-     </div>
+    </div>
 
-     <div class="parent">
+    <div class="parent">
         <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
         <div class="overlay-text">
             ランキング<br>
@@ -27,7 +48,7 @@
     </div>
 
     <!-- チュートリアルモーダル -->
-    <div id="tutorial">
+    <div id="tutorial" style="display: none;">
         <div class="modal-content">
         <h1>ゲーム説明</h1>
         <p>マウスで照準を合わせ、クリックしてミサイルを発射します。<br>

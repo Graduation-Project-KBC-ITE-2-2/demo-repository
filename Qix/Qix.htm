@@ -9,14 +9,34 @@
 <body>
     <!-- ヘッダーを上に表示する -->
     <div id="header"></div>
-    <script type="module" src="/vite-one/main.js"></script>
+
+    <!-- Firebase Configの読み込み -->
+    <script type="module" src="../firebaseConfig.js"></script>
+
+    <!-- ログインチェック用スクリプト -->
+    <script type="module">
+        import { auth, getCurrentUser } from '../firebaseConfig.js';
+
+        // 認証状態をチェック
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、ゲームキャンバスを表示
+                document.getElementById("tutorial").style.display = "block";
+                document.getElementById("canvas").style.display = "block";
+            }
+        }).catch(error => {
+            // ユーザーがログインしていない場合、ログインページにリダイレクト
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html"; // ログインページにリダイレクト
+        });
+    </script>
 
     <!-- ゲームキャンバス -->
-    <canvas id="canvas" width="600" height="700"></canvas>
+    <canvas id="canvas" width="600" height="700" style="display: none;"></canvas>
     <img id="ship" src="ship.png" style="display:none;" />
 
     <!-- チュートリアルモーダル -->
-    <div id="tutorial">
+    <div id="tutorial" style="display: none;">
         <div class="modal-content">
             <h2>ゲームのルール</h2>
             <p>あなたは青い船を操作し、緑の領域を塗りつぶしながらスコアを獲得します。</p>
@@ -32,6 +52,7 @@
         </div>
     </div>
 
+    <script type="module" src="/vite-one/main.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

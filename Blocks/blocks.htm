@@ -1,12 +1,11 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>  
-    <title>Blocks Game</title>
+    <title>Bloks Game</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
     <script type="module" src="script.js" defer></script>
-
 </head>
 
 <body>
@@ -14,8 +13,29 @@
     <div id="header"></div>
     <script type="module" src="/vite-one/main.js"></script>
 
+    <!-- Firebase Configの読み込み -->
+    <script type="module" src="../firebaseConfig.js"></script>
+
+    <!-- ログインチェック用スクリプト -->
+    <script type="module">
+        import { auth, getCurrentUser } from '../firebaseConfig.js';
+
+        // 認証状態をチェック
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、ゲーム画面を表示
+                document.getElementById("tutorialModal").style.display = "block";
+                document.getElementById("canvas").style.display = "block";
+            }
+        }).catch(error => {
+            // ユーザーがログインしていない場合、ログインページにリダイレクト
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html"; // ログインページにリダイレクト
+        });
+    </script>
+
     <!-- 統合されたチュートリアルと難易度選択 -->
-    <div id="tutorialModal">
+    <div id="tutorialModal" style="display: none;">
         <div class="modal-content">
             <h1>チュートリアル</h1>
             <p>このゲームでは、パドルを操作してボールを弾き、ブロックを全て壊してください。</p>
@@ -26,15 +46,15 @@
         </div>
     </div>
 
-    <canvas id="canvas" width="600" height="600"></canvas>
+    <canvas id="canvas" width="600" height="600" style="display: none;"></canvas>
     
-            <!-- ゲームの横に表示する要素 -->
-            <div class="parent">
-                <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
-                <div class="overlay-text">
-                    ランキング<br>
-                    <div id="scorelist"></div>
-                </div>
-            </div>
+    <!-- ゲームの横に表示する要素 -->
+    <div class="parent">
+        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
+        <div class="overlay-text">
+            ランキング<br>
+            <div id="scorelist"></div>
+        </div>
+    </div>
 </body>
 </html>
