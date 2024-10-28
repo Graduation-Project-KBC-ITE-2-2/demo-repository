@@ -1,3 +1,6 @@
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+import { addKeyListenerForStart } from '../Key.js'
+
 "use strict";	
 var W, H, S = 20;
 var snake = [], foods = [];
@@ -40,7 +43,7 @@ function init() {
 }
 
 // スタートボタンが押されたときにゲームを開始する関数
-function startGame() {
+window.startGame = function(){
     console.log("Start button clicked");
     if (!gameStarted) {
         console.log("Game started!");
@@ -53,6 +56,13 @@ function startGame() {
         init(); // 初期化処理
         timer = setInterval(tick, 200); // ゲームループを開始
     }
+}
+
+window.retryGame = function() {
+    document.getElementById('retryButton').style.display = 'none'; // リトライボタンを非表示
+    gameStarted = true;  // ゲーム開始フラグをリセット
+    init();  // ゲームを初期化
+    timer = setInterval(tick, 200);  // ゲームループを再開
 }
 
 // 餌の追加
@@ -87,7 +97,7 @@ function moveFood(x, y) {
     addFood();
 }
 
-function tick() {
+async function tick() {
     var x = snake[0].x;
     var y = snake[0].y;
 
@@ -109,7 +119,9 @@ function tick() {
             bestScore = point;
             localStorage.setItem('bestScore', bestScore);  // ベストスコアを保存
         }
-
+        const title = document.title;
+        const userEmail = await getUserEmail();
+        await saveScoreAndEmail(title, point, userEmail);
         paint(); // 最後の状態を描画
 
         // ゲームオーバーを表示
@@ -117,8 +129,15 @@ function tick() {
         ctx.font = "40px sans-serif";
         ctx.fillText("Game Over", W * S / 4, H * S / 2);
 
+        // リトライボタンを表示
+        document.getElementById('retryButton').style.display = 'block';
+
         return;
     }
+
+
+
+
 
     // 頭を先頭に追加
     snake.unshift(new Point(x, y));
@@ -133,6 +152,12 @@ function tick() {
     paint();
 }
 
+//キーで操作可能に
+window.onload = function() {
+    // コールバック関数を指定してリスナーを追加
+    addKeyListenerForStart('tutorial', startGame, 32);
+    addKeyListenerForStart('retryButton', retryGame, 32);
+};
 
 function paint() {
     ctx.clearRect(0, 0, W * S, H * S);
@@ -152,3 +177,7 @@ function paint() {
 function keydown(event) {
     keyCode = event.keyCode;
 }
+
+const title = document.title;
+
+displayDataInHTMLRealtime(title);

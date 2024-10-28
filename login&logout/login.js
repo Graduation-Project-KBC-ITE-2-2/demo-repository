@@ -8,7 +8,7 @@ document.getElementById('login-button').addEventListener('click', async () => {
     try {
         const user = await loginUser(email, password);
         // ログイン成功時の処理
-        window.location.href = '../index.html?login=success';
+        window.location.href = 'index.html?login=success';
 
     } catch (error) {
         document.getElementById('error-message').innerText = error.message;

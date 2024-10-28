@@ -3,7 +3,7 @@
 
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js';
+import { getAuth, signInWithEmailAndPassword, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js';
 import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, onSnapshot  } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
 
 // Firebaseの設定情報
@@ -41,10 +41,20 @@ export const getCurrentUser = () => {
 export const getUserEmail = async () => {
     try {
         const user = await getCurrentUser(); // 現在のユーザー情報を取得
-        return user.email;  // ログイン中のユーザーのEメールを返す
+        if (user) {
+            // ユーザーがログインしている場合
+            if (user.isAnonymous) {
+                return user.uid;  // 匿名ユーザーの場合はユーザーIDを返す
+            } else {
+                return user.email;  // ログイン中のユーザーのEメールを返す
+            }
+        } else {
+            console.error('ユーザーがログインしていません');
+            return null;  // ユーザーがログインしていない場合、nullを返す
+        }
     } catch (error) {
-        console.error('ユーザーがログインしていません: ', error);
-        return null;  // ユーザーがログインしていない場合、nullを返す
+        console.error('エラーが発生しました: ', error);
+        return null;  // エラーが発生した場合もnullを返す
     }
 };
 
@@ -160,6 +170,31 @@ export const displayDataInHTMLRealtime = (collectionName) => {
 };
 
 
+export function toggleModalVisibility(noneId) {
+    const noneIdElement = document.getElementById(noneId);  // 渡されたIDで要素を取得
+
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            // ユーザーがログインしている場合、非表示
+            noneIdElement.style.display = 'none';
+        } else {
+            // ユーザーがログインしていない場合、表示
+            noneIdElement.style.display = 'block';
+        }
+    });
+}
 
 
 
+export const guestLogin = async () => {
+    const auth = getAuth();
+    try {
+        const userCredential = await signInAnonymously(auth);
+        const user = userCredential.user;
+        console.log("ゲストユーザーとしてログイン成功:", user);
+        return user;
+    } catch (error) {
+        console.error("ゲストログイン中にエラーが発生しました:", error);
+        throw error;
+    }
+};

@@ -1,3 +1,6 @@
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+import { addKeyListenerForStart } from '../Key.js'
+
 var round = 0;
 var questions = [];
 var qCount = 0;
@@ -8,7 +11,7 @@ var bestScore = localStorage.getItem('bestScore') !== null ? parseInt(localStora
 
 function gobj(id) { return document.getElementById(id); }
 
-function init() {
+window.init = function() {
     const buttons = document.querySelectorAll("button[data-index]");
     buttons.forEach(button => {
         var index = button.getAttribute('data-index');
@@ -33,8 +36,9 @@ function showTutorial() {
     gobj("tutorial").style.display = "flex";
 }
 
-function hideTutorial() {
+window.hideTutorial = function() {
     gobj("tutorial").style.display = "none";
+    
     setTimeout(function() {
         startGame();
     }, 1000); // 1秒のディレイを追加してリスタート
@@ -43,12 +47,26 @@ function hideTutorial() {
 function startGame() {
     showMessage("ゲーム開始！");
     gobj("message").style.whiteSpace = "nowrap";
+    document.getElementById('retryButton').style.display = 'none'; // リトライボタンを非表示
     setTimeout(function() {
         round = 0;
         questions = [];
         answers = [];
         nextRound();
     }, 1000); // 1秒のディレイを追加してゲームを開始
+}
+
+
+
+window.onload = function() {
+    window.init(); // 初期化
+    addKeyListenerForStart('tutorial', hideTutorial, 32);
+    addKeyListenerForStart('retryButton', retryGame, 32);
+};
+
+window.retryGame = function() {
+    
+    window.hideTutorial()
 }
 
 function showMessage(mess) {
@@ -113,7 +131,7 @@ function showQuizItem() {
     }
 }
 
-function answer(val) {
+async function answer(val) {
     answers.push(val);
     var mistake = false;
     
@@ -135,7 +153,10 @@ function answer(val) {
             console.log('Best Score saved to localStorage:', bestScore);
         }
         // ベストスコアの表示更新
-        gobj("ベストスコア").textContent = "Best Score: " + bestScore;
+        // gobj("ベストスコア").textContent = "Best Score: " + bestScore;
+
+        // リトライボタンを表示
+        gobj("retryButton").style.display = "block";
     } else if (answers.length == questions.length) {
         showMessage("正解です");
         // ラウンドクリア時にもベストスコアを更新
@@ -147,4 +168,13 @@ function answer(val) {
         gobj("bestScore").textContent = "ベストスコア: " + bestScore;
         setTimeout(nextRound, 2000); // 2秒後に次のラウンドへ
     }
+    const title = document.title;
+    const userEmail = await getUserEmail();
+    await saveScoreAndEmail(title, round, userEmail);
 }
+
+
+
+const title = document.title;
+console.log(title);
+displayDataInHTMLRealtime(title);

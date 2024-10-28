@@ -1,3 +1,5 @@
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+
     "use strict";
     var houses = [], missiles = [], shoot, timer = NaN,
         count = 0, score = 0, ctx;
@@ -97,7 +99,7 @@ function circle(ctx, x, y, r) {
     ctx.fill();
 }
 
-function init() {
+ window.init = function() {
     shoot = new Shoot();
 
     var canvas = document.getElementById('canvas');
@@ -111,7 +113,7 @@ function init() {
 }
 
 
-function start() {
+ window.start = function() {
     console.log("Game started"); // デバッグ用
 
     // チュートリアルを非表示にする
@@ -233,7 +235,7 @@ function mousedown(e) {
 }
 
 
-function draw() {
+async function draw() {
     var strip = document.getElementById('strip'); // stripを定義
     
     // 背景を塗りつぶし
@@ -261,6 +263,12 @@ function draw() {
 
     if (isNaN(timer)) {
         ctx.fillText('GAME OVER', 320, 150);
+        const title = document.title;
+        const userEmail = await getUserEmail();
+        await saveScoreAndEmail(title, score, userEmail);
     }
 }
 
+const title = document.title;
+
+displayDataInHTMLRealtime(title);

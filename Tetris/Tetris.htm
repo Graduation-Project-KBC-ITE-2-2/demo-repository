@@ -4,13 +4,13 @@
     <title>テトリス</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css">
-    
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css">
 </head>
 
 <body>
     <!-- ヘッダー（ナビゲーションバー） -->
     <div id="header"></div>
-    <script type="module" src="/vite-one/main.js"></script>
+
 
     <div style="position: relative;">
         <canvas id="canvas" width="600" height="600"></canvas>
@@ -20,21 +20,29 @@
                 <h1>チュートリアル</h1>
                 <p>このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。</p>
                 <p>ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。</p>
-                <button id="startButton" onclick="startGame()">スタート</button>
+                <button id="startButton" onclick="window.startGame()">スタート</button>
             </div>
         </div>
         <!-- ゲームオーバーモーダルウィンドウ -->
         <div id="gameOverModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2>ゲームオーバー</h2>
-                <button id="retryButton" onclick="retryGame()">リトライ</button>
-                <button id="returnButton" onclick="returnToIndex()">ゲーム一覧に戻る</button>
+                <button id="retryButton" onclick="window.retryGame()">リトライ</button>
+                <button id="returnButton" onclick="window.returnToIndex()">ゲーム一覧に戻る</button>
             </div>
+        </div>
+    </div>
+    <div class="parent">
+        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
+        <div class="overlay-text">
+            ランキング<br>
+            <div id="scorelist"></div>
         </div>
     </div>
 
     <!-- JavaScriptファイルの読み込み -->
-    <script src="script.js"></script>
+    <script type="module" src="/demo-repository/main.js"></script>
+    <script type="module" src="script.js"></script>
 
 </body>
 </html>

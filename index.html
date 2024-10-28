@@ -9,6 +9,9 @@ git pull origin main-->
     <head>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="login&logout/loginbutton.css">
+        <link rel="stylesheet" href="login&logout/login.css">
+
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- キャッシュを無効にするためのメタタグ -->
@@ -24,6 +27,8 @@ git pull origin main-->
     
         <!-- メインJavaScriptファイルの読み込み -->
         <script type="module" src="index.js" defer></script>
+        <script type="module" src="./login&logout/login.js"></script>
+
     </head>
   <body>
 
@@ -88,9 +93,25 @@ git pull origin main-->
         </div>
     </div>
 
+
+
+    <div id="modal">
+        <div class="modal-content">
+
+            <div class="login-container">
+                <h1>ログイン</h1>
+                <input type="email" id="email" placeholder="メールアドレス" required>
+                <input type="password" id="password" placeholder="パスワード" required>
+                <button id="login-button" class="auth-button">ログイン</button>
+                <button id="guestLoginButton">ゲストログイン </button>
+                <div id="error-message" class="error-message"></div>
+            </div>
+
+        </div>
+    </div>
     <div class="auth-buttons">
-        <button id="login-button" class="auth-button">ログイン</button>
-        <button id="signup-button" class="auth-button">新規登録</button>
+        <button id="loginButton" class="common-button">ログイン<span style="opacity: 0.5;"> space</span></button>
+        <!-- <button id="signup-button" class="auth-button">新規登録</button> -->
     </div>
 
   </body>

@@ -1,3 +1,5 @@
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+import { addKeyListenerForStart } from '../Key.js'
 
 "use strict";
 var ctx, W = 12, H = 22, field, block, nextBlock, keyevents = [];
@@ -304,7 +306,7 @@ function init() {
 
 var bestScore = localStorage.getItem('bestScore') || 0; // ローカルストレージからベストスコアを取得
 
-function mainLoop() {
+async function mainLoop() {
     count++;
 
     // スピードアップ
@@ -322,6 +324,9 @@ function mainLoop() {
             bestScore = score;
             localStorage.setItem('bestScore', bestScore); // 新しいベストスコアを保存
         }
+        const title = document.title;
+        const userEmail = await getUserEmail();
+        await saveScoreAndEmail(title, score, userEmail);
 
         // モーダルウィンドウを表示
         document.getElementById('gameOverModal').style.display = 'flex';
@@ -436,22 +441,33 @@ function draw() {
 }
 
 // リトライボタンの処理
-function retryGame() {
+ window.retryGame=function() {
     init();
     keyevents = []; // キーイベントのリセット
 }
 
 // ゲーム一覧に戻るボタンの処理
-function returnToIndex() {
+ window.returnToIndex = function() {
     window.location.href = '../index.html';
 }
 
 
 
 // スタートボタンのクリックでゲームを開始
-function startGame() {
+ window.startGame = function() {
     init(); // ゲーム開始
 }
 
+//キーで操作可能に
+window.onload = function() {
+    // コールバック関数を指定してリスナーを追加
+    addKeyListenerForStart('tutorial', startGame, 32);
+    addKeyListenerForStart('retryButton', retryGame, 13);
+};
+
+
+const title = document.title;
+
+displayDataInHTMLRealtime(title);
 
 

@@ -4,6 +4,7 @@
     <title>SnakeBite</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css">
 </head>
 
 <div id="header"></div>
@@ -13,14 +14,30 @@
         <div class="modal-content">
             <h2>チュートリアル</h2>
             <p>このゲームでは、蛇を操作して餌を食べ、成長させます。矢印キーで移動してください。</p>
-            <button id="startButton" onclick="startGame()">スタート</button>
+            <button id="startButton" class="common-button" onclick="window.startGame()">スタート</button>
         </div>
     </div>
     <div id="game">
         <canvas id="field" width="400" height="400" style="background:#cccccc"></canvas>
+        <!-- リトライボタン -->
+        <button id="retryButton" onclick="retryGame()" style="display: none;">Retry</button>
+
     </div>
 
+    <div class="parent">
+        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
+        <div class="overlay-text">
+            ランキング<br>
+            <div id="scorelist"></div>
+        </div>
+    </div>
+
+
+
     <!-- JavaScriptファイルの読み込み -->
-    <script src="script.js"></script>
+    <script type="module" src="/main.js"></script>
+    <script type="module" src="script.js"></script>
+
+    
 </body>
 </html>
