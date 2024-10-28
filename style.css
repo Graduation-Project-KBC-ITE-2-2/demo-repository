@@ -251,12 +251,16 @@ h1 {
     }
     
     .game-image {
-        width: 100%; /* カードの幅に合わせる */
-        height: 190px; /* 画像の高さを設定 */
-        object-fit: cover; /* 画像のトリミングを防ぎ、アスペクト比を保持 */
-        border-radius: 8px; /* 画像の角を丸くする */
-        margin-bottom: 15px; /* タイトルとの間隔をあける */
-    }
+      width: 120%; /* 幅を120%に設定 */
+      max-height: 150px; /* 高さの最大値を設定 */
+      height: auto; /* 自動調整でアスペクト比を維持 */
+      object-fit: contain; /* 画像をコンテナ内に収め、アスペクト比を維持 */
+      border-radius: 8px;
+      margin-bottom: 15px;
+      margin-left: -10%; /* 左に10%移動（調整可能） */
+  }
+  
+  
     
     .game-item a {
         color: #333;
