@@ -257,7 +257,7 @@ function getSpeedByDifficulty() {
         case 'Hard':
             return 5.5; // Hardの速度
         default:
-            return 3.0; // デフォルトの速度
+            return difficulty; // デフォルトの速度
     }
 }
 
