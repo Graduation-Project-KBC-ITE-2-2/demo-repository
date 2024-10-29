@@ -97,7 +97,7 @@ window.startGame = function (selectedDifficulty) {
     }
 
     // チュートリアルモーダルを非表示にする
-    document.getElementById('tutorialModal').style.display = 'none';
+    document.getElementById('modal').style.display = 'none';
 
     // 初期化（paddle, ballなどのオブジェクトを初期化）
     init();
