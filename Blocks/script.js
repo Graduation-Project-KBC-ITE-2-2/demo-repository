@@ -90,44 +90,31 @@ function init() {
 
 // ゲーム開始関数
 window.startGame = function (selectedDifficulty) {
-    // ゲームが終了した後に再スタートする場合に備えて、timerをクリア
     if (timer) {
-        clearInterval(timer); // 現在のタイマーをクリア
-        timer = null; // タイマーをリセット
+        clearInterval(timer);
+        timer = null;
     }
 
-    // チュートリアルモーダルを非表示にする
     document.getElementById('modal').style.display = 'none';
 
-    // 初期化（paddle, ballなどのオブジェクトを初期化）
     init();
 
-    // 難易度に応じてボールの速度を設定
-    difficulty = selectedDifficulty; // 選択された難易度を保存
+    difficulty = selectedDifficulty;
     switch (selectedDifficulty) {
         case 'Easy':
-            ball.speed = 2.5; // Easyの速度
+            ball.speed = 2.5;
             break;
         case 'Normal':
-            ball.speed = 4.0; // Normalの速度
+            ball.speed = 4.0;
             break;
         case 'Hard':
-            ball.speed = 5.5; // Hardの速度
+            ball.speed = 5.5;
             break;
     }
 
-    // ゲーム開始（ブロック生成とボールの速度・方向設定）
     start();
-
-    // 初回のボールの発射を実行
-    ball.dx = ball.speed * Math.cos(Math.PI / 4); // ボールの初期X方向速度
-    ball.dy = -ball.speed * Math.sin(Math.PI / 4); // ボールの初期Y方向速度
-
-    // メインループの開始
-    if (isNaN(timer)) {
-        timer = setInterval(mainLoop, 15);
-    }
 }
+
 
 
 // キーの押下状態を管理する関数
