@@ -6,32 +6,31 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
-<header>
-    <ul class="header">
-        <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
-        <li><a href="/Blocks/blocks.htm">Blocks</a></li>
-        <li><a href="/Cave/cave.html">Cave</a></li>
-        <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
-        <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
-        <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
-        <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-        <li><a href="/Qix/Qix.htm">Qix</a></li>
-        <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-        <li><a href="/index.html">Top</a></li>
-    </ul>
-</header>
-
 <body>
-    <!-- ヘッダーを上に表示する -->
-    <div id="header"></div>
+    <!-- ヘッダー（ナビゲーションバー） -->
+    <header>
+        <ul class="header">
+            <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
+            <li><a href="/Blocks/blocks.htm">Blocks</a></li>
+            <li><a href="/Cave/cave.html">Cave</a></li>
+            <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
+            <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
+            <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
+            <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
+            <li><a href="/Qix/Qix.htm">Qix</a></li>
+            <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
+            <li><a href="/index.html">Top</a></li>
+        </ul>
+    </header>
+
 
     <!-- ゲーム説明のセクション -->
     <div id="tutorial" style="display: none;">
         <div class="modal-content">
-            <h1>ゲーム説明</h1>
-            <p>爆弾を避けながらセルをクリックしてください。<br>セルが開いたら、周囲の爆弾の数が表示されます。</p>
-            <p>すべてのセルを開くか、爆弾をクリックするまでゲームは続きます！</p>
-            <button id="startButton" onclick="startGame()">スタートゲーム</button>
+            <h1>チュートリアル</h1>
+            <p>このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。</p>
+            <p>ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。</p>
+            <button id="startButton" onclick="startGame()">スタート</button>
         </div>
     </div>
 
