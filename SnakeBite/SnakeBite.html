@@ -8,6 +8,51 @@
 
 <body>
     <!-- ヘッダーを上に表示する -->
+<<<<<<< HEAD
+    <header>
+        <ul class="header">
+            <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
+            <li><a href="/Blocks/blocks.htm">Blocks</a></li>
+            <li><a href="/Cave/cave.html">Cave</a></li>
+            <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
+            <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
+            <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
+            <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
+            <li><a href="/Qix/Qix.htm">Qix</a></li>
+            <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
+            <li><a href="/index.html">Top</a></li>
+        </ul>
+    </header>
+
+    <!-- チュートリアルセクション -->
+    <div id="tutorial">
+        <div class="modal-content">
+            <h2>チュートリアル</h2>
+            <p>このゲームでは、蛇を操作して餌を食べ、成長させます。矢印キーで移動してください。</p>
+            <button id="startButton" class="common-button" onclick="window.startGame()">スタート</button>
+        </div>
+    </div>
+
+    <!-- ゲームエリア -->
+    <div id="game">
+        <canvas id="field" width="400" height="400" style="background:#cccccc"></canvas>
+        <!-- リトライボタン -->
+        <button id="retryButton" onclick="retryGame()" style="display: none;">Retry</button>
+    </div>
+
+    <!-- ランキングセクション -->
+    <div class="parent">
+        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
+        <div class="overlay-text">
+            ランキング<br>
+            <div id="scorelist"></div>
+        </div>
+    </div>
+
+    <!-- JavaScriptファイルの読み込み -->
+    <script type="module" src="/main.js"></script>
+    <script type="module" src="script.js"></script>
+=======
     <div id="header"></div>
 
     <!-- ゲーム説明のセクション -->
@@ -94,5 +139,6 @@
             window.location.href = "../login.html";
         });
     </script>
+>>>>>>> 4ab9e54902f1e2f1b956f9dbdce2d6aaa2a90e6c
 </body>
 </html>
