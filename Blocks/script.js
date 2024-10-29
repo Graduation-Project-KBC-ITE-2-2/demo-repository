@@ -79,12 +79,12 @@ function init() {
     setInterval(function () {
         if (isPlaying()) { // ボールが動いている場合のみ時間を更新
             elapsedTime++; // 経過時間を更新
-            ball.speed += 1.5; // ボールの速度を増加
+            ball.speed += 1.0; // ボールの速度を増加
             let angle = Math.atan2(ball.dy, ball.dx); // 現在の方向を取得
             ball.dx = ball.speed * Math.cos(angle); // X方向の速度を再計算
             ball.dy = ball.speed * Math.sin(angle); // Y方向の速度を再計算
         }
-    }, 1000); // 1秒ごとに実行
+    }, 3000); // 1秒ごとに実行
 
 }
 
@@ -102,33 +102,27 @@ window.startGame = function (selectedDifficulty) {
     // 初期化（paddle, ballなどのオブジェクトを初期化）
     init();
 
-    // 難易度に応じてボールの速度を設定
+    // 難易度に応じて設定
     difficulty = selectedDifficulty; // 選択された難易度を保存
     switch (selectedDifficulty) {
         case 'Easy':
-            ball.speed = 2.5; // Easyの速度
+            ball.speed = 3.0; // Easyの速度
+            paddle.w = 150;
+            this.point = (6 - i) * 5; // ブロックの得点
             break;
         case 'Normal':
-            ball.speed = 4.0; // Normalの速度
+            ball.speed = 5.0; // Normalの速度
             break;
         case 'Hard':
-            ball.speed = 5.5; // Hardの速度
+            ball.speed = 6.5; // Hardの速度
+            paddle.w = 70;
+            this.point = (6 - i) * 20; // ブロックの得点
             break;
     }
 
     // ゲーム開始（ブロック生成とボールの速度・方向設定）
     start();
-
-    // 初回のボールの発射を実行
-    ball.dx = ball.speed * Math.cos(Math.PI / 4); // ボールの初期X方向速度
-    ball.dy = -ball.speed * Math.sin(Math.PI / 4); // ボールの初期Y方向速度
-
-    // メインループの開始
-    if (isNaN(timer)) {
-        timer = setInterval(mainLoop, 15);
-    }
 }
-
 
 // キーの押下状態を管理する関数
 function toggleKey(code, flag) {
