@@ -10,22 +10,9 @@
 
 <body>
     <!-- ヘッダーを上に表示する -->
-    <header>
-        <ul class="header">
-            <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
-            <li><a href="/Blocks/blocks.htm">Blocks</a></li>
-            <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
-            <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
-            <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
-            <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-            <li><a href="/Qix/Qix.htm">Qix</a></li>
-            <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-            <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
-            <li><a href="/index.html">Top</a></li>
-        </ul>
-    </header>
+    <header id="header"></header>
+    <script type="module" src="/main.js"></script>
 
-    <!-- チュートリアルモーダル -->
     <div id="modal">
         <div class="modal-content">
             <h1>チュートリアル</h1>
@@ -35,21 +22,22 @@
         </div>
     </div>
 
-    <!-- ゲームエリア -->
-    <div id="main">
-        <img id="ship" src="ship.png" style="height:97px;" />
-        <img id="bang" src="bang.png" />
-        <div id="gameOver">ゲームオーバー</div>
-        <div id="score">Score: 0</div> <!-- スコア要素を1つだけ残します -->
+    <div>
+        <div id="main">
+            <img id="ship" src="ship.png" style="height:97px;" />
+            <img id="bang" src="bang.png" />
+            <div id="gameOver">ゲームオーバー</div>
+            <div id="score">Score: 0</div> <!-- スコア要素を1つだけ残します -->
+        </div>
+    
+        <!-- ゲーム再開ボタン -->
+        <button id="retryButton" onclick="window.retryGame()" style="display: none;">リトライ</button>
+    
+        <!-- ハイスコア表示 -->
+        <div id="highScores">High Scores: 0, 0, 0</div>
     </div>
 
-    <!-- ゲーム再開ボタン -->
-    <button id="retryButton" onclick="window.retryGame()" style="display: none;">リトライ</button>
 
-    <!-- ハイスコア表示 -->
-    <div id="highScores">High Scores: 0, 0, 0</div>
-
-    <!-- ランキングセクション -->
     <div class="parent">
         <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
         <div class="overlay-text">

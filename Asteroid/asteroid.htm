@@ -24,6 +24,28 @@
 
 <body>
     <div id="header"></div>
+
+    <!-- Firebase Configの読み込み -->
+    <script type="module" src="../firebaseConfig.js"></script>
+
+    <!-- ログインチェック用スクリプト -->
+    <script type="module">
+        import { auth, getCurrentUser } from '../firebaseConfig.js';
+
+        // 認証状態をチェック
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、ゲーム画面を表示
+                document.getElementById("modal").style.display = "block";
+                document.getElementById("canvas").style.display = "block";
+            }
+        }).catch(error => {
+            // ユーザーがログインしていない場合、ログインページにリダイレクト
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html"; // ログインページにリダイレクト
+        });
+    </script>
+
     <div id="modal">
         <div class="modal-content">
             <h1>チュートリアル</h1>
@@ -31,15 +53,15 @@
             <p>矢印キーで宇宙船を左右に動かしたり、前進させたりすることができます。</p>
             <p>スペースキーを押すと弾を発射し、隕石を破壊することができます。</p>
             <p>隕石を避けながら、できるだけ高いスコアを目指してください！</p>
-            <button id="startButton" class="common-button" onclick="window.init()">ゲームを開始<span style="opacity: 0.5;"> space</span></button>
+            <button id="startButton" class="common-button" onclick="window.init()">ゲームを開始<span style="opacity: 0.5;"> space</span></button>
         </div>
     </div>
 
     <!-- フレックスボックスコンテナに変更 -->
-   
+    <div>
         <!-- ゲーム部分 -->
         <div>
-            <canvas id="canvas" width="800" height="800"></canvas>
+            <canvas id="canvas" width="800" height="800" style="display: none;"></canvas>
             <img id="ship" src="ship.png" style="display:none;" />
             <img id="bg" src="bg.png" style="display:none;" />
             <img id="rock" src="rock.png" style="display:none;" />
@@ -54,7 +76,7 @@
                 <div id="scorelist"></div>
             </div>
         </div>
-   
+    </div>
 
     <!-- 修正: srcを正しく指定 -->
     <script type="module" src="/demo-repository/main.js"></script>
@@ -71,5 +93,4 @@
         });
     </script>
 </body>
-
 </html>

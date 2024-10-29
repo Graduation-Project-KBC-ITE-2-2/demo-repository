@@ -97,7 +97,7 @@ window.startGame = function (selectedDifficulty) {
     }
 
     // チュートリアルモーダルを非表示にする
-    document.getElementById('tutorialModal').style.display = 'none';
+    document.getElementById('modal').style.display = 'none';
 
     // 初期化（paddle, ballなどのオブジェクトを初期化）
     init();
@@ -118,7 +118,17 @@ window.startGame = function (selectedDifficulty) {
 
     // ゲーム開始（ブロック生成とボールの速度・方向設定）
     start();
+
+    // 初回のボールの発射を実行
+    ball.dx = ball.speed * Math.cos(Math.PI / 4); // ボールの初期X方向速度
+    ball.dy = -ball.speed * Math.sin(Math.PI / 4); // ボールの初期Y方向速度
+
+    // メインループの開始
+    if (isNaN(timer)) {
+        timer = setInterval(mainLoop, 15);
+    }
 }
+
 
 // キーの押下状態を管理する関数
 function toggleKey(code, flag) {
@@ -257,7 +267,7 @@ function getSpeedByDifficulty() {
         case 'Hard':
             return 5.5; // Hardの速度
         default:
-            return 3.0; // デフォルトの速度
+            return difficulty; // デフォルトの速度
     }
 }
 

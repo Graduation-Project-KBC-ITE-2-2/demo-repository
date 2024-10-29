@@ -25,7 +25,28 @@
     <!-- ヘッダーを上に表示する -->
     <div id="header"></div>
 
-    <div id="tutorial">
+    <!-- Firebase Configの読み込み -->
+    <script type="module" src="../firebaseConfig.js"></script>
+
+    <!-- ログインチェック用スクリプト -->
+    <script type="module">
+        import { auth, getCurrentUser } from '../firebaseConfig.js';
+
+        // 認証状態をチェック
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、ゲーム画面を表示
+                document.getElementById("tutorial").style.display = "block";
+                document.getElementById("canvas").style.display = "block";
+            }
+        }).catch(error => {
+            // ユーザーがログインしていない場合、ログインページにリダイレクト
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html"; // ログインページにリダイレクト
+        });
+    </script>
+
+    <div id="tutorial" style="display: none;">
         <div class="modal-content">
             <h1>ゲーム説明</h1>
             <p>矢印キーで船を左右に移動させ、スペースキーで弾を発射します。<br>
@@ -34,22 +55,19 @@
         </div>
     </div>
 
-    <div>
-        <canvas id="canvas" width="600" height="600" />
+    <div style="display: none;">
+        <canvas id="canvas" width="600" height="600"></canvas>
         <img id="strip" src="strip.png" style="display:none;" />
     </div>
 
-        <!-- ゲームの横に表示する要素 -->
-        <!-- ゲームの横に表示する要素 -->
-        <!-- ゲームの横に表示する要素 -->
-        <div class="parent">
-            <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
-            <div class="overlay-text">
-                ランキング<br>
-                <div id="scorelist"></div>
-            </div>
+    <!-- ゲームの横に表示する要素 -->
+    <div class="parent">
+        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
+        <div class="overlay-text">
+            ランキング<br>
+            <div id="scorelist"></div>
         </div>
-
+    </div>
 
     <script type="module" src="/demo-repository/main.js"></script>
     <script type="module" src="script.js"></script>

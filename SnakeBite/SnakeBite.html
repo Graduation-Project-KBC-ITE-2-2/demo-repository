@@ -1,14 +1,14 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>SnakeBite</title>
+    <title>Mine Land</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css">
 </head>
 
 <body>
     <!-- ヘッダーを上に表示する -->
+<<<<<<< HEAD
     <header>
         <ul class="header">
             <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
@@ -52,5 +52,93 @@
     <!-- JavaScriptファイルの読み込み -->
     <script type="module" src="/main.js"></script>
     <script type="module" src="script.js"></script>
+=======
+    <div id="header"></div>
+
+    <!-- ゲーム説明のセクション -->
+    <div id="tutorial" style="display: none;">
+        <div class="modal-content">
+            <h1>ゲーム説明</h1>
+            <p>爆弾を避けながらセルをクリックしてください。<br>セルが開いたら、周囲の爆弾の数が表示されます。</p>
+            <p>すべてのセルを開くか、爆弾をクリックするまでゲームは続きます！</p>
+            <button id="startButton" onclick="startGame()">スタートゲーム</button>
+        </div>
+    </div>
+
+    <!-- ゲームコンテナ -->
+    <div id="game-container" style="display: none;">
+        <h1 id="title">Mine Land</h1>
+        <table id="main" border="1"></table>
+    </div>
+
+    <!-- Firebase Configの読み込み -->
+    <script type="module" src="../firebaseConfig.js"></script>
+
+    <!-- ログインチェック用スクリプト -->
+    <script type="module">
+        import { auth, getCurrentUser } from '../firebaseConfig.js';
+
+        // 証言状態をチェック
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、ゲーム画面を表示
+                document.getElementById("tutorial").style.display = "block";
+                document.getElementById("game-container").style.display = "block";
+            }
+        }).catch(error => {
+            // ユーザーがログインしていない場合、ログインページにリダイレクト
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html"; // ログインページにリダイレクト
+        });
+    </script>
+
+    <!-- ゲームのスクリプト -->
+    <script type="module" src="/main.js"></script>
+    <script type="module" src="script.js"></script>
+
+    <!-- テトリスゲームのコンテナ -->
+    <div id="tetris-container" style="display: none;">
+        <h1 id="tetris-title">Tetris</h1>
+        <canvas id="tetris-canvas"></canvas>
+    </div>
+
+    <!-- テトリス用スクリプト -->
+    <script type="module" src="/tetris.js"></script>
+
+    <!-- テトリス用ログインチェックスクリプト -->
+    <script type="module">
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、テトリス画面を表示
+                document.getElementById("tetris-container").style.display = "block";
+            }
+        }).catch(error => {
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html";
+        });
+    </script>
+
+    <!-- スネークバイトゲームのコンテナ -->
+    <div id="snakebite-container" style="display: none;">
+        <h1 id="snakebite-title">Snakebite</h1>
+        <canvas id="snakebite-canvas"></canvas>
+    </div>
+
+    <!-- スネークバイト用スクリプト -->
+    <script type="module" src="/snakebite.js"></script>
+
+    <!-- スネークバイト用ログインチェックスクリプト -->
+    <script type="module">
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、スネークバイト画面を表示
+                document.getElementById("snakebite-container").style.display = "block";
+            }
+        }).catch(error => {
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html";
+        });
+    </script>
+>>>>>>> 4ab9e54902f1e2f1b956f9dbdce2d6aaa2a90e6c
 </body>
 </html>
