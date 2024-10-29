@@ -11,8 +11,28 @@
     <!-- ヘッダーを上に表示する -->
     <div id="header"></div>
 
+    <!-- Firebase Configの読み込み -->
+    <script type="module" src="../firebaseConfig.js"></script>
 
-    <div id="tutorial">
+    <!-- ログインチェック用スクリプト -->
+    <script type="module">
+        import { auth, getCurrentUser } from '../firebaseConfig.js';
+
+        // 認証状態をチェック
+        getCurrentUser().then(user => {
+            if (user) {
+                // ログインしている場合、ゲーム画面を表示
+                document.getElementById("tutorial").style.display = "block";
+                document.getElementById("gameArea").style.display = "block";
+            }
+        }).catch(error => {
+            // ユーザーがログインしていない場合、ログインページにリダイレクト
+            console.error('ログインしていません:', error);
+            window.location.href = "../login.html"; // ログインページにリダイレクト
+        });
+    </script>
+
+    <div id="tutorial" style="display: none;">
         <div>
             <h2>チュートリアル</h2>
             <p>ボタンが点滅します。それを覚えて、順番に押してください。</p>
@@ -20,17 +40,15 @@
         </div>
     </div>
 
-    <div>
+    <div id="gameArea" style="position: relative; display: none;">
         <!-- メッセージとボタンを同じ親要素に配置 -->
-        <div id="gameArea" style="position: relative;">
-            <p id="message"></p> <!-- メッセージ要素をゲームエリア内に配置 -->
-            <button id="b0" style="background-color:#600" data-index="0"></button>
-            <button id="b1" style="background-color:#660" data-index="1"></button>
-            <br />
-            <button id="b2" style="background-color:#060" data-index="2"></button>
-            <button id="b3" style="background-color:#006" data-index="3"></button>
-            <!-- リトライボタン -->
-        </div>
+        <p id="message"></p> <!-- メッセージ要素をゲームエリア内に配置 -->
+        <button id="b0" style="background-color:#600" data-index="0"></button>
+        <button id="b1" style="background-color:#660" data-index="1"></button>
+        <br />
+        <button id="b2" style="background-color:#060" data-index="2"></button>
+        <button id="b3" style="background-color:#006" data-index="3"></button>
+        <!-- リトライボタン -->
         <button id="retryButton" onclick="window.retryGame()" style="display: none;">リトライ</button>
 
         <p id="bestScore"></p> <!-- ベストスコアを表示する要素 -->

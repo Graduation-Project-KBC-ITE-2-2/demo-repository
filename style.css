@@ -228,37 +228,51 @@ h1 {
       }
 
       .game-list {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* レスポンシブなグリッドレイアウト */
-          gap: 20px;
-          max-width: 1000px;
-          margin: 50px auto;
-          padding: 0 20px;
-      }
-
-      .game-item {
-          background-color: #ffffff;
-          padding: 20px;
-          border-radius: 12px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          transition: transform 0.3s, box-shadow 0.3s; /* ホバー時のアニメーション */
-      }
-
-      .game-item:hover {
-          transform: translateY(-10px);
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-      }
-
-      .game-item a {
-          color: #333;
-          text-decoration: none;
-          font-size: 1.2rem;
-          font-weight: bold;
-      }
-
-      .game-item a:hover {
-          color: #007BFF;
-      }
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* レスポンシブなグリッドレイアウト */
+        gap: 20px;
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 0 20px;
+    }
+    
+    .game-item {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s; /* ホバー時のアニメーション */
+    }
+    
+    .game-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .game-image {
+      width: 120%; /* 幅を120%に設定 */
+      max-height: 150px; /* 高さの最大値を設定 */
+      height: auto; /* 自動調整でアスペクト比を維持 */
+      object-fit: contain; /* 画像をコンテナ内に収め、アスペクト比を維持 */
+      border-radius: 8px;
+      margin-bottom: 15px;
+      margin-left: -10%; /* 左に10%移動（調整可能） */
+  }
+  
+  
+    
+    .game-item a {
+        color: #333;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+    
+    .game-item a:hover {
+        color: #007bff; /* ホバー時のテキストカラー */
+    }
+    
 
       .auth-buttons {
           margin: 30px 0;
