@@ -106,15 +106,15 @@ window.startGame = function (selectedDifficulty) {
     difficulty = selectedDifficulty; // 選択された難易度を保存
     switch (selectedDifficulty) {
         case 'Easy':
-            ball.speed = 2.5; // Easyの速度
+            ball.speed = 3.0; // Easyの速度
             paddle.w = 150;
             this.point = (6 - i) * 5; // ブロックの得点
             break;
         case 'Normal':
-            ball.speed = 4.0; // Normalの速度
+            ball.speed = 5.0; // Normalの速度
             break;
         case 'Hard':
-            ball.speed = 5.5; // Hardの速度
+            ball.speed = 6.5; // Hardの速度
             paddle.w = 70;
             this.point = (6 - i) * 20; // ブロックの得点
             break;
