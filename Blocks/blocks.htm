@@ -3,7 +3,7 @@
 <head>  
     <title>Bloks Game</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="styles.css"> 
     <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
     <script type="module" src="script.js" defer></script>
 </head>
@@ -11,7 +11,6 @@
 <body>
     <!-- ヘッダーを上に固定表示する -->
     <div id="header"></div>
-    <script type="module" src="/vite-one/main.js"></script>
 
     <!-- Firebase Configの読み込み -->
     <script type="module" src="../firebaseConfig.js"></script>
@@ -24,25 +23,25 @@
         getCurrentUser().then(user => {
             if (user) {
                 // ログインしている場合、ゲーム画面を表示
-                document.getElementById("tutorialModal").style.display = "block";
+                document.getElementById("modal").style.display = "block";
                 document.getElementById("canvas").style.display = "block";
             }
         }).catch(error => {
             // ユーザーがログインしていない場合、ログインページにリダイレクト
             console.error('ログインしていません:', error);
-            window.location.href = "../login.html"; // ログインページにリダイレクト
+            window.location.href = "../index.html"; // ログインページにリダイレクト
         });
     </script>
 
     <!-- 統合されたチュートリアルと難易度選択 -->
-    <div id="tutorialModal" style="display: none;">
+    <div id="modal">
         <div class="modal-content">
             <h1>チュートリアル</h1>
             <p>このゲームでは、パドルを操作してボールを弾き、ブロックを全て壊してください。</p>
             <p>難易度を選択してください：</p>
-            <button class="difficulty-button" onclick="window.startGame('Easy')">Easy</button>
-            <button class="difficulty-button" onclick="window.startGame('Normal')">Normal</button>
-            <button class="difficulty-button" onclick="window.startGame('Hard')">Hard</button>
+            <button class="startButton" onclick="window.startGame('Easy')">Easy</button>
+            <button class="startButton" onclick="window.startGame('Normal')">Normal</button>
+            <button class="startButton" onclick="window.startGame('Hard')">Hard</button>
         </div>
     </div>
 
