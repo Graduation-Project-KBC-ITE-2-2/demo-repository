@@ -4,8 +4,8 @@
     <title>Cave</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css"> 
+    <link rel="stylesheet" href="../scoreboard.css">
     <script type="module" src="script.js"></script>
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
 </head>
 
 <body>
@@ -13,49 +13,30 @@
     <header id="header"></header>
     <script type="module" src="/main.js"></script>
 
-    <!-- Firebase Configの読み込み -->
-    <script type="module" src="../firebaseConfig.js"></script>
-
-    <!-- ログインチェック用スクリプト -->
-    <script type="module">
-        import { auth, getCurrentUser } from '../firebaseConfig.js';
-
-        // 認証状態をチェック
-        getCurrentUser().then(user => {
-            if (user) {
-                // ログインしている場合、ゲーム画面を表示
-                document.getElementById("modal").style.display = "block";
-                document.getElementById("main").style.display = "block";
-            }
-        }).catch(error => {
-            // ユーザーがログインしていない場合、ログインページにリダイレクト
-            console.error('ログインしていません:', error);
-            window.location.href = "../login.html"; // ログインページにリダイレクト
-        });
-    </script>
-
     <div id="modal">
         <div class="modal-content">
             <h1>チュートリアル</h1>
             <p>このゲームでは、隙間を避けながら宇宙船を操縦します。<br>
             上キーを押して上昇し、下キーを押して下降します。</p>
-            
             <button id="startButton" class="common-button" onclick="window.startGame()">ゲームを開始</button>
         </div>
     </div>
 
-    <div style="display: none;" id="main">
-        <img id="ship" src="ship.png" style="height:97px;" />
-        <img id="bang" src="bang.png" />
-        <div id="gameOver">ゲームオーバー</div>
-        <div id="score">Score: 0</div> <!-- スコア要素を1つだけ残します -->
-    </div>
+    <div>
+        <div id="main">
+            <img id="ship" src="ship.png" style="height:97px;" />
+            <img id="bang" src="bang.png" />
+            <div id="gameOver">ゲームオーバー</div>
+            <div id="score">Score: 0</div> <!-- スコア要素を1つだけ残します -->
+        </div>
     
-    <!-- ゲーム再開ボタン -->
-    <button id="retryButton" onclick="window.retryGame()" style="display: none;">リトライ</button>
+        <!-- ゲーム再開ボタン -->
+        <button id="retryButton" onclick="window.retryGame()" style="display: none;">リトライ</button>
+    
+        <!-- ハイスコア表示 -->
+        <div id="highScores">High Scores: 0, 0, 0</div>
+    </div>
 
-    <!-- ハイスコア表示 -->
-    <div id="highScores">High Scores: 0, 0, 0</div>
 
     <div class="parent">
         <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
