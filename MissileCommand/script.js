@@ -20,7 +20,7 @@ function Missle(){
         this.eX = rand(800);
         this.interval = this.interval * 0.9;
         this.firetime = rand(this.interval) + count;
-        this.x = 0;
+        this.x = this.sX;  // 初期位置を始点に設定
         this.y = 0;
         this.r = 0;
     };
@@ -39,6 +39,7 @@ function Missle(){
 
     this.reload();
 }
+
 
 function Shoot() {
     this.scopeX = 400;
@@ -99,26 +100,32 @@ function circle(ctx, x, y, r) {
     ctx.fill();
 }
 
- window.init = function() {
+// 関数をグローバルスコープに登録
+window.init = function() {
     shoot = new Shoot();
 
     var canvas = document.getElementById('canvas');
-    ctx = canvas.getContext('2d');
+    canvas.style.display = 'block'; // キャンバスを表示
+    ctx = canvas.getContext('2d');   // コンテキストを取得
     ctx.font = "20pt Arial";
 
     canvas.addEventListener('mousemove', mousemove);
     canvas.addEventListener('mousedown', mousedown);
 
-    // 初回は start() を呼ばない
+    console.log("Game initialized"); // デバッグ用のメッセージ
 }
 
-
- window.start = function() {
+window.start = function() {
     console.log("Game started"); // デバッグ用
 
-    // チュートリアルを非表示にする
+    // チュートリアルを非表示にし、キャンバスを表示する
     document.getElementById('tutorial').style.display = 'none';
-    
+    var canvas = document.getElementById('canvas');
+    canvas.style.display = 'block'; // キャンバスを表示
+
+    ctx = canvas.getContext('2d'); // キャンバス表示後にコンテキストを取得
+    ctx.font = "20pt Arial";
+
     score = 0;
 
     houses = [];
@@ -131,8 +138,12 @@ function circle(ctx, x, y, r) {
         missiles.push(new Missle());
     }
 
-    timer = setInterval(mainLoop, 20);
+    timer = setInterval(mainLoop, 20); // メインループの開始
 }
+
+
+
+
 
 
 
@@ -236,8 +247,8 @@ function mousedown(e) {
 
 
 async function draw() {
-    var strip = document.getElementById('strip'); // stripを定義
-    
+    var strip = document.getElementById('strip');
+
     // 背景を塗りつぶし
     ctx.fillStyle = 'rgb(0,0,0)';
     ctx.fillRect(0, 0, 800, 600);
@@ -252,7 +263,7 @@ async function draw() {
 
     // 敵のミサイルの描画
     missiles.forEach(function (m) {
-        if (m.x != 0 && m.y != 0) {
+        if (m.x !== 0 && m.y !== 0) {
             m.draw(ctx);
         }
     });
@@ -261,13 +272,15 @@ async function draw() {
     ctx.fillStyle = 'rgb(0,255,0)';
     ctx.fillText(('00000' + score).slice(-5), 570, 30);
 
-    if (isNaN(timer)) {
+    // ゲームオーバーの表示
+    if (!timer) {
         ctx.fillText('GAME OVER', 320, 150);
         const title = document.title;
         const userEmail = await getUserEmail();
         await saveScoreAndEmail(title, score, userEmail);
     }
 }
+
 
 const title = document.title;
 
