@@ -81,6 +81,8 @@ window.init = function() {
     document.getElementById('tutorial').style.display = 'flex';
 };
 
+
+
 window.start = function() {
     // チュートリアルを非表示にする
     document.getElementById('tutorial').style.display = 'none';
@@ -146,12 +148,17 @@ window.start = function() {
     }
 
     function keyDown(evt) {
+        if (evt.keyCode == 32) {
+            evt.preventDefault(); // スペースキーのデフォルトの動作を無効にする（スクロール防止）
+            if (beam.y < 0) {
+                beam.y = 520;
+                beam.x = ship.x;
+            }
+        }
         if (evt.keyCode == 37) ship.moveL = true;
         if (evt.keyCode == 39) ship.moveR = true;
-        if (evt.keyCode == 32 && beam.y < 0) {
-            beam.y = 520; beam.x = ship.x;
-        }
     }
+    
 
     function keyUp(evt) {
         if (evt.keyCode == 37) ship.moveL = false;
@@ -265,6 +272,8 @@ window.start = function() {
 
         draw();
     }
+   
+    
 
     async function draw() {
         // 背景を描画
@@ -299,6 +308,8 @@ window.start = function() {
             await saveScoreAndEmail(title, score, userEmail);
         }
     }
+
+
 
     const title = document.title;
 
