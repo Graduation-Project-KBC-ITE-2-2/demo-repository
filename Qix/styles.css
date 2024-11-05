@@ -35,10 +35,10 @@ header {
 }
 
 canvas {
-    display: block;
-    margin: 30px auto 0; 
     background-color: black;
+    border: 2px solid blue; /* 見やすくするためのボーダー */
 }
+
 .modal {
     position: fixed;
     z-index: 10;
@@ -96,4 +96,22 @@ transform: translate(-50%, -50%); /* 位置を中央に調整 */
 
 #startButton:hover {
     background-color: #ccc;
+}
+
+#container {
+    display: flex;
+    justify-content: space-around; /* コンテンツを均等に配置 */
+    align-items: flex-start; /* 上揃え */
+    margin: 20px auto;
+    max-width: 1200px; /* コンテナの最大幅を設定 */
+}
+
+#scoreboard {
+    color: white;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 200px;
+    margin-left: 20px; /* キャンバスとランキングの間のスペースを追加 */
 }

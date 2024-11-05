@@ -4,6 +4,7 @@
     <title>Quicks</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css">
 </head>
 
 <header>
@@ -16,7 +17,7 @@
         <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
         <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
         <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-        <li><a href="/Tetris/Tetris.htm">Tetris</a>
+        <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
         <li><a href="/index.html">Top</a></li>
     </ul>
 </header>
@@ -46,10 +47,24 @@
         });
     </script>
 
-    <!-- ゲームキャンバス -->
-    <canvas id="canvas" width="600" height="700" style="display: none;"></canvas>
-    <img id="ship" src="ship.png" style="display:none;" />
+    <!-- ゲームコンテナ -->
+    <div id="container">
+        <!-- ゲームキャンバス -->
+        <canvas id="canvas" width="600" height="600" style="display: block; margin: 0 auto;"></canvas>
 
+        
+        <!-- 画像 -->
+        <img id="ship" src="ship.png" style="display:none;" />
+
+        <!-- ランキング表示エリア -->
+        <div id="scoreboard">
+            <h3>ランキング</h3>
+            <div id="scorelist">
+                <!-- ランキングがここに表示されます -->
+            </div>
+        </div>
+    </div>
+    
     <!-- チュートリアルモーダル -->
     <div id="tutorial" style="display: none;">
         <div class="modal-content">
@@ -67,7 +82,8 @@
         </div>
     </div>
 
-    <script type="module" src="/vite-one/main.js"></script>
-    <script src="script.js"></script>
+    <script src="/vite-one/main.js" defer></script>
+    <script src="script.js" defer></script>
+
 </body>
 </html>
