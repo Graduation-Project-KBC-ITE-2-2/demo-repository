@@ -17,14 +17,12 @@
         <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
         <li><a href="/Qix/Qix.htm">Qix</a></li>
         <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-        <li><a href="/Tetris/Tetris.htm">Tetris</a>
+        <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
         <li><a href="/index.html">Top</a></li>
     </ul>
 </header>
 
 <body onload="window.init()">
-    <!-- ヘッダーを上に表示する -->
-    <div id="header"></div>
 
     <!-- Firebase Configの読み込み -->
     <script type="module" src="../firebaseConfig.js"></script>
@@ -47,34 +45,36 @@
         });
     </script>
 
+    
+    <!-- ゲームコンテナ -->
+    <div id="container">
+        <div id="gameArea" style="position: relative; display: none;">
+            <!-- メッセージとボタンを同じ親要素に配置 -->
+            <p id="message"></p> <!-- メッセージ要素をゲームエリア内に配置 -->
+            <button id="b0" style="background-color:#600" data-index="0"></button>
+            <button id="b1" style="background-color:#660" data-index="1"></button>
+            <br />
+            <button id="b2" style="background-color:#060" data-index="2"></button>
+            <button id="b3" style="background-color:#006" data-index="3"></button>
+            <!-- リトライボタン -->
+            <button id="retryButton" onclick="window.retryGame()" style="display: none;">リトライ</button>
+
+            <p id="bestScore"></p> <!-- ベストスコアを表示する要素 -->
+        </div>
+
+            
+        <div id="scoreboard">
+            <h3>ランキング</h3>
+            <div id="scorelist">
+            </div>
+        </div>
+    </div>
+
     <div id="tutorial" style="display: none;">
         <div>
             <h2>チュートリアル</h2>
             <p>ボタンが点滅します。それを覚えて、順番に押してください。</p>
             <button id="startButton" onclick="window.hideTutorial()">スタート</button>
-        </div>
-    </div>
-
-    <div id="gameArea" style="position: relative; display: none;">
-        <!-- メッセージとボタンを同じ親要素に配置 -->
-        <p id="message"></p> <!-- メッセージ要素をゲームエリア内に配置 -->
-        <button id="b0" style="background-color:#600" data-index="0"></button>
-        <button id="b1" style="background-color:#660" data-index="1"></button>
-        <br />
-        <button id="b2" style="background-color:#060" data-index="2"></button>
-        <button id="b3" style="background-color:#006" data-index="3"></button>
-        <!-- リトライボタン -->
-        <button id="retryButton" onclick="window.retryGame()" style="display: none;">リトライ</button>
-
-        <p id="bestScore"></p> <!-- ベストスコアを表示する要素 -->
-    </div>
-
-    <div class="parent">
-        <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
-        
-        <div class="overlay-text">
-            ランキング<br>
-            <div id="scorelist"></div>
         </div>
     </div>
 
