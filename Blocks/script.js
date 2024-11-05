@@ -1,4 +1,5 @@
 import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+import { addKeyListenerForStart } from '../Key.js'
 
 "use strict";
 
@@ -7,37 +8,130 @@ var ctx, paddle, ball, timer, blocks = [];
 var balls = 3, score = 0, elapsedTime = 0; // ゲームの初期設定
 var WIDTH = 600, HEIGHT = 600; // キャンバスのサイズ
 var colors = ['red', 'orange', 'yellow', 'green', 'purple', 'blue']; // ブロックの色
-var difficulty = ''; // 難易度を保持するための変数
+var difficulty; // グローバル変数として宣言
+
 
 // ボールのコンストラクタ
 function Ball() {
-    this.r = 10; // ボールの半径
-    this.x = WIDTH / 2; // 初期X座標
-    this.y = HEIGHT - 30; // 初期Y座標（パドルの上）
-    this.dx = 0; // X方向の速度
-    this.dy = 0; // Y方向の速度
-    this.dir = 0; // 方向
-    this.speed = 3.0; // 初期速度
+    switch (difficulty) {
+        case 'Easy':
+            // Easyの速度
+            this.r = 10; // ボールの半径
+            this.x = WIDTH / 2; // 初期X座標
+            this.y = HEIGHT - 30; // 初期Y座標（パドルの上）
+            this.dx = 0; // X方向の速度
+            this.dy = 0; // Y方向の速度
+            this.dir = 0; // 方向
+            this.speed = 5.0; // 初期速度
+            // 1秒ごとにボールの速度を0.1上げる処理を追加
+            setInterval(function () {
+                if (isPlaying()) { // ボールが動いている場合のみ時間を更新
+                    ball.speed += 1.0; // ボールの速度を増加
+                    let angle = Math.atan2(ball.dy, ball.dx); // 現在の方向を取得
+                    ball.dx = ball.speed * Math.cos(angle); // X方向の速度を再計算
+                    ball.dy = ball.speed * Math.sin(angle); // Y方向の速度を再計算
+                }
+            }, 5000); // 5秒ごとに実行
+            break;
+        case 'Normal':
+            // Normalの速度
+            this.r = 10; // ボールの半径
+            this.x = WIDTH / 2; // 初期X座標
+            this.y = HEIGHT - 30; // 初期Y座標（パドルの上）
+            this.dx = 0; // X方向の速度
+            this.dy = 0; // Y方向の速度
+            this.dir = 0; // 方向
+            this.speed = 5.0; // 初期速度
+            // 1秒ごとにボールの速度を0.1上げる処理を追加
+            setInterval(function () {
+                if (isPlaying()) { // ボールが動いている場合のみ時間を更新
+                    ball.speed += 1.0; // ボールの速度を増加
+                    let angle = Math.atan2(ball.dy, ball.dx); // 現在の方向を取得
+                    ball.dx = ball.speed * Math.cos(angle); // X方向の速度を再計算
+                    ball.dy = ball.speed * Math.sin(angle); // Y方向の速度を再計算
+                }
+            }, 3000); // 3秒ごとに実行
+            break;
+        case 'Hard':
+            // Hardの速度
+            this.r = 10; // ボールの半径
+            this.x = WIDTH / 2; // 初期X座標
+            this.y = HEIGHT - 30; // 初期Y座標（パドルの上）
+            this.dx = 0; // X方向の速度
+            this.dy = 0; // Y方向の速度
+            this.dir = 0; // 方向
+            this.speed = 6.0; // 初期速度
+            // 1秒ごとにボールの速度を0.1上げる処理を追加
+            setInterval(function () {
+                if (isPlaying()) { // ボールが動いている場合のみ時間を更新
+                    ball.speed += 1.5; // ボールの速度を増加
+                    let angle = Math.atan2(ball.dy, ball.dx); // 現在の方向を取得
+                    ball.dx = ball.speed * Math.cos(angle); // X方向の速度を再計算
+                    ball.dy = ball.speed * Math.sin(angle); // Y方向の速度を再計算
+                }
+            }, 2000); // 2秒ごとに実行
+            break;
+    }
 }
 
 // パドルのコンストラクタ
 function Paddle() {
-    this.w = 110; // パドルの幅
-    this.h = 20; // パドルの高さ
-    this.x = (WIDTH - this.w) / 2; // 初期X座標
-    this.y = HEIGHT - 20; // 初期Y座標
-    this.keyL = false; // 左キーの押下状態
-    this.keyR = false; // 右キーの押下状態
+    switch (difficulty) {
+        case 'Easy':
+            this.w = 130; // パドルの幅
+            this.h = 20; // パドルの高さ
+            this.x = (WIDTH - this.w) / 2; // 初期X座標
+            this.y = HEIGHT - 20; // 初期Y座標
+            this.keyL = false; // 左キーの押下状態
+            this.keyR = false; // 右キーの押下状態
+            break
+        case 'Normal':
+            this.w = 110; // パドルの幅
+            this.h = 20; // パドルの高さ
+            this.x = (WIDTH - this.w) / 2; // 初期X座標
+            this.y = HEIGHT - 20; // 初期Y座標
+            this.keyL = false; // 左キーの押下状態
+            this.keyR = false; // 右キーの押下状態
+            break
+        case 'Hard':
+            this.w = 90; // パドルの幅
+            this.h = 20; // パドルの高さ
+            this.x = (WIDTH - this.w) / 2; // 初期X座標
+            this.y = HEIGHT - 20; // 初期Y座標
+            this.keyL = false; // 左キーの押下状態
+            this.keyR = false; // 右キーの押下状態
+            break
+    }
 }
 
 // ブロックのコンストラクタ
 function Block(x, y, i) {
-    this.x = x; // ブロックのX座標
-    this.y = y; // ブロックのY座標
-    this.w = 50; // ブロックの幅
-    this.h = 20; // ブロックの高さ
-    this.color = colors[i]; // ブロックの色
-    this.point = (6 - i) * 10; // ブロックの得点
+    switch (difficulty) {
+        case 'Easy':
+            this.x = x; // ブロックのX座標
+            this.y = y; // ブロックのY座標
+            this.w = 50; // ブロックの幅
+            this.h = 20; // ブロックの高さ
+            this.color = colors[i]; // ブロックの色
+            this.point = (6 - i) * 10; // ブロックの得点
+        break
+        case 'Normal':
+            this.x = x; // ブロックのX座標
+            this.y = y; // ブロックのY座標
+            this.w = 50; // ブロックの幅
+            this.h = 20; // ブロックの高さ
+            this.color = colors[i]; // ブロックの色
+            this.point = (6 - i) * 30; // ブロックの得点
+        break
+        case 'Hard':
+            this.x = x; // ブロックのX座標
+            this.y = y; // ブロックのY座標
+            this.w = 50; // ブロックの幅
+            this.h = 20; // ブロックの高さ
+            this.color = colors[i]; // ブロックの色
+            this.point = (6 - i) * 100; // ブロックの得点
+        break
+    }
 }
 
 // パドルの描画メソッド
@@ -75,16 +169,16 @@ function init() {
         timer = setInterval(mainLoop, 15);
     }
 
-    // 1秒ごとにボールの速度を0.1上げる処理を追加
+    /*// 1秒ごとにボールの速度を0.1上げる処理を追加
     setInterval(function () {
         if (isPlaying()) { // ボールが動いている場合のみ時間を更新
             elapsedTime++; // 経過時間を更新
-            ball.speed += 1.0; // ボールの速度を増加
+            ball.speed += 1.5; // ボールの速度を増加
             let angle = Math.atan2(ball.dy, ball.dx); // 現在の方向を取得
             ball.dx = ball.speed * Math.cos(angle); // X方向の速度を再計算
             ball.dy = ball.speed * Math.sin(angle); // Y方向の速度を再計算
         }
-    }, 3000); // 1秒ごとに実行
+    }, 1000); // 1秒ごとに実行*/
 
 }
 
@@ -96,29 +190,14 @@ window.startGame = function (selectedDifficulty) {
         timer = null; // タイマーをリセット
     }
 
+    // 難易度に応じてボールの速度を設定
+    difficulty = selectedDifficulty; // 選択された難易度を保存
+
     // チュートリアルモーダルを非表示にする
     document.getElementById('modal').style.display = 'none';
 
     // 初期化（paddle, ballなどのオブジェクトを初期化）
     init();
-
-    // 難易度に応じて設定
-    difficulty = selectedDifficulty; // 選択された難易度を保存
-    switch (selectedDifficulty) {
-        case 'Easy':
-            ball.speed = 3.0; // Easyの速度
-            paddle.w = 150;
-            this.point = (6 - i) * 5; // ブロックの得点
-            break;
-        case 'Normal':
-            ball.speed = 5.0; // Normalの速度
-            break;
-        case 'Hard':
-            ball.speed = 6.5; // Hardの速度
-            paddle.w = 70;
-            this.point = (6 - i) * 20; // ブロックの得点
-            break;
-    }
 
     // ゲーム開始（ブロック生成とボールの速度・方向設定）
     start();
@@ -180,8 +259,7 @@ async function mainLoop() {
     // ゲームオーバー判定
     if (ball.y + ball.r > HEIGHT) {
         if (--balls > 0) { // 残機があれば
-            ball = new Ball(); // 新しいボールを生成
-            ball.speed = getSpeedByDifficulty(); // ボールの速度を再設定（難易度に基づく）
+            ball = new Ball(difficulty); // 新しいボールを生成
             ball.dx = ball.speed * Math.cos(Math.PI / 4); // 新しい速度を設定
             ball.dy = -ball.speed * Math.sin(Math.PI / 4);
         } else {
@@ -190,7 +268,9 @@ async function mainLoop() {
             const title = document.title; // ゲームのタイトルを取得
             const userEmail = await getUserEmail(); // ユーザーのメールを取得
             await saveScoreAndEmail(title, score, userEmail); // スコアとメールを保存
-            alert("ゲームオーバー！再挑戦してください。"); // ゲームオーバーのアラート
+            // alert("ゲームオーバー！再挑戦してください。"); // ゲームオーバーのアラート
+            // リトライボタンを表示
+            document.getElementById('retryButton').style.display = "block"; // ここを変更
             return;
         }
     }
@@ -248,22 +328,29 @@ function draw() {
 
     // スコア、時間、難易度の描画
     ctx.fillStyle = 'white'; // テキストの色
-    ctx.fillText('スコア: ' + score + ' | 時間: ' + elapsedTime + '秒 | 難易度: ' + difficulty, 20, 30);
+    ctx.fillText('スコア: ' + score + ' | 難易度: ' + difficulty, 20, 30);
 }
 
-// 難易度に応じたボールの速度を取得する関数
-function getSpeedByDifficulty() {
-    switch (difficulty) {
-        case 'Easy':
-            return 2.5; // Easyの速度
-        case 'Normal':
-            return 4.0; // Normalの速度
-        case 'Hard':
-            return 5.5; // Hardの速度
-        default:
-            return difficulty; // デフォルトの速度
+window.retryGame = function () {
+
+    document.getElementById('retryButton').style.display = "none"; // リトライボタンを非表示にする
+    if (timer) {
+        clearInterval(timer); // 現在のタイマーをクリア
+        timer = null; // タイマーをリセット
     }
-}
+    balls = 3, score = 0, elapsedTime = 0; // ゲームの初期設定
+
+    // ゲームを再初期化
+    init(); // これにより、初期化関数が呼び出されてゲームが再スタートする
+    // ゲーム開始（ブロック生成とボールの速度・方向設定）
+    start();
+};
+
+window.onload = function () {
+
+    addKeyListenerForStart('retryButton', retryGame, 32);
+};
+
 
 // タイトルを取得してリアルタイムでデータを表示
 const title = document.title;
