@@ -1,6 +1,3 @@
-import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
-import { addKeyListenerForStart } from '../Key.js'
-
 "use strict";
 var ctx, W = 12, H = 22, field, block, nextBlock, keyevents = [];
 var interval = 40, count, score, timer;
@@ -256,6 +253,7 @@ function processBlockCells(func) {
 }
 
 function init() {
+    console.log("init called");
     var canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
     ctx.font = "20pt Arial";
@@ -265,9 +263,21 @@ function init() {
     interval = 40; // ゲームスピードをリセット
     keyevents = []; // キーイベントのリセット
 
-    // モーダルウィンドウを非表示にする
-    document.getElementById('tutorial').style.display = 'none';
-    document.getElementById('gameOverModal').style.display = 'none';
+    // チェックしてから表示を変更する
+    const tutorial = document.getElementById('tutorial');
+    const gameOverModal = document.getElementById('gameOverModal');
+
+    if (tutorial) {
+        tutorial.style.display = 'none';
+    } else {
+        console.warn("Tutorial element not found.");
+    }
+
+    if (gameOverModal) {
+        gameOverModal.style.display = 'none';
+    } else {
+        console.warn("GameOverModal element not found.");
+    }
 
     // フィールドの初期化
     field = new Array(H);
@@ -304,7 +314,7 @@ function init() {
 });
 }
 
-var bestScore = localStorage.getItem('bestScore') || 0; // ローカルストレージからベストスコアを取得
+//var bestScore = localStorage.getItem('bestScore') || 0; // ローカルストレージからベストスコアを取得
 
 async function mainLoop() {
     count++;
@@ -320,16 +330,16 @@ async function mainLoop() {
         timer = null;
 
         // ベストスコアの更新
-        if (score > bestScore) {
-            bestScore = score;
-            localStorage.setItem('bestScore', bestScore); // 新しいベストスコアを保存
-        }
+        // if (score > bestScore) {
+        //     bestScore = score;
+        //     localStorage.setItem('bestScore', bestScore); // 新しいベストスコアを保存
+        // }
         const title = document.title;
         const userEmail = await getUserEmail();
         await saveScoreAndEmail(title, score, userEmail);
 
         // モーダルウィンドウを表示
-        document.getElementById('gameOverModal').style.display = 'flex';
+        document.getElementById("tutorial").style.display = "flex"; // チュートリアルを表示
     } else {
         // ブロックの位置を更新
         block.update();
@@ -417,9 +427,9 @@ function draw() {
     ctx.fillStyle = 'rgb(0,255,0)';
     ctx.fillText('YOUR SCORE', 400, 110);
     ctx.fillText(('0000000' + score).slice(-7), 440, 150);
-    ctx.fillText('BEST SCORE', 400, 190);  // ベストスコアのラベル
-    ctx.fillText(('0000000' + bestScore).slice(-7), 440, 230);  // ベストスコアを表示
-    ctx.fillText('next', 380, 270);
+    //ctx.fillText('BEST SCORE', 400, 190);  // ベストスコアのラベル
+    //ctx.fillText(('0000000' + bestScore).slice(-7), 440, 230);  // ベストスコアを表示
+    //ctx.fillText('next', 380, 270);
 
     // 外枠のスタイル設定
     ctx.strokeStyle = 'white'; // 枠線の色
@@ -429,7 +439,7 @@ function draw() {
     ctx.strokeRect(390, 125, 200, 30); // x, y, 幅, 高さ
 
     // BEST SCORE の外枠を描画
-    ctx.strokeRect(390, 205, 200, 30); // x, y, 幅, 高さ
+    //ctx.strokeRect(390, 205, 200, 30); // x, y, 幅, 高さ
 
     // NEXT の外枠を描画
     ctx.strokeRect(380, 290, 120, 120); // x, y, 幅, 高さ
@@ -454,9 +464,11 @@ function draw() {
 
 
 // スタートボタンのクリックでゲームを開始
- window.startGame = function() {
+window.startGame = function() {
+    console.log("startGame called");
     init(); // ゲーム開始
-}
+};
+
 
 //キーで操作可能に
 window.onload = function() {

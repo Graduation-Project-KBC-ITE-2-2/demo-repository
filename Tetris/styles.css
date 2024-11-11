@@ -2,15 +2,10 @@ body {
     margin: 0;
     padding: 0;
     background-color: #333;
-    font-family: Arial, sans-serif;
-    text-align: center; /* 子要素を中央に揃える */
 }
 
-/* ヘッダーのスタイル */
 header {
     padding: 0;
-    position: relative;
-    z-index: 5; /* モーダルより下に表示されないように z-index を設定 */
 }
 
 .header {
@@ -19,7 +14,6 @@ header {
     margin: 0;
     display: flex;
     justify-content: center;
-    background-color: #333;
 }
 
 .header li {
@@ -31,10 +25,7 @@ header {
     text-decoration: none;
     font-weight: bold;
     font-size: 15px;
-    padding-top: 10px;
-    padding-bottom: 5px; 
-    padding-left: 15px;
-    padding-right: 15px; 
+    padding: 10px 15px;
     border-radius: 5px;
     transition: background-color 0.3s ease;
 }
@@ -42,22 +33,11 @@ header {
 .header a:hover {
     background-color: #555;
 }
-/*ゲーム画面*/
-#canvas {
-    /* キャンバス要素のスタイル設定 */
-    display: block; /* キャンバスをブロック要素として表示 */
-    margin: 40px auto; /* 上に40pxのマージンを設定し、左右のマージンを自動で中央揃え */
-    background-color: black; /* キャンバスの背景色を黒に設定 */
-    max-width: 90%; /* キャンバスの最大幅を画面幅の90%に制限 */
-    max-height: 70vh; /* キャンバスの最大高さをビューポート高さの70%に制限 */
-    box-sizing: border-box; /* パディングとボーダーを含めて要素のサイズを計算 */
-    width: 500px; /* キャンバスの幅を500pxに設定 */
-    height: 500px; /* キャンバスの高さを500pxに設定 */
+
+canvas {
+    background-color: black;
 }
 
-
-
-/* モーダルウィンドウのスタイル */
 .modal {
     position: fixed;
     z-index: 10;
@@ -75,27 +55,62 @@ header {
 }
 
 .modal-content {
-    background-color: #333;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 300px;
+background-color: #333;
+padding: 20px;
+border: 1px solid #888;
+width: 300px; /* 幅を指定 */
+text-align: center;
+border-radius: 10px;
+position: absolute; /* 絶対位置にする */
+top: 50%; /* 縦中央に配置 */
+left: 50%; /* 横中央に配置 */
+transform: translate(-50%, -50%); /* 位置を中央に調整 */
+}
+#tutorial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
     text-align: center;
-    border-radius: 10px;
+    z-index: 10;
 }
 
-/* ボタンのスタイル */
-#retryButton, #returnButton, #startButton {
-    margin: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
+#startButton {
     background-color: white;
     color: black;
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
     transition: background-color 0.3s ease;
 }
 
-#retryButton:hover, #returnButton:hover, #startButton:hover {
+#startButton:hover {
     background-color: #ccc;
+}
+
+#container {
+    display: flex;
+    justify-content: space-around; /* コンテンツを均等に配置 */
+    align-items: flex-start; /* 上揃え */
+    margin: 20px auto;
+    max-width: 1200px; /* コンテナの最大幅を設定 */
+}
+
+#scoreboard {
+    color: white;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 200px;
+    margin-left: 20px; /* キャンバスとランキングの間のスペースを追加 */
 }

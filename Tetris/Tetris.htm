@@ -1,12 +1,11 @@
-﻿﻿<!DOCTYPE html>
-<html>
-<head>
-    <title>Mine Land</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="styles.css">
-</head>
+﻿﻿    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Mine Land</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
 
-<body>
     <!-- ヘッダー（ナビゲーションバー） -->
     <header>
         <ul class="header">
@@ -23,68 +22,60 @@
         </ul>
     </header>
 
+    <body>
+        
+        <!-- ヘッダーを上に表示する -->
+        <div id="header"></div>
 
-    <!-- ゲーム説明のセクション -->
-    <div id="tutorial" style="display: none;">
-        <div class="modal-content">
-            <h1>チュートリアル</h1>
-            <p>このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。</p>
-            <p>ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。</p>
-            <button id="startButton" onclick="startGame()">スタート</button>
+        <!-- Firebase Configの読み込み -->
+        <script type="module" src="../firebaseConfig.js"></script>
+
+        <!-- ログインチェック用スクリプト -->
+        <script type="module">
+            import { auth, getCurrentUser } from '../firebaseConfig.js';
+
+            // 証言状態をチェック
+            getCurrentUser().then(user => {
+                if (user) {
+                    // ログインしている場合、ゲーム画面を表示
+                    document.getElementById("tutorial").style.display = "block";
+                    document.getElementById("game-container").style.display = "block";
+                }
+            }).catch(error => {
+                // ユーザーがログインしていない場合、ログインページにリダイレクト
+                console.error('ログインしていません:', error);
+                window.location.href = "../login.html"; // ログインページにリダイレクト
+            });
+        </script>
+
+        <!-- ゲームコンテナ -->
+        <div id="game-container" style="display: none;">
+            <canvas id="canvas" width="700" height="600"></canvas>
+
+
+            <!-- ランキング表示エリア -->
+            <div id="scoreboard">
+                <h3>ランキング</h3>
+                <div id="scorelist">
+                    <!-- ランキングがここに表示されます -->
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- ゲームコンテナ -->
-    <div id="game-container" style="display: none;">
-        <h1 id="title">Mine Land</h1>
-        <table id="main" border="1"></table>
-    </div>
 
-    <!-- Firebase Configの読み込み -->
-    <script type="module" src="../firebaseConfig.js"></script>
+        <!-- ゲーム説明のセクション -->
+        <div id="tutorial" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h1>チュートリアル</h1>
+                <p>このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。</p>
+                <p>ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。</p>
+                <button id="startButton" onclick="startGame()">スタート</button>
+            </div>
+        </div>
+        
 
-    <!-- ログインチェック用スクリプト -->
-    <script type="module">
-        import { auth, getCurrentUser } from '../firebaseConfig.js';
-
-        // 証言状態をチェック
-        getCurrentUser().then(user => {
-            if (user) {
-                // ログインしている場合、ゲーム画面を表示
-                document.getElementById("tutorial").style.display = "block";
-                document.getElementById("game-container").style.display = "block";
-            }
-        }).catch(error => {
-            // ユーザーがログインしていない場合、ログインページにリダイレクト
-            console.error('ログインしていません:', error);
-            window.location.href = "../login.html"; // ログインページにリダイレクト
-        });
-    </script>
-
-    <!-- ゲームのスクリプト -->
-    <script type="module" src="/main.js"></script>
-    <script type="module" src="script.js"></script>
-
-    <!-- テトリスゲームのコンテナ -->
-    <div id="tetris-container" style="display: none;">
-        <h1 id="tetris-title">Tetris</h1>
-        <canvas id="tetris-canvas"></canvas>
-    </div>
-
-    <!-- テトリス用スクリプト -->
-    <script type="module" src="/tetris.js"></script>
-
-    <!-- テトリス用ログインチェックスクリプト -->
-    <script type="module">
-        getCurrentUser().then(user => {
-            if (user) {
-                // ログインしている場合、テトリス画面を表示
-                document.getElementById("tetris-container").style.display = "block";
-            }
-        }).catch(error => {
-            console.error('ログインしていません:', error);
-            window.location.href = "../login.html";
-        });
-    </script>
-</body>
-</html>
+        <!-- ゲームのスクリプト -->
+        <script type="module" src="/main.js"></script>
+        <script type="module" src="script.js"></script>
+    </body>
+    </html>
