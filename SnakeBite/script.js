@@ -10,6 +10,8 @@ var bestScore = localStorage.getItem('bestScore') || 0;
 var timer = NaN;
 var ctx;
 var gameStarted = false;
+var totalFoods = 5; // 初期の餌の数
+var foodsEaten = 0; // 食べた餌の数
 
 // Pointオブジェクト
 function Point(x, y) {
@@ -30,12 +32,13 @@ function init() {
         snake = [];
         foods = [];
         point = 0;
+        foodsEaten = 0;
 
         // 蛇の初期化
         snake.push(new Point(W / 2, H / 2));
 
         // 餌の初期化
-        for (var i = 0 ; i < 10 ; i++) {
+        for (var i = 0; i < totalFoods; i++) {
             addFood();
         }
 
@@ -47,13 +50,11 @@ function init() {
 }
 
 // スタートボタンが押されたときにゲームを開始する関数
-// ゲームのスタート関数
 window.startGame = function() {
     const tutorialElement = document.getElementById("tutorial");
     const containerElement = document.getElementById("container");
 
     if (tutorialElement) {
-        // チュートリアルを非表示にする
         tutorialElement.style.display = "none";
     } else {
         console.error("チュートリアル要素が見つかりませんでした。");
@@ -61,15 +62,12 @@ window.startGame = function() {
     }
 
     if (containerElement) {
-        // ゲームエリア全体を表示
-        containerElement.style.display = "flex"; // 明示的にflexを設定
+        containerElement.style.display = "flex";
     }
 
-    // ゲーム開始処理
-    console.log("ゲームが開始されました");
     gameStarted = true;
     init();
-    timer = setInterval(tick, 200); // ゲームループを開始
+    timer = setInterval(tick, 200);
 };
 
 window.retryGame = function() {
@@ -81,34 +79,43 @@ window.retryGame = function() {
 
 // 餌の追加
 function addFood() {
+    let attempts = 0;
     while (true) {
         var x = Math.floor(Math.random() * W);
         var y = Math.floor(Math.random() * H);
 
-        if (isHit(foods, x, y) || isHit(snake, x, y)) {
-            continue;
+        if (!isHit(snake, x, y) && !isHit(foods, x, y)) {
+            foods.push(new Point(x, y));
+            console.log("新しい餌を追加しました:", x, y);
+            break;
         }
 
-        foods.push(new Point(x, y));
-        break;
+        attempts++;
+        if (attempts > 100) {
+            console.warn("餌の追加に失敗しました。適切な位置が見つかりません。");
+            break;
+        }
     }
 }
 
-// 衝突判定
+// 餌を消す関数
+function removeFood(x, y) {
+    foods = foods.filter(function (p) {
+        return !(p.x === x && p.y === y);
+    });
+    console.log("餌を削除しました。残りの餌の数:", foods.length);
+}
+
 function isHit(data, x, y) {
+    x = Math.round(x);
+    y = Math.round(y);
     for (var i = 0; i < data.length; i++) {
-        if (data[i].x == x && data[i].y == y) {
+        if (data[i].x === x && data[i].y === y) {
+            console.log("衝突を検出:", x, y);
             return true;
         }
     }
     return false;
-}
-
-function moveFood(x, y) {
-    foods = foods.filter(function (p) {
-        return (p.x != x || p.y != y);
-    });
-    addFood();
 }
 
 async function tick() {
@@ -123,48 +130,34 @@ async function tick() {
         default: paint(); return;
     }
 
-    // 自分 or 壁に衝突？
+    // 自分自身や壁に衝突した場合
     if (isHit(snake, x, y) || x < 0 || x >= W || y < 0 || y >= H) {
-        clearInterval(timer);
-        gameStarted = false;
-
-        if (point > bestScore) {
-            bestScore = point;
-            localStorage.setItem('bestScore', bestScore);
-        }
-
-        const title = document.title;
-        const userEmail = await getUserEmail();
-        await saveScoreAndEmail(title, point, userEmail);
-
-        paint();
-
-        ctx.fillStyle = "red";
-        ctx.font = "40px sans-serif";
-        ctx.fillText("Game Over", W * S / 4, H * S / 2);
-
-        document.getElementById('retryButton').style.display = 'block';
+        endGame("Game Over");
         return;
     }
 
+    // 蛇の移動
     snake.unshift(new Point(x, y));
 
+    // 餌との衝突判定
     if (isHit(foods, x, y)) {
         point += 10;
-        moveFood(x, y);
+        foodsEaten++;
+        console.log("餌に衝突しました。ポイント:", point);
+        console.log("食べた餌の数:", foodsEaten);
+        removeFood(x, y);
+
+        // ゲームクリア判定
+        if (foodsEaten >= totalFoods) {
+            endGame("Game Clear!");
+            return;
+        }
     } else {
         snake.pop();
     }
 
     paint();
 }
-
-window.onload = function() {
-    document.addEventListener("DOMContentLoaded", () => {
-        addKeyListenerForStart('tutorial', startGame, 32);
-        addKeyListenerForStart('retryButton', retryGame, 32);
-    });
-};
 
 function paint() {
     ctx.clearRect(0, 0, W * S, H * S);
@@ -183,6 +176,28 @@ function paint() {
 
 function keydown(event) {
     keyCode = event.keyCode;
+}
+
+async function endGame(message) {
+    clearInterval(timer);
+    gameStarted = false;
+
+    if (point > bestScore) {
+        bestScore = point;
+        localStorage.setItem('bestScore', bestScore);
+    }
+
+    const title = document.title;
+    const userEmail = await getUserEmail();
+    await saveScoreAndEmail(title, point, userEmail);
+
+    paint();
+
+    ctx.fillStyle = message === "Game Clear!" ? "green" : "red";
+    ctx.font = "40px sans-serif";
+    ctx.fillText(message, W * S / 4, H * S / 2);
+
+    document.getElementById('retryButton').style.display = 'block';
 }
 
 const title = document.title;
