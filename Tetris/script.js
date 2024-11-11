@@ -1,4 +1,7 @@
 "use strict";
+import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+import { addKeyListenerForStart } from '../Key.js'
+
 var ctx, W = 12, H = 22, field, block, nextBlock, keyevents = [];
 var interval = 40, count, score, timer;
 // サウンドオブジェクトの作成
@@ -263,9 +266,7 @@ function init() {
     interval = 40; // ゲームスピードをリセット
     keyevents = []; // キーイベントのリセット
 
-    // チェックしてから表示を変更する
-    const tutorial = document.getElementById('tutorial');
-    const gameOverModal = document.getElementById('gameOverModal');
+    
 
     if (tutorial) {
         tutorial.style.display = 'none';
@@ -273,11 +274,6 @@ function init() {
         console.warn("Tutorial element not found.");
     }
 
-    if (gameOverModal) {
-        gameOverModal.style.display = 'none';
-    } else {
-        console.warn("GameOverModal element not found.");
-    }
 
     // フィールドの初期化
     field = new Array(H);
@@ -465,21 +461,32 @@ function draw() {
 
 // スタートボタンのクリックでゲームを開始
 window.startGame = function() {
-    console.log("startGame called");
-    init(); // ゲーム開始
+    // チェックしてから表示を変更する
+    const tutorial = document.getElementById("tutorial");
+    const container = document.getElementById("container");
+
+    if (tutorial) {
+        tutorial.style.display = "none";
+    } else {
+        console.error("チュートリアル要素が見つかりませんでした。");
+        return;
+    }
+
+    if (container) {
+        container.style.display = "flex";
+    }
+
+    
+    // ゲーム開始処理
+    console.log("ゲームが開始されました");
+    init();
+    timer = setInterval(tick, 200); // ゲームループを開始
 };
 
 
-//キーで操作可能に
-window.onload = function() {
-    // コールバック関数を指定してリスナーを追加
-    addKeyListenerForStart('tutorial', startGame, 32);
-    addKeyListenerForStart('retryButton', retryGame, 13);
-};
-
+    function keydown(event) {
+        keyCode = event.keyCode;
+    }
 
 const title = document.title;
-
 displayDataInHTMLRealtime(title);
-
-

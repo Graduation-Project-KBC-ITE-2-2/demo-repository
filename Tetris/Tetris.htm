@@ -1,34 +1,55 @@
 ﻿﻿    <!DOCTYPE html>
     <html>
     <head>
-        <title>Mine Land</title>
+        <title>Tetris</title>
         <meta charset="utf-8" />
         <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css">
     </head>
 
-    <!-- ヘッダー（ナビゲーションバー） -->
-    <header>
-        <ul class="header">
-            <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
-            <li><a href="/Blocks/blocks.htm">Blocks</a></li>
-            <li><a href="/Cave/cave.html">Cave</a></li>
-            <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
-            <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
-            <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
-            <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-            <li><a href="/Qix/Qix.htm">Qix</a></li>
-            <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-            <li><a href="/index.html">Top</a></li>
-        </ul>
-    </header>
+   
 
     <body>
-        
-        <!-- ヘッダーを上に表示する -->
-        <div id="header"></div>
-
-        <!-- Firebase Configの読み込み -->
-        <script type="module" src="../firebaseConfig.js"></script>
+         <!-- ヘッダー（ナビゲーションバー） -->
+         <header>
+            <ul class="header">
+                <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
+                <li><a href="/Blocks/blocks.htm">Blocks</a></li>
+                <li><a href="/Cave/cave.html">Cave</a></li>
+                <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
+                <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
+                <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
+                <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
+                <li><a href="/Qix/Qix.htm">Qix</a></li>
+                <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
+                <li><a href="/index.html">Top</a></li>
+            </ul>
+        </header>
+        <div id="container">
+            <!-- ゲームコンテナ -->
+            <div id="game-container">
+                <canvas id="canvas" width="700" height="600"></canvas>
+            </div>
+1
+            
+        <!-- ランキング表示エリア -->
+        <div id="scoreboard">
+            <h3>ランキング</h3>
+            <div id="scorelist">
+                <!-- ランキングがここに表示されます -->
+            </div>
+        </div>
+    </div>
+            
+            <!-- ゲーム説明のセクション -->
+            <div id="tutorial" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h2>チュートリアル</h2>
+                <p>このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。</p>
+                <p>ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。</p>
+                <button id="startButton" class="common-button" onclick="window.startGame()">スタート</button>
+            </div>
+        </div>
 
         <!-- ログインチェック用スクリプト -->
         <script type="module">
@@ -47,32 +68,6 @@
                 window.location.href = "../login.html"; // ログインページにリダイレクト
             });
         </script>
-
-        <!-- ゲームコンテナ -->
-        <div id="game-container" style="display: none;">
-            <canvas id="canvas" width="700" height="600"></canvas>
-
-
-            <!-- ランキング表示エリア -->
-            <div id="scoreboard">
-                <h3>ランキング</h3>
-                <div id="scorelist">
-                    <!-- ランキングがここに表示されます -->
-                </div>
-            </div>
-        </div>
-
-
-        <!-- ゲーム説明のセクション -->
-        <div id="tutorial" class="modal" style="display: none;">
-            <div class="modal-content">
-                <h1>チュートリアル</h1>
-                <p>このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。</p>
-                <p>ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。</p>
-                <button id="startButton" onclick="startGame()">スタート</button>
-            </div>
-        </div>
-        
 
         <!-- ゲームのスクリプト -->
         <script type="module" src="/main.js"></script>
