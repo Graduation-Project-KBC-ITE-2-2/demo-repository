@@ -258,20 +258,37 @@ async function endGame(message) {
 
   if (message === "Game Clear!") {
     if (currentStage < maxStage) {
-      currentStage++;
-      alert("ステージ " + currentStage + " へ進みます！");
-      gameStarted = true;
-      init();
+      // ステージクリアのメッセージを表示
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "green";
+      ctx.font = "40px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(
+        "ステージ " + currentStage + " クリア",
+        canvas.width / 2,
+        canvas.height / 2
+      );
+
+      // 2秒後に次のステージを開始
+      setTimeout(() => {
+        currentStage++;
+        init();
+      }, 2000);
     } else {
       ctx.fillStyle = "green";
       ctx.font = "40px sans-serif";
-      ctx.fillText("All Stages Clear!", (W * S) / 4, (H * S) / 2);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("All Stages Clear!", canvas.width / 2, canvas.height / 2);
       document.getElementById("retryButton").style.display = "block";
     }
   } else {
     ctx.fillStyle = "red";
     ctx.font = "40px sans-serif";
-    ctx.fillText(message, (W * S) / 4, (H * S) / 2);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(message, canvas.width / 2, canvas.height / 2);
     document.getElementById("retryButton").style.display = "block";
   }
 }
