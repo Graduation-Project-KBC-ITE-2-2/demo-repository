@@ -125,7 +125,7 @@ window.start = function() {
     }
     
     function isPositionValid(newX, newY, aliens) {
-        const margin = 30; // エイリアン間の最低距離
+        const margin = 20; // エイリアン間の最低距離
         return aliens.every(alien => {
             return Math.abs(alien.x - newX) > margin && Math.abs(alien.y - newY) > margin;
         });
