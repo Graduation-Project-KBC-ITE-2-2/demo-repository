@@ -18,10 +18,9 @@ const gameState = {
   ctx: null,
   waveNumber: 1,
   waveInProgress: false,
-
-  // 追加: エネルギー管理
-  energy: 100, // 現在のエネルギー
-  maxEnergy: 100, // 最大エネルギー
+  energy: 100,
+  maxEnergy: 100,
+  backgroundImage: null, // 背景画像を追加
 };
 
 // 家を表すクラス
@@ -224,8 +223,12 @@ function init() {
   gameState.ctx = canvas.getContext("2d");
   gameState.ctx.font = "20pt Arial";
 
-  // 不要な mousemove イベントリスナーを削除
-  // canvas.addEventListener("mousemove", mousemove); // 削除
+  // 背景画像をロード
+  gameState.backgroundImage = new Image();
+  gameState.backgroundImage.src = "background.jpg"; // 背景画像のパス
+  gameState.backgroundImage.onload = function () {
+    console.log("背景画像がロードされました");
+  };
 
   canvas.addEventListener("mousedown", mousedown);
 
@@ -426,35 +429,41 @@ function startNextWave() {
 }
 
 // 描画関数
-// 描画関数
-// 描画関数
 async function draw() {
-  const strip = document.getElementById("strip");
-  if (!strip) {
-    console.error("Strip element not found!");
-    return;
-  }
-
   const ctx = gameState.ctx;
   if (!ctx) return;
 
-  // 背景を塗りつぶし
-  ctx.fillStyle = "rgb(0,0,0)";
-  ctx.fillRect(0, 0, 800, 600);
+  // 背景を描画
+  if (gameState.backgroundImage) {
+    ctx.drawImage(
+      gameState.backgroundImage,
+      0,
+      0,
+      ctx.canvas.width,
+      ctx.canvas.height
+    );
+  } else {
+    // 背景がロードされていない場合は黒で塗りつぶし
+    ctx.fillStyle = "rgb(0,0,0)";
+    ctx.fillRect(0, 0, 800, 600);
+  }
 
   // 家の描画
   gameState.houses.forEach((house) => {
-    ctx.drawImage(
-      strip,
-      house.hit ? 20 : 0,
-      0,
-      20,
-      20,
-      house.x,
-      house.y,
-      house.w,
-      house.w
-    );
+    const strip = document.getElementById("strip");
+    if (strip) {
+      ctx.drawImage(
+        strip,
+        house.hit ? 20 : 0,
+        0,
+        20,
+        20,
+        house.x,
+        house.y,
+        house.w,
+        house.w
+      );
+    }
   });
 
   // レーザーの描画
@@ -469,18 +478,19 @@ async function draw() {
 
   // 敵ミサイルの描画
   gameState.missiles.forEach((missile) => {
-    if (missile.destroyed && !missile.exploded) return;
-    if (missile.x !== 0 && missile.y !== 0) {
+    if (!missile.destroyed || missile.exploded) {
       missile.draw(ctx);
     }
   });
 
   // スコアの描画
   ctx.fillStyle = "rgb(0,255,0)";
+  ctx.font = "20pt Arial"; // フォントの設定を明示的に追加
   ctx.fillText(("00000" + gameState.score).slice(-5), 570, 30);
 
-  // ウェーブ数の表示
-  ctx.fillText("Wave: " + gameState.waveNumber, 50, 30);
+  // WAVE 表示
+  ctx.fillStyle = "rgb(255,255,255)";
+  ctx.fillText(`WAVE: ${gameState.waveNumber}`, 50, 30); // 明示的にWAVEを描画
 
   // エネルギーバーの描画
   const barWidth = 200;
@@ -489,15 +499,15 @@ async function draw() {
   const barY = 40;
   const energyRatio = gameState.energy / gameState.maxEnergy;
 
-  // バーの枠
+  // エネルギーバーの枠
   ctx.strokeStyle = "rgb(255,255,255)";
   ctx.strokeRect(barX, barY, barWidth, barHeight);
 
-  // エネルギー部分の描画
+  // エネルギー部分
   ctx.fillStyle = "rgb(0,255,0)";
   ctx.fillRect(barX, barY, barWidth * energyRatio, barHeight);
 
-  // エネルギー文字の表示
+  // エネルギー文字
   ctx.fillStyle = "rgb(255,255,255)";
   ctx.font = "14pt Arial";
   ctx.fillText(
@@ -509,12 +519,17 @@ async function draw() {
   // ゲームオーバーの表示
   if (!gameState.timer) {
     ctx.fillStyle = "rgb(255,0,0)";
+    ctx.font = "20pt Arial"; // フォントサイズを再設定
     ctx.fillText("GAME OVER", 320, 150);
     const title = document.title;
     const userEmail = await getUserEmail();
     await saveScoreAndEmail(title, gameState.score, userEmail);
   }
 }
+
+// **関数を window オブジェクトに割り当ててグローバルにする**
+window.init = init;
+window.start = start;
 
 // ゲームデータをリアルタイムで表示
 const title = document.title;
