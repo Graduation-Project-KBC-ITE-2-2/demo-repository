@@ -1,287 +1,528 @@
-import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../firebaseConfig.js';
+import {
+  getUserEmail,
+  saveScoreAndEmail,
+  displayDataInHTMLRealtime,
+} from "../firebaseConfig.js";
 
-    "use strict";
-    var houses = [], missiles = [], shoot, timer = NaN,
-        count = 0, score = 0, ctx;
+("use strict");
 
+// ゲームの状態を管理する変数
+const gameState = {
+  houses: [],
+  missiles: [],
+  lasers: [],
+  explosions: [],
+  timer: NaN,
+  count: 0,
+  score: 0,
+  ctx: null,
+  waveNumber: 1,
+  waveInProgress: false,
+
+  // 追加: エネルギー管理
+  energy: 100, // 現在のエネルギー
+  maxEnergy: 100, // 最大エネルギー
+};
+
+// 家を表すクラス
 function House(x) {
-    this.x = x;
-    this.y = 550;
-    this.w = 40;
-    this.hit = false;
+  this.x = x;
+  this.y = 550;
+  this.w = 40;
+  this.hit = false;
 }
 
-function Missle(){
-    this.maxCount = 500;
-    this.interval = 1000;
-
-    this.reload = function(){
-        this.sX = rand(800);
-        this.eX = rand(800);
-        this.interval = this.interval * 0.9;
-        this.firetime = rand(this.interval) + count;
-        this.x = this.sX;  // 初期位置を始点に設定
-        this.y = 0;
-        this.r = 0;
-    };
-
-    this.draw = function(ctx){
-        ctx.strokeStyle = ctx.fillStyle = 'rgb(0,255,255)';
-
-        // 軌跡の描画
-        line(ctx, this.sX, 0, this.x, this.y);
-
-        // 爆発
-        if(this.r > 0){
-            circle(ctx, this.x, this.y, this.r < 50 ? this.r : (100 - this.r));
-        }
-    };
-
-    this.reload();
+// 敵ミサイルを表すクラス
+function Missile() {
+  this.maxCount = 500;
+  this.interval = 1000;
+  this.destroyed = false;
+  this.exploded = false;
+  this.r = 0;
+  this.reload();
 }
 
+Missile.prototype.reload = function () {
+  this.sX = rand(800);
+  this.eX = rand(800);
+  this.firetime = rand(this.interval) + gameState.count;
+  this.x = this.sX;
+  this.y = 0;
+};
 
-function Shoot() {
-    this.scopeX = 400;
-    this.scopeY = 300;
-    this.scopeW = 50;
-    this.image = document.getElementById('scope');
-    this.count = 0;
-    this.shotX = 0;
-    this.shotY = 0;
-    this.shotR = 0;
-    this.fire = false;
-    this.draw = function (ctx) {
-        ctx.strokeStyle = ctx.fillStyle = 'rgb(0,255,0)';
+Missile.prototype.update = function () {
+  const c = gameState.count - this.firetime;
+  if (c < 0) return;
 
-        // 照準器の描画
-        ctx.drawImage(this.image,
-            this.scopeX - this.scopeW / 2, this.scopeY - this.scopeW / 2);
-
-        if (!this.fire) return;
-
-        if (this.shotR == 0 && this.count < 100) {
-            // 軌跡の描画
-            var ratio = this.count / 100;
-
-            var y = 600 - (600 - this.shotY) * ratio;
-
-            // 左側レーザー
-            line(ctx, 0, 600, (this.shotX * ratio), y);
-
-            // 右側レーザー
-            line(ctx, 800, 600, (800 - (800 - this.shotX) * ratio), y);
-
-        } else if (this.shotR > 0) {
-            // 爆発
-            circle(ctx, this.shotX, this.shotY, this.shotR);
-        }
+  if (this.exploded) {
+    this.r++;
+    if (this.r > 50) {
+      this.destroyed = true;
     }
+  } else {
+    this.x = ((this.eX - this.sX) * c) / this.maxCount + this.sX;
+    this.y = (600 * c) / this.maxCount;
+
+    // 地面に衝突時
+    if (c > this.maxCount) {
+      gameState.houses.forEach((house) => {
+        if (house.x + house.w >= this.x - 50 && this.x + 50 >= house.x) {
+          house.hit = true;
+        }
+      });
+
+      if (gameState.houses.every((house) => house.hit)) {
+        clearInterval(gameState.timer);
+        gameState.timer = NaN;
+      }
+
+      explodeSound();
+      this.exploded = true;
+      this.r = 25;
+
+      // 爆発エフェクトを追加
+      gameState.explosions.push(new Explosion(this.x, this.y, 25, 30));
+    }
+  }
+};
+
+Missile.prototype.draw = function (ctx) {
+  ctx.strokeStyle = "rgb(0,255,255)";
+  line(ctx, this.sX, 0, this.x, this.y);
+  if (this.exploded && this.r > 0) {
+    ctx.fillStyle = "rgba(0,255,0,0.5)";
+    circle(ctx, this.x, this.y, this.r);
+  }
+};
+
+// プレイヤーの爆発エフェクトを表すクラス
+function Explosion(x, y, radius, duration) {
+  this.x = x;
+  this.y = y;
+  this.radius = radius;
+  this.maxRadius = radius + 10; // 拡大範囲を小さく調整
+  this.duration = duration;
 }
 
-function rand(r) { return Math.floor(Math.random() * r) }
+Explosion.prototype.update = function () {
+  if (this.radius < this.maxRadius) {
+    this.radius += 0.5;
+  }
+  this.duration--;
+};
 
+Explosion.prototype.draw = function (ctx) {
+  if (this.radius > 0) {
+    ctx.fillStyle = "rgba(0,255,0,0.5)";
+    circle(ctx, this.x, this.y, this.radius);
+  }
+};
+
+Explosion.prototype.isFinished = function () {
+  return this.duration <= 0;
+};
+
+// プレイヤーの攻撃（レーザー）を表すクラス
+function Laser(targetX, targetY) {
+  this.startX1 = 0; // 左側からのレーザー開始点
+  this.startY1 = 600;
+  this.startX2 = 800; // 右側からのレーザー開始点
+  this.startY2 = 600;
+  this.endX = targetX; // レーザーの目標地点X
+  this.endY = targetY; // レーザーの目標地点Y
+  this.explosionRadius = 25; // 爆発範囲
+  this.duration = 10; // レーザーの表示持続フレーム数
+}
+
+Laser.prototype.update = function () {
+  this.duration--;
+};
+
+Laser.prototype.draw = function (ctx) {
+  ctx.strokeStyle = "rgb(0,255,0)";
+  ctx.lineWidth = 2;
+
+  // 左側レーザーの描画
+  line(ctx, this.startX1, this.startY1, this.endX, this.endY);
+
+  // 右側レーザーの描画
+  line(ctx, this.startX2, this.startY2, this.endX, this.endY);
+
+  // **ここでの爆発描画を削除**
+};
+
+// ランダムな整数を生成する関数
+function rand(max) {
+  return Math.floor(Math.random() * max);
+}
+
+// 爆発音を再生する関数
 function explodeSound() {
-    document.getElementById('explode').play();
+  const explodeAudio = document.getElementById("explode");
+  if (explodeAudio) {
+    explodeAudio.currentTime = 0;
+    explodeAudio.play();
+  }
 }
 
+// 線を描画する関数
 function line(ctx, x0, y0, x1, y1) {
-    ctx.beginPath();
-    ctx.moveTo(x0, y0);
-    ctx.lineTo(x1, y1);
-    ctx.closePath();
-    ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x0, y0);
+  ctx.lineTo(x1, y1);
+  ctx.closePath();
+  ctx.stroke();
 }
 
+// 円を描画する関数
 function circle(ctx, x, y, r) {
-    if (r <= 0) return;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2, true);
-    ctx.fill();
+  if (r <= 0) return;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2, true);
+  ctx.fill();
 }
 
-// 関数をグローバルスコープに登録
-window.init = function() {
-    shoot = new Shoot();
+// 線分と円の衝突判定関数
+function lineIntersectsCircle(x1, y1, x2, y2, cx, cy, r) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const length = Math.sqrt(dx * dx + dy * dy);
 
-    var canvas = document.getElementById('canvas');
-    canvas.style.display = 'block'; // キャンバスを表示
-    ctx = canvas.getContext('2d');   // コンテキストを取得
-    ctx.font = "20pt Arial";
+  if (length === 0) {
+    return Math.sqrt((cx - x1) ** 2 + (cy - y1) ** 2) <= r;
+  }
 
-    canvas.addEventListener('mousemove', mousemove);
-    canvas.addEventListener('mousedown', mousedown);
+  const unitDx = dx / length;
+  const unitDy = dy / length;
 
-    console.log("Game initialized"); // デバッグ用のメッセージ
+  let t = unitDx * (cx - x1) + unitDy * (cy - y1);
+
+  let closestX = x1 + unitDx * t;
+  let closestY = y1 + unitDy * t;
+
+  if (t < 0) {
+    closestX = x1;
+    closestY = y1;
+  } else if (t > length) {
+    closestX = x2;
+    closestY = y2;
+  }
+
+  const distance = Math.sqrt((cx - closestX) ** 2 + (cy - closestY) ** 2);
+
+  return distance <= r;
 }
 
-window.start = function() {
-    console.log("Game started"); // デバッグ用
+// ゲームの初期化関数
+function init() {
+  const canvas = document.getElementById("canvas");
+  if (!canvas) {
+    console.error("Canvas element not found!");
+    return;
+  }
+  canvas.style.display = "block";
+  gameState.ctx = canvas.getContext("2d");
+  gameState.ctx.font = "20pt Arial";
 
-    // チュートリアルを非表示にし、キャンバスを表示する
-    document.getElementById('tutorial').style.display = 'none';
-    var canvas = document.getElementById('canvas');
-    canvas.style.display = 'block'; // キャンバスを表示
+  // 不要な mousemove イベントリスナーを削除
+  // canvas.addEventListener("mousemove", mousemove); // 削除
 
-    ctx = canvas.getContext('2d'); // キャンバス表示後にコンテキストを取得
-    ctx.font = "20pt Arial";
+  canvas.addEventListener("mousedown", mousedown);
 
-    score = 0;
-
-    houses = [];
-    for (var i = 0 ; i < 13 ; i++) {
-        houses.push(new House(i * 60 + 20));
-    }
-
-    missiles = [];
-    for (var i = 0 ; i < 8 ; i++) {
-        missiles.push(new Missle());
-    }
-
-    timer = setInterval(mainLoop, 20); // メインループの開始
+  console.log("Game initialized");
 }
 
+// ゲーム開始関数
+function start() {
+  console.log("Game started");
+  const tutorial = document.getElementById("tutorial");
+  if (tutorial) {
+    tutorial.style.display = "none";
+  }
+  const canvas = document.getElementById("canvas");
+  if (canvas) {
+    canvas.style.display = "block";
+    gameState.ctx = canvas.getContext("2d");
+    gameState.ctx.font = "20pt Arial";
+  }
 
+  // ゲーム状態のリセット
+  gameState.score = 0;
+  gameState.waveNumber = 1;
+  gameState.waveInProgress = false;
+  gameState.count = 0;
 
+  // 追加: エネルギーをリセット
+  gameState.energy = gameState.maxEnergy;
 
+  // 家の初期化
+  gameState.houses = [];
+  for (let i = 0; i < 13; i++) {
+    gameState.houses.push(new House(i * 60 + 20));
+  }
 
+  // 敵ミサイルの初期化
+  gameState.missiles = [];
+  const baseMissiles = 3;
+  const numMissiles = baseMissiles + gameState.waveNumber * 2;
+  for (let i = 0; i < numMissiles; i++) {
+    const missile = new Missile();
+    missile.interval = 1200 - gameState.waveNumber * 50;
+    if (missile.interval < 400) missile.interval = 400;
+    missile.maxCount = 600 - gameState.waveNumber * 10;
+    if (missile.maxCount < 200) missile.maxCount = 200;
+    missile.reload();
+    gameState.missiles.push(missile);
+  }
 
+  // レーザーと爆発エフェクトの初期化
+  gameState.lasers = [];
+  gameState.explosions = [];
 
+  // メインループの開始
+  gameState.timer = setInterval(mainLoop, 20);
+}
+
+// メインループ関数
+// メインループ関数
 function mainLoop() {
-    count++;
+  gameState.count++;
 
-    // 自分のミサイル発射時、その状態を更新
-    if (shoot.fire) {
-        shoot.count++;
+  // レーザーの更新
+  gameState.lasers = gameState.lasers.filter((laser) => {
+    laser.update();
+    return laser.duration > 0;
+  });
 
-        if (100 <= shoot.count && shoot.count < 200) {
-            shoot.shotR++;
-        } else if (200 <= shoot.count && shoot.count < 300) {
-            shoot.shotR--;
-        } else if (300 <= shoot.count) {
-            shoot.fire = false;
-        }
-    }
+  // 爆発エフェクトの更新
+  gameState.explosions = gameState.explosions.filter((explosion) => {
+    explosion.update();
+    return !explosion.isFinished();
+  });
 
-    // ミサイルの状態を更新
-    missiles.forEach(function (m) {
-        var c = count - m.firetime;
-        if (c < 0) {
-            return;
-        }
-        if (m.r > 0) { // 爆発
-            if (m.r++ > 100) {
-                m.reload()
-            }
+  // 敵ミサイルの更新
+  gameState.missiles.forEach((missile) => {
+    if (missile.destroyed) return;
+    missile.update();
+  });
 
-        } else {
-            // ミサイルの場所更新
-            m.x = (m.eX - m.sX) * c / m.maxCount + m.sX;
-            m.y = 600 * c / m.maxCount;
+  // ミサイル配列から破壊済みミサイルを削除
+  gameState.missiles = gameState.missiles.filter(
+    (missile) => !missile.destroyed
+  );
 
-            // 自分の迎撃ミサイルとの衝突判定
-            var dx = Math.pow(shoot.shotX - m.x, 2);
-            var dy = Math.pow(shoot.shotY - m.y, 2);
-            if ((dx + dy) < Math.pow(shoot.shotR, 2)) {
-                m.r = 1;
-                score += 100;
-                explodeSound();
-                return;
-            }
+  // プレイヤーの爆発エフェクトと敵ミサイルの当たり判定
+  gameState.explosions.forEach((explosion) => {
+    gameState.missiles.forEach((missile) => {
+      if (missile.destroyed || missile.exploded) return;
 
-            // 地面に衝突時
-            if (c > m.maxCount) {
+      const distance = Math.sqrt(
+        (explosion.x - missile.x) ** 2 + (explosion.y - missile.y) ** 2
+      );
+      if (distance <= explosion.radius + 10) {
+        missile.exploded = true;
+        missile.r = 25;
+        gameState.score += 100;
+        explodeSound();
 
-                // 家に衝突したか判定
-                houses.forEach(function (house) {
-                    if ((house.x + house.w < m.x - 50) ||
-                        (m.x + 50 < house.x)) {
-                    } else {
-                        house.hit = true;
-                    }
-                });
-
-                if (houses.every(function (house) {
-                        return house.hit
-                })) {
-                    clearInterval(timer);
-                    timer = NaN;
-                }
-
-                explodeSound();
-                m.r = 1;
-            }
-        }
+        // 爆発エフェクトを追加
+        gameState.explosions.push(
+          new Explosion(missile.x, missile.y, 25, 60) // durationを60に変更
+        );
+      }
     });
+  });
 
-    draw();
+  // エネルギーの回復処理
+  const energyRegenRate = 0.1; // フレームごとの回復量
+  gameState.energy += energyRegenRate;
+  if (gameState.energy > gameState.maxEnergy) {
+    gameState.energy = gameState.maxEnergy;
+  }
+
+  // ウェーブ終了後、次のウェーブを開始
+  if (gameState.missiles.length === 0 && !gameState.waveInProgress) {
+    gameState.waveInProgress = true;
+    setTimeout(startNextWave, 3000);
+  }
+
+  draw();
 }
 
-function mousemove(e) {
-    var canvas = document.getElementById('canvas');
-    var rect = canvas.getBoundingClientRect();  // キャンバスの位置を取得
-
-    // キャンバス内の正確なマウス座標を計算
-    shoot.scopeX = e.clientX - rect.left;
-    shoot.scopeY = e.clientY - rect.top;
-}
-
-
+// マウスクリック時の処理
 function mousedown(e) {
-    var canvas = document.getElementById('canvas');
-    var rect = canvas.getBoundingClientRect();  // キャンバスの位置を取得
+  const canvas = document.getElementById("canvas");
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
 
-    // キャンバス内の正確なマウスクリック位置を計算
-    var mouseX = e.clientX - rect.left;
-    var mouseY = e.clientY - rect.top;
+  // キャンバス内の正確なマウスクリック位置を計算
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
 
-    // 迎撃ミサイルの発射
-    if (!shoot.fire) {
-        shoot.shotX = mouseX;  // 修正されたマウスのX座標
-        shoot.shotY = mouseY;  // 修正されたマウスのY座標
-        shoot.shotR = 0;
-        shoot.count = 0;
-        shoot.fire = true;
+  // エネルギー消費量
+  const energyCost = 10; // 必要に応じて調整
+
+  // エネルギーが足りない場合は攻撃をキャンセル
+  if (gameState.energy < energyCost) {
+    console.log("エネルギーが足りません！");
+    return;
+  }
+
+  // エネルギーを消費
+  gameState.energy -= energyCost;
+
+  // デバッグ用ログ（必要に応じてコメントアウト）
+  // console.log(`Mouse Clicked at: (${mouseX}, ${mouseY})`);
+
+  // 新しいレーザーを生成して配列に追加
+  const newLaser = new Laser(mouseX, mouseY);
+  gameState.lasers.push(newLaser);
+
+  // 爆発エフェクトを追加
+  gameState.explosions.push(new Explosion(mouseX, mouseY, 25, 60)); // durationを60に変更
+
+  // クリック位置でのみミサイルとの当たり判定を行う
+  gameState.missiles.forEach((missile) => {
+    if (missile.destroyed || missile.exploded) return;
+
+    const distance = Math.sqrt(
+      (missile.x - mouseX) ** 2 + (missile.y - mouseY) ** 2
+    );
+
+    if (distance <= 10) {
+      // ミサイルの当たり判定半径を調整
+      missile.exploded = true;
+      missile.r = 25;
+      gameState.score += 100;
+      explodeSound();
+
+      // 爆発エフェクトを追加
+      gameState.explosions.push(new Explosion(missile.x, missile.y, 25, 60)); // durationを60に変更
+
+      // デバッグ用ログ（必要に応じてコメントアウト）
+      // console.log(`Missile at (${missile.x}, ${missile.y}) exploded.`);
     }
+  });
 }
 
+// 次のウェーブを開始する関数
+function startNextWave() {
+  gameState.waveNumber++;
+  gameState.waveInProgress = false;
+  gameState.missiles = [];
 
+  const baseMissiles = 3;
+  const numMissiles = baseMissiles + gameState.waveNumber * 2;
+
+  for (let i = 0; i < numMissiles; i++) {
+    const missile = new Missile();
+    missile.interval = 1200 - gameState.waveNumber * 50;
+    if (missile.interval < 400) missile.interval = 400;
+    missile.maxCount = 600 - gameState.waveNumber * 10;
+    if (missile.maxCount < 200) missile.maxCount = 200;
+    missile.reload();
+    gameState.missiles.push(missile);
+  }
+}
+
+// 描画関数
+// 描画関数
+// 描画関数
 async function draw() {
-    var strip = document.getElementById('strip');
+  const strip = document.getElementById("strip");
+  if (!strip) {
+    console.error("Strip element not found!");
+    return;
+  }
 
-    // 背景を塗りつぶし
-    ctx.fillStyle = 'rgb(0,0,0)';
-    ctx.fillRect(0, 0, 800, 600);
+  const ctx = gameState.ctx;
+  if (!ctx) return;
 
-    // 家の描画
-    houses.forEach(function (h) {
-        ctx.drawImage(strip, (h.hit ? 20 : 0), 0, 20, 20, h.x, h.y, h.w, h.w);
-    });
+  // 背景を塗りつぶし
+  ctx.fillStyle = "rgb(0,0,0)";
+  ctx.fillRect(0, 0, 800, 600);
 
-    // 自分のミサイルの描画
-    shoot.draw(ctx);
+  // 家の描画
+  gameState.houses.forEach((house) => {
+    ctx.drawImage(
+      strip,
+      house.hit ? 20 : 0,
+      0,
+      20,
+      20,
+      house.x,
+      house.y,
+      house.w,
+      house.w
+    );
+  });
 
-    // 敵のミサイルの描画
-    missiles.forEach(function (m) {
-        if (m.x !== 0 && m.y !== 0) {
-            m.draw(ctx);
-        }
-    });
+  // レーザーの描画
+  gameState.lasers.forEach((laser) => {
+    laser.draw(ctx);
+  });
 
-    // スコアの描画
-    ctx.fillStyle = 'rgb(0,255,0)';
-    ctx.fillText(('00000' + score).slice(-5), 570, 30);
+  // 爆発エフェクトの描画
+  gameState.explosions.forEach((explosion) => {
+    explosion.draw(ctx);
+  });
 
-    // ゲームオーバーの表示
-    if (!timer) {
-        ctx.fillText('GAME OVER', 320, 150);
-        const title = document.title;
-        const userEmail = await getUserEmail();
-        await saveScoreAndEmail(title, score, userEmail);
+  // 敵ミサイルの描画
+  gameState.missiles.forEach((missile) => {
+    if (missile.destroyed && !missile.exploded) return;
+    if (missile.x !== 0 && missile.y !== 0) {
+      missile.draw(ctx);
     }
+  });
+
+  // スコアの描画
+  ctx.fillStyle = "rgb(0,255,0)";
+  ctx.fillText(("00000" + gameState.score).slice(-5), 570, 30);
+
+  // ウェーブ数の表示
+  ctx.fillText("Wave: " + gameState.waveNumber, 50, 30);
+
+  // エネルギーバーの描画
+  const barWidth = 200;
+  const barHeight = 20;
+  const barX = 570;
+  const barY = 40;
+  const energyRatio = gameState.energy / gameState.maxEnergy;
+
+  // バーの枠
+  ctx.strokeStyle = "rgb(255,255,255)";
+  ctx.strokeRect(barX, barY, barWidth, barHeight);
+
+  // エネルギー部分の描画
+  ctx.fillStyle = "rgb(0,255,0)";
+  ctx.fillRect(barX, barY, barWidth * energyRatio, barHeight);
+
+  // エネルギー文字の表示
+  ctx.fillStyle = "rgb(255,255,255)";
+  ctx.font = "14pt Arial";
+  ctx.fillText(
+    `Energy: ${Math.floor(gameState.energy)}/${gameState.maxEnergy}`,
+    barX,
+    barY + barHeight + 20
+  );
+
+  // ゲームオーバーの表示
+  if (!gameState.timer) {
+    ctx.fillStyle = "rgb(255,0,0)";
+    ctx.fillText("GAME OVER", 320, 150);
+    const title = document.title;
+    const userEmail = await getUserEmail();
+    await saveScoreAndEmail(title, gameState.score, userEmail);
+  }
 }
 
-
+// ゲームデータをリアルタイムで表示
 const title = document.title;
-
 displayDataInHTMLRealtime(title);
+
+// **関数を window オブジェクトに割り当ててグローバルにする**
+window.init = init;
+window.start = start;
+
+// **init 関数の呼び出しを defer スクリプト内で行う**
+// もしくは、HTML のロード後に自動で呼び出すように設定する
