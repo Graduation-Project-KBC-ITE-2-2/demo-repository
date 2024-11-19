@@ -105,17 +105,31 @@ window.start = function() {
     for (var i = 0; i < 4; i++) { // 4行のエイリアン
         var offset = (i < 2) ? 96 : 144; // スプライトのオフセット
         for (var j = 0; j < 10; j++) {
-            var groupX = 100 + i * 150; // グループの中心X座標
-            var x = groupX + rand(100) - 20; // グループ内でランダムなX
-            var y = -50 - rand(200); // 縦方向にランダム配置
+            var newAlien;
+            var attempts = 0; // 試行回数
+            do {
+                var groupX = 100 + i * 150; // グループの中心X座標
+                var x = groupX + rand(100) - 20; // グループ内でランダムなX
+                var y = -50 - rand(200); // 縦方向にランダム配置
+                newAlien = new Alien(x, y, (4 - i) * 10, offset);
+                attempts++;
+            } while (!isPositionValid(newAlien.x, newAlien.y, aliens) && attempts < 100); // 最大100回まで試行
     
-            aliens.push(new Alien(x, y, (4 - i) * 10, offset));
+            if (attempts < 100) {
+                aliens.push(newAlien); // 有効な座標が見つかった場合のみ追加
+            } else {
+                console.error('Valid position for Alien not found after 100 attempts.');
+            }
         }
         bombs.push(new Bomb());
     }
     
-    
-    
+    function isPositionValid(newX, newY, aliens) {
+        const margin = 30; // エイリアン間の最低距離
+        return aliens.every(alien => {
+            return Math.abs(alien.x - newX) > margin && Math.abs(alien.y - newY) > margin;
+        });
+    }
     
     // メインループとエイリアン移動ループを開始
     if (isNaN(alienT)) {
