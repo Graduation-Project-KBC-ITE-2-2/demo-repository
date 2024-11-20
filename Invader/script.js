@@ -97,20 +97,20 @@ window.start = function() {
     ship = new Ship(); // 宇宙船の初期化
     beam = new Beam(); // ビームの初期化
     clock = 0;
-    Alien.interval = 1000 - stage * 50; // ステージ進行でエイリアンの移動速度アップ
+    //Alien.interval = 1000 - stage * 50; // ステージ進行でエイリアンの移動速度アップ
 
     // エイリアンと爆弾を初期化
     aliens = [];
     bombs = [];
-    for (var i = 0; i < 4; i++) { // 4行のエイリアン
-        var offset = (i < 2) ? 96 : 144; // スプライトのオフセット
-        for (var j = 0; j < 10; j++) {
+    for (var i = 0; i < 6; i++) { // 6行のエイリアン
+        var offset = (i < 3) ? 96 : 144; // スプライトのオフセット
+        for (var j = 0; j < 12; j++) {
             var newAlien;
             var attempts = 0; // 試行回数
             do {
-                var groupX = 100 + i * 150; // グループの中心X座標
-                var x = groupX + rand(100) - 20; // グループ内でランダムなX
-                var y = -50 - rand(200); // 縦方向にランダム配置
+                var groupX = 200 + i * 100; // グループの中心X座標
+                var x = groupX + rand(200) - 20; // グループ内でランダムなX
+                var y = -10 - rand(200); // 縦方向にランダム配置
                 newAlien = new Alien(x, y, (4 - i) * 10, offset);
                 attempts++;
             } while (!isPositionValid(newAlien.x, newAlien.y, aliens) && attempts < 100); // 最大100回まで試行
