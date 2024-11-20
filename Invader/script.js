@@ -36,6 +36,8 @@ function Alien(x, y, point, offset) {
     this.y = y;
     this.point = point; // 倒した時のスコア
     this.offset = offset;
+    this.speedX = (Math.random() * 10 + 1) * (Math.random() > 0.5 ? 1 : -1); // 横方向速度（1〜3, 正負ランダム）
+    this.speedY = Math.random() * 0.5 + 0.5; // 下方向速度（0.5〜1.0）
     this.isEven = function () { return Alien.isEven; }
 }
 
@@ -100,36 +102,38 @@ window.start = function() {
     //Alien.interval = 1000 - stage * 50; // ステージ進行でエイリアンの移動速度アップ
 
     // エイリアンと爆弾を初期化
-    aliens = [];
-    bombs = [];
-    for (var i = 0; i < 6; i++) { // 6行のエイリアン
-        var offset = (i < 3) ? 96 : 144; // スプライトのオフセット
-        for (var j = 0; j < 12; j++) {
-            var newAlien;
-            var attempts = 0; // 試行回数
-            do {
-                var groupX = 200 + i * 100; // グループの中心X座標
-                var x = groupX + rand(200) - 20; // グループ内でランダムなX
-                var y = -10 - rand(200); // 縦方向にランダム配置
-                newAlien = new Alien(x, y, (4 - i) * 10, offset);
-                attempts++;
-            } while (!isPositionValid(newAlien.x, newAlien.y, aliens) && attempts < 100); // 最大100回まで試行
-    
-            if (attempts < 100) {
-                aliens.push(newAlien); // 有効な座標が見つかった場合のみ追加
-            } else {
-                console.error('Valid position for Alien not found after 100 attempts.');
-            }
-        }
+    // エイリアンを個体単位でランダムに出現させる
+aliens = [];
+bombs = [];
+var numAliens = 20; // 出現させたいエイリアンの総数
+for (var i = 0; i < numAliens; i++) {
+    var x, y, newAlien;
+    var offset = (i % 2 === 0) ? 96 : 144; // スプライトの種類をランダム化
+    var attempts = 0; // 試行回数
+
+    do {
+        x = rand(540) + 30; // ランダムなX座標 (30～570)
+        y = rand(200) - 200; // ランダムなY座標 (-200～0)
+        newAlien = new Alien(x, y, rand(40) + 10, offset); // スコアは10～50
+        attempts++;
+    } while (!isPositionValid(x, y, aliens) && attempts < 100); // 重ならないように配置
+
+    if (attempts < 100) {
+        aliens.push(newAlien);
         bombs.push(new Bomb());
+    } else {
+        console.error('Failed to find a valid position for Alien after 100 attempts.');
     }
-    
-    function isPositionValid(newX, newY, aliens) {
-        const margin = 20; // エイリアン間の最低距離
-        return aliens.every(alien => {
-            return Math.abs(alien.x - newX) > margin && Math.abs(alien.y - newY) > margin;
-        });
-    }
+}
+
+// 配置が重複しないかをチェック
+function isPositionValid(newX, newY, aliens) {
+    const margin = 20; // 他のエイリアンとの最低距離
+    return aliens.every(alien => {
+        return Math.abs(alien.x - newX) > margin && Math.abs(alien.y - newY) > margin;
+    });
+}
+
     
     // メインループとエイリアン移動ループを開始
     if (isNaN(alienT)) {
@@ -159,48 +163,32 @@ function keyUp(evt) {
     if (evt.keyCode == 39) ship.moveR = false;
 }
 
-// エイリアンの移動処理
+// エイリアンの移動処理（速度を考慮）
 function alienLoop() {
-    var minX = Infinity, maxX = 0, maxY = 0;
-
     Alien.isEven = !Alien.isEven; // 描画状態を切り替え
 
-    // エイリアンの位置を更新
-    aliens.forEach(function (e) {
-        e.x += Alien.isDown ? 0 : (Alien.isLeft ? -10 : 10); // 横移動
-        e.y += Alien.isDown ? 20 : 0; // 下移動
+    aliens.forEach(function (alien) {
+        // エイリアンの位置を更新
+        alien.x += alien.speedX;
+        alien.y += alien.speedY;
 
-        if (e.y < 0) { // 画面外の場合少しずつ下げる
-            e.y += 5;
+        // 画面の境界をチェック
+        if (alien.x < 0 || alien.x > 570) { // 横方向の画面外チェック
+            alien.speedX *= -1; // 速度の方向を反転
+            alien.x = Math.max(0, Math.min(alien.x, 570)); // 範囲内に収める
+        }
+
+        if (alien.y > 550) { // 下方向の画面外チェック
+            alien.y = -50; // 上に戻す
+            alien.x = rand(540) + 30; // 新しい位置をランダム設定
         }
     });
 
-    // 境界チェック
-    aliens.forEach(function (e) {
-        minX = Math.min(minX, e.x);
-        maxX = Math.max(maxX, e.x);
-        maxY = Math.max(maxY, e.y);
-    });
-
-    // 移動方向の切り替え
-    if (Alien.isDown) {
-        Alien.isDown = false;
-    } else if (minX < 20) {
-        Alien.isDown = true;
-        Alien.isLeft = false;
-    } else if (maxX > 560) {
-        Alien.isDown = true;
-        Alien.isLeft = true;
-    }
-
-    // ゲームオーバー条件
-    if (maxY > 550) {
-        gameOver();
-    } else {
-        Alien.interval = Math.max(50, Alien.interval - 5); // 移動速度を徐々にアップ
-        setTimeout(alienLoop, Alien.interval);
-    }
+    // エイリアン移動の間隔を調整して再呼び出し
+    Alien.interval = 300 + rand(200); // より速くなるように調整（300～500ms）
+    setTimeout(alienLoop, Alien.interval);
 }
+
 
 // ゲームオーバー処理
 function gameOver() {
