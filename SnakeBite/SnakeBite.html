@@ -1,82 +1,97 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <title>Mine Land</title>
+  <head>
+    <title>SnakeBite</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css">
-</head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css" />
+  </head>
 
-<body>
+  <body>
     <header>
-        <ul class="header">
-            <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
-            <li><a href="/Blocks/blocks.htm">Blocks</a></li>
-            <li><a href="/Cave/cave.html">Cave</a></li>
-            <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
-            <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
-            <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
-            <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-            <li><a href="/Qix/Qix.htm">Qix</a></li>
-            <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
-            <li><a href="/index.html">Top</a></li>
-        </ul>
+      <ul class="header">
+        <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
+        <li><a href="/Blocks/blocks.htm">Blocks</a></li>
+        <li><a href="/Cave/cave.html">Cave</a></li>
+        <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
+        <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
+        <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
+        <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
+        <li><a href="/Qix/Qix.htm">Qix</a></li>
+        <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
+        <li><a href="/index.html">Top</a></li>
+      </ul>
     </header>
 
     <div id="container">
-        <!-- ゲームエリア -->
-        <div id="gameArea">
-            <canvas id="field" width="800" height="600" style="background:#cccccc"></canvas>
-            <button id="retryButton" onclick="retryGame()" style="display: none;">Retry</button>
-        </div>
+      <!-- ゲームエリア -->
+      <div id="gameArea">
+        <canvas
+          id="field"
+          width="800"
+          height="600"
+          style="background: #cccccc"
+        ></canvas>
+        <button id="retryButton" onclick="retryGame()" style="display: none">
+          Retry
+        </button>
+      </div>
 
-        <!-- ランキング表示エリア -->
-        <div id="scoreboard">
-            <h3>ランキング</h3>
-            <div id="scorelist"></div>
-        </div>
+      <!-- ランキング表示エリア -->
+      <div id="scoreboard">
+        <h3>ランキング</h3>
+        <div id="scorelist"></div>
+      </div>
     </div>
 
-    <div id="tutorial" style="display: none;">
-        <div class="modal-content">
-            <h2>チュートリアル</h2>
-            <p>このゲームでは、蛇を操作して餌を食べ、成長させます。矢印キーで移動してください。</p>
-            <button id="startButton" class="common-button" onclick="window.startGame()">スタート</button>
-        </div>
+    <div id="tutorial" style="display: none">
+      <div class="modal-content">
+        <h2>チュートリアル</h2>
+        <p>
+          このゲームでは、蛇を操作して餌を食べ、成長させます。矢印キーで移動してください。
+        </p>
+        <button
+          id="startButton"
+          class="common-button"
+          onclick="window.startGame()"
+        >
+          スタート
+        </button>
+      </div>
     </div>
 
     <!-- JavaScriptファイルの読み込み -->
     <script type="module">
-        import { auth, getCurrentUser } from '../firebaseConfig.js';
+      import { auth, getCurrentUser } from "../firebaseConfig.js";
 
-        document.addEventListener("DOMContentLoaded", async () => {
-            try {
-                const user = await getCurrentUser();
-                if (user) {
-                    document.getElementById("tutorial").style.display = "block";
-                    document.getElementById("container").style.display = "flex";
-                } else {
-                    window.location.href = "../index.html";
-                }
-            } catch (error) {
-                console.error('ログインしていません:', error);
-                window.location.href = "../index.html";
-            }
-        });
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          const user = await getCurrentUser();
+          if (user) {
+            document.getElementById("tutorial").style.display = "block";
+            document.getElementById("container").style.display = "flex";
+          } else {
+            window.location.href = "../index.html";
+          }
+        } catch (error) {
+          console.error("ログインしていません:", error);
+          window.location.href = "../index.html";
+        }
+      });
 
-        window.startGame = function() {
-            const tutorialElement = document.getElementById("tutorial");
-            if (tutorialElement) {
-                tutorialElement.style.display = "none";
-            } else {
-                console.error("チュートリアル要素が見つかりませんでした。");
-                return;
-            }
-            console.log("ゲームが開始されました");
-        };
+      window.startGame = function () {
+        const tutorialElement = document.getElementById("tutorial");
+        if (tutorialElement) {
+          tutorialElement.style.display = "none";
+        } else {
+          console.error("チュートリアル要素が見つかりませんでした。");
+          return;
+        }
+        console.log("ゲームが開始されました");
+      };
     </script>
 
     <script type="module" src="/main.js"></script>
     <script type="module" src="script.js"></script>
-</body>
+  </body>
 </html>

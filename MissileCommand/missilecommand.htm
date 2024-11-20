@@ -1,78 +1,88 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Missile Command</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
-</head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css" />
+  </head>
 
-<header>
+  <header>
     <ul class="header">
-        <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
-        <li><a href="/Blocks/blocks.htm">Blocks</a></li>
-        <li><a href="/Cave/cave.html">Cave</a></li>
-        <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
-        <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
-        <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
-        <li><a href="/Qix/Qix.htm">Qix</a></li>
-        <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-        <li><a href="/Tetris/Tetris.htm">Tetris</a></li> <!-- 閉じタグを追加 -->
-        <li><a href="/index.html">Top</a></li>
+      <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
+      <li><a href="/Blocks/blocks.htm">Blocks</a></li>
+      <li><a href="/Cave/cave.html">Cave</a></li>
+      <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
+      <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
+      <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
+      <li><a href="/Qix/Qix.htm">Qix</a></li>
+      <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
+      <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
+      <li><a href="/index.html">Top</a></li>
     </ul>
-</header>
+  </header>
 
-<body onload="init()">
+  <body>
     <div id="header"></div>
 
     <!-- Firebase Configの読み込み -->
     <script type="module" src="../firebaseConfig.js"></script>
 
     <script type="module">
-        import { auth, getCurrentUser } from '../firebaseConfig.js';
+      import { auth, getCurrentUser } from "../firebaseConfig.js";
 
-        getCurrentUser().then(user => {
-            if (user) {
-                document.getElementById("tutorial").style.display = "block";
-                document.getElementById("canvas").style.display = "block";
-            }
-        }).catch(error => {
-            console.error('ログインしていません:', error);
-            window.location.href = "../login.html";
+      getCurrentUser()
+        .then((user) => {
+          if (user) {
+            document.getElementById("tutorial").style.display = "block";
+            document.getElementById("canvas").style.display = "block";
+            window.init(); // ページロード時に init を呼び出す
+          }
+        })
+        .catch((error) => {
+          console.error("ログインしていません:", error);
+          window.location.href = "../login.html";
         });
     </script>
 
     <!-- ゲームコンテナ -->
     <div id="container">
-        <!-- ゲームキャンバス -->
-        <canvas id="canvas" width="800" height="600"></canvas>
+      <!-- ゲームキャンバス -->
+      <canvas
+        id="canvas"
+        width="800"
+        height="600"
+        style="display: none"
+      ></canvas>
 
-        <!-- 家の画像（隠し画像として事前ロード） -->
-        <img id="strip" src="strip.png" style="display:none;" />
-        <img id="scope" src="scope.png" style="display:none;" />
-        <audio id="explode" src="bomb.mp3"></audio>
+      <!-- 家の画像（隠し画像として事前ロード） -->
+      <img id="strip" src="strip.png" style="display: none" />
+      <img id="scope" src="scope.png" style="display: none" />
+      <!-- scope.png を再追加 -->
+      <audio id="explode" src="bomb.mp3"></audio>
 
-        <!-- ランキング表示エリア -->
-        <div id="scoreboard">
-            <h3>ランキング</h3>
-            <div id="scorelist">
-                <!-- ランキングがここに表示されます -->
-            </div>
+      <!-- ランキング表示エリア -->
+      <div id="scoreboard">
+        <h3>ランキング</h3>
+        <div id="scorelist">
+          <!-- ランキングがここに表示されます -->
         </div>
+      </div>
     </div>
-    
 
     <!-- チュートリアルモーダル -->
-    <div id="tutorial" style="display: none;">
-        <div class="modal-content">
-            <h1>ゲーム説明</h1>
-            <p>マウスで照準を合わせ、クリックしてミサイルを発射します。<br>
-            エイリアンのミサイルを撃ち落として家を守りましょう！</p>
-            <button id="startButton" onclick="window.start();">スタート</button>
-        </div>
+    <div id="tutorial" style="display: none">
+      <div class="modal-content">
+        <h1>ゲーム説明</h1>
+        <p>
+          マウスで照準を合わせ、クリックしてミサイルを発射します。<br />
+          エイリアンのミサイルを撃ち落として家を守りましょう！
+        </p>
+        <button id="startButton" onclick="start();">スタート</button>
+      </div>
     </div>
 
     <script type="module" src="/demo-repository/main.js" defer></script>
     <script type="module" src="script.js" defer></script>
-</body>
+  </body>
 </html>
