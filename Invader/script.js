@@ -6,6 +6,10 @@ import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../f
 var ctx, ship, beam, aliens = [], bombs = [],
     score = 0, stage = 1, clock = 0, mainT = NaN, alienT = NaN;
 
+// タイマー関連の変数
+var remainingTime = 180; // 3分（180秒）
+var timerInterval = NaN; // タイマー用のインターバルID
+
 var backgroundImg = new Image();
 backgroundImg.src = 'cosmos-1853491_1920.jpg'; // 背景画像のパス
 
@@ -78,7 +82,7 @@ function rand(max) {
 }
 
 // 初期化関数: ゲームの準備
-window.init = function() {
+window.init = function () {
     ctx = document.getElementById('canvas').getContext('2d');
     ctx.font = "20pt Arial";
     score = 0;
@@ -93,7 +97,7 @@ window.init = function() {
 };
 
 // ゲーム開始関数
-window.start = function() {
+window.start = function () {
     document.getElementById('tutorial').style.display = 'none'; // チュートリアルを非表示
 
     ship = new Ship(); // 宇宙船の初期化
@@ -103,38 +107,38 @@ window.start = function() {
 
     // エイリアンと爆弾を初期化
     // エイリアンを個体単位でランダムに出現させる
-aliens = [];
-bombs = [];
-var numAliens = 20; // 出現させたいエイリアンの総数
-for (var i = 0; i < numAliens; i++) {
-    var x, y, newAlien;
-    var offset = (i % 2 === 0) ? 96 : 144; // スプライトの種類をランダム化
-    var attempts = 0; // 試行回数
+    aliens = [];
+    bombs = [];
+    var numAliens = 20; // 出現させたいエイリアンの総数
+    for (var i = 0; i < numAliens; i++) {
+        var x, y, newAlien;
+        var offset = (i % 2 === 0) ? 96 : 144; // スプライトの種類をランダム化
+        var attempts = 0; // 試行回数
 
-    do {
-        x = rand(540) + 30; // ランダムなX座標 (30～570)
-        y = rand(200) - 200; // ランダムなY座標 (-200～0)
-        newAlien = new Alien(x, y, rand(40) + 10, offset); // スコアは10～50
-        attempts++;
-    } while (!isPositionValid(x, y, aliens) && attempts < 100); // 重ならないように配置
+        do {
+            x = rand(540) + 30; // ランダムなX座標 (30～570)
+            y = rand(200) - 200; // ランダムなY座標 (-200～0)
+            newAlien = new Alien(x, y, rand(40) + 10, offset); // スコアは10～50
+            attempts++;
+        } while (!isPositionValid(x, y, aliens) && attempts < 100); // 重ならないように配置
 
-    if (attempts < 100) {
-        aliens.push(newAlien);
-        bombs.push(new Bomb());
-    } else {
-        console.error('Failed to find a valid position for Alien after 100 attempts.');
+        if (attempts < 100) {
+            aliens.push(newAlien);
+            bombs.push(new Bomb());
+        } else {
+            console.error('Failed to find a valid position for Alien after 100 attempts.');
+        }
     }
-}
 
-// 配置が重複しないかをチェック
-function isPositionValid(newX, newY, aliens) {
-    const margin = 20; // 他のエイリアンとの最低距離
-    return aliens.every(alien => {
-        return Math.abs(alien.x - newX) > margin && Math.abs(alien.y - newY) > margin;
-    });
-}
+    // 配置が重複しないかをチェック
+    function isPositionValid(newX, newY, aliens) {
+        const margin = 20; // 他のエイリアンとの最低距離
+        return aliens.every(alien => {
+            return Math.abs(alien.x - newX) > margin && Math.abs(alien.y - newY) > margin;
+        });
+    }
 
-    
+
     // メインループとエイリアン移動ループを開始
     if (isNaN(alienT)) {
         alienT = setTimeout(alienLoop, Alien.interval);
@@ -278,7 +282,13 @@ async function draw() {
 
     // スコアを描画
     ctx.fillStyle = 'rgb(0,255,0)';
-    ctx.fillText(('0000000' + score).slice(-7), 470, 30);
+    ctx.fillText(('0000000' + score).slice(-7), 470, 50);
+
+    // タイマーを描画
+    ctx.fillStyle = 'rgb(255,255,255)';
+    var minutes = Math.floor(remainingTime / 60);
+    var seconds = remainingTime % 60;
+    ctx.fillText(`残り時間: ${minutes}:${seconds.toString().padStart(2, '0')}`, 10, 50);
 
     if (aliens.length == 0) {
         ctx.fillText('STAGE CLEAR', 200, 150);
@@ -290,9 +300,21 @@ async function draw() {
         const title = document.title;
         const userEmail = await getUserEmail();
         await saveScoreAndEmail(title, score, userEmail);
-    }
-}
 
-// リアルタイムデータを表示
-const title = document.title;
-displayDataInHTMLRealtime(title);
+        if (aliens.length == 0) {
+            ctx.fillText('STAGE CLEAR', 200, 150);
+        }
+
+        if (isNaN(mainT)) {
+            ctx.fillText('GAME OVER', 220, 150);
+
+            const title = document.title;
+            const userEmail = await getUserEmail();
+            await saveScoreAndEmail(title, score, userEmail);
+        }
+    }
+
+    // リアルタイムデータを表示
+    const title = document.title;
+    displayDataInHTMLRealtime(title);
+}
