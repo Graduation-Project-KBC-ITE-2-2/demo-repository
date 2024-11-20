@@ -37,7 +37,7 @@ function Alien(x, y, point, offset) {
     this.point = point; // 倒した時のスコア
     this.offset = offset;
     this.speedX = (Math.random() * 10 + 1) * (Math.random() > 0.5 ? 1 : -1); // 横方向速度（1〜3, 正負ランダム）
-    this.speedY = Math.random() * 0.5 + 0.5; // 下方向速度（0.5〜1.0）
+    this.speedY = Math.random() * 10 + 10; // 下方向速度（0.5〜1.0）
     this.isEven = function () { return Alien.isEven; }
 }
 
