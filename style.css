@@ -229,7 +229,7 @@ h1 {
 
       .game-list {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* レスポンシブなグリッドレイアウト */
+        grid-template-columns: repeat(5, 1fr); /* 常に5列に設定 */
         gap: 20px;
         max-width: 1000px;
         margin: 50px auto;
