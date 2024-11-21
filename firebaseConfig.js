@@ -154,13 +154,17 @@ export const displayDataInHTMLRealtime = (collectionName) => {
 
             // スコアを降順に並べ替え
             scores.sort((a, b) => b.data.score - a.data.score);
+
+            // 上位10人だけを抽出
+            const topScores = scores.slice(0, 10);  // 最初の10人を取得
+
             let rank = 1;
             // 取得したデータを一行ずつHTMLに表示
-            scores.forEach(score => {
-                const accountName = score.data.email.slice(0, 10);
+            topScores.forEach(score => {
+                const accountName = score.data.email.slice(0, 10);  // Eメールの先頭10文字を表示
                 const scoreElement = document.createElement('p'); // 各データを表示するための <p> 要素を作成
                 scoreElement.textContent = `${rank} ,ID: ${accountName}, スコア: ${score.data.score}`; // 各データを設定
-                scoreListElement.appendChild(scoreElement); //  <p> 要素を追加
+                scoreListElement.appendChild(scoreElement); // <p> 要素を追加
                 rank++;
             });
         });
@@ -168,6 +172,7 @@ export const displayDataInHTMLRealtime = (collectionName) => {
         console.error('データの表示中にエラーが発生しました:', error);
     }
 };
+
 
 
 export function toggleModalVisibility(noneId) {
