@@ -10,6 +10,7 @@ var ctx, ship, beam, aliens = [], bombs = [],
 var remainingTime = 180; // 3分（180秒）
 var timerInterval = NaN; // タイマー用のインターバルID
 
+
 var backgroundImg = new Image();
 backgroundImg.src = 'cosmos-1853491_1920.jpg'; // 背景画像のパス
 
@@ -52,8 +53,11 @@ function Ship() {
     this.offset = 192;
     this.moveL = false; // 左移動フラグ
     this.moveR = false; // 右移動フラグ
+    this.isBlinking = false; // 点滅中フラグ
+    this.blinkEndTime = 0; // 点滅終了時間
     this.isEven = function () { return true; }
 }
+
 
 function startTimer() {
     // 既存のタイマーをクリア（再スタート対応）
@@ -76,7 +80,9 @@ function spawnAlien() {
     var x = rand(540) + 30; // ランダムなX座標 (30～570)
     var y = rand(200) - 200; // ランダムなY座標 (-200～0)
     var offset = rand(2) === 0 ? 96 : 144; // スプライトの種類をランダム化
-    var newAlien = new Alien(x, y, rand(40) + 10, offset); // スコアは10～50
+    // 50～100の10刻みでランダムな値を生成
+    var randomPoints = (Math.floor(Math.random() * 6) * 10) + 50;
+    var newAlien = new Alien(x, y, randomPoints, offset);
 
     if (isPositionValid(x, y, aliens)) {
         aliens.push(newAlien);
@@ -162,33 +168,40 @@ window.start = function () {
     remainingTime = 180; // タイマーをリセット
     startTimer()
 
-     // エイリアン出現の初期化と開始
-     aliens = []; // 既存のエイリアンをクリア
-     bombs = [];
-     startAlienSpawning(); // 定期的にエイリアンを生成
- 
-     // メインループとエイリアン移動ループを開始
-     if (isNaN(alienT)) {
-         alienT = setTimeout(alienLoop, Alien.interval);
-     }
-     if (isNaN(mainT)) {
-         mainT = setInterval(mainLoop, 50);
-     };
+    // エイリアン出現の初期化と開始
+    aliens = []; // 既存のエイリアンをクリア
+    bombs = [];
+    startAlienSpawning(); // 定期的にエイリアンを生成
 
-    // エイリアンと爆弾を初期化
-    // エイリアンを個体単位でランダムに出現させる
+    // メインループとエイリアン移動ループを開始
+    if (isNaN(alienT)) {
+        alienT = setTimeout(alienLoop, Alien.interval);
+    }
+    if (isNaN(mainT)) {
+        mainT = setInterval(mainLoop, 50);
+    };
+
+    // エイリアンを初期化
     aliens = [];
     bombs = [];
     var numAliens = 20; // 出現させたいエイリアンの総数
     for (var i = 0; i < numAliens; i++) {
         var x, y, newAlien;
-        var offset = (i % 2 === 0) ? 96 : 144; // スプライトの種類をランダム化
-        var attempts = 0; // 試行回数
+        var offset, point;
 
+        if (i % 2 === 0) { // 赤いエイリアン
+            offset = 96; // 赤いエイリアンのスプライト
+            point = 150; // 赤いエイリアンのポイント
+        } else { // 黄色いエイリアン
+            offset = 144; // 黄色いエイリアンのスプライト
+            point = 100; // 黄色いエイリアンのポイント
+        }
+
+        var attempts = 0; // 試行回数
         do {
             x = rand(540) + 30; // ランダムなX座標 (30～570)
             y = rand(200) - 200; // ランダムなY座標 (-200～0)
-            newAlien = new Alien(x, y, rand(40) + 10, offset); // スコアは10～50
+            newAlien = new Alien(x, y, point, offset);
             attempts++;
         } while (!isPositionValid(x, y, aliens) && attempts < 100); // 重ならないように配置
 
@@ -199,6 +212,7 @@ window.start = function () {
             console.error('Failed to find a valid position for Alien after 100 attempts.');
         }
     }
+
 
     // 配置が重複しないかをチェック
     function isPositionValid(newX, newY, aliens) {
@@ -277,13 +291,7 @@ function mainLoop() {
 
     scrollY += 1; // 背景スクロール
 
-    if (aliens.length == 0) { // ステージクリア条件
-        if (clock > 100) {
-            stage++;
-            start();
-        }
-        return;
-    }
+
 
     // ビーム処理
     var hit = -1;
@@ -320,10 +328,21 @@ function mainLoop() {
         }
 
         b.even = !b.even;
+
+        // 爆弾が宇宙船に当たった場合
         if (b.x - 15 < ship.x && ship.x < b.x + 15 && 530 < b.y && b.y < 550) {
-            gameOver();
+            // スコアをマイナス200
+            score = Math.max(0, score - 200);
+
+            // 点滅開始
+            ship.isBlinking = true;
+            ship.blinkEndTime = clock + 30; // 30フレーム後に終了 (約1.5秒)
+
+            // 爆弾を画面外にリセット
+            b.y = 600;
         }
     });
+
 
     // 宇宙船の移動処理
     if (ship.moveR) { ship.x = Math.min(ship.x + 5, 570); }
@@ -341,8 +360,15 @@ async function draw() {
     // エイリアンを描画
     aliens.forEach(function (a) { a.draw(ctx); });
 
-    // 宇宙船を描画
-    ship.draw(ctx);
+    // 宇宙船を描画（点滅中は一定フレームで非表示）
+    if (!ship.isBlinking || Math.floor(clock / 10) % 2 === 0) {
+        ship.draw(ctx);
+    }
+
+    // 点滅終了判定
+    if (ship.isBlinking && clock >= ship.blinkEndTime) {
+        ship.isBlinking = false; // 点滅終了
+    }
 
     // ビームを描画
     beam.draw(ctx);
@@ -362,8 +388,8 @@ async function draw() {
     var seconds = remainingTime % 60;
     ctx.fillText(`残り時間: ${minutes}:${seconds.toString().padStart(2, '0')}`, 450, 20);
 
-
     // リアルタイムデータを表示
     const title = document.title;
     displayDataInHTMLRealtime(title);
 }
+
