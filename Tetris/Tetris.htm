@@ -1,16 +1,21 @@
 ﻿﻿<!DOCTYPE html>
 <html>
+  <!-- ヘッド部分 -->
   <head>
+    <!--ページのタイトル-->
     <title>Tetris</title>
+    <!-- ページの文字コード -->
     <meta charset="utf-8" />
+    <!-- 外部CSSファイルを読み込むためのリンク  -->
     <link rel="stylesheet" type="text/css" href="styles.css" />
   </head>
 
   <body>
     <!-- ヘッダーセクション -->
     <header>
+      <!-- リストの開始 -->
       <ul class="header">
-        <!-- ナビゲーションリンク -->
+        <!-- 各ページへのリンク -->
         <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
         <li><a href="/Blocks/blocks.htm">Blocks</a></li>
         <li><a href="/Cave/cave.html">Cave</a></li>
@@ -20,13 +25,14 @@
         <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
         <li><a href="/Qix/Qix.htm">Qix</a></li>
         <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
+        <!-- トップページへのリンク -->
         <li><a href="/index.html">Top</a></li>
       </ul>
     </header>
 
-    <!-- メインコンテナ -->
+    <!-- メインコンテナ（ゲーム画面とランキング表示をまとめる） -->
     <div id="container">
-      <!-- ゲームコンテナ -->
+      <!-- ゲーム描画用のキャンバス -->
       <div id="game-container">
         <canvas id="canvas" width="630" height="600"></canvas>
       </div>
@@ -35,21 +41,23 @@
       <div id="scoreboard">
         <h3>ランキング</h3>
         <div id="scorelist">
-          <!-- ランキングがここに表示されます -->
+          <!-- ランキングデータがここに動的に表示される -->
         </div>
       </div>
     </div>
 
-    <!-- ゲーム説明のセクション -->
+    <!-- チュートリアル（ゲーム説明モーダル） -->
     <div class="modal hidden" id="tutorial">
       <div class="modal-content">
         <h2>チュートリアル</h2>
+        <!-- ゲームの説明テキスト -->
         <p>
           このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。
         </p>
         <p>
           ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。
         </p>
+        <!-- スタートボタン -->
         <button
           id="startButton"
           class="common-button"
@@ -60,7 +68,7 @@
       </div>
     </div>
 
-    <!-- ログインチェック用スクリプト -->
+    <!-- Firebaseログインチェック用スクリプト -->
     <script type="module">
       import { auth, getCurrentUser } from "../firebaseConfig.js";
 
@@ -80,17 +88,17 @@
         });
     </script>
 
-    <!-- ゲームのスクリプト -->
+    <!-- ゲームのメインスクリプト -->
     <script type="module" src="script.js"></script>
     <script>
-      // スペースキーでゲームを開始できるようにイベントリスナーを追加
+      // スペースキーでゲームを開始する機能を追加
       window.addEventListener("keydown", function (e) {
         if (e.code === "Space") {
-          // スペースキーのコードは "Space"
+          // スペースキーが押された場合
           const tutorialModal = document.getElementById("tutorial");
-          // モーダルが表示されている場合のみゲームを開始
+          // チュートリアルが表示されている場合のみゲームを開始
           if (tutorialModal && tutorialModal.style.display !== "none") {
-            window.startGame(); // 正しい関数を呼び出す
+            window.startGame();
           }
         }
       });
