@@ -1,76 +1,99 @@
-﻿﻿    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Tetris</title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css">
-    </head>
+﻿﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tetris</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
 
-   
+  <body>
+    <!-- ヘッダーセクション -->
+    <header>
+      <ul class="header">
+        <!-- ナビゲーションリンク -->
+        <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
+        <li><a href="/Blocks/blocks.htm">Blocks</a></li>
+        <li><a href="/Cave/cave.html">Cave</a></li>
+        <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
+        <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
+        <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
+        <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
+        <li><a href="/Qix/Qix.htm">Qix</a></li>
+        <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
+        <li><a href="/index.html">Top</a></li>
+      </ul>
+    </header>
 
-    <body>
-         <!-- ヘッダー（ナビゲーションバー） -->
-         <header>
-            <ul class="header">
-                <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
-                <li><a href="/Blocks/blocks.htm">Blocks</a></li>
-                <li><a href="/Cave/cave.html">Cave</a></li>
-                <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
-                <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
-                <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
-                <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-                <li><a href="/Qix/Qix.htm">Qix</a></li>
-                <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-                <li><a href="/index.html">Top</a></li>
-            </ul>
-        </header>
-        <div id="container">
-            <!-- ゲームコンテナ -->
-            <div id="game-container">
-                <canvas id="canvas" width="700" height="600"></canvas>
-            </div>
-1
-            
-        <!-- ランキング表示エリア -->
-        <div id="scoreboard">
-            <h3>ランキング</h3>
-            <div id="scorelist">
-                <!-- ランキングがここに表示されます -->
-            </div>
+    <!-- メインコンテナ -->
+    <div id="container">
+      <!-- ゲームコンテナ -->
+      <div id="game-container">
+        <canvas id="canvas" width="630" height="600"></canvas>
+      </div>
+
+      <!-- ランキングエリア -->
+      <div id="scoreboard">
+        <h3>ランキング</h3>
+        <div id="scorelist">
+          <!-- ランキングがここに表示されます -->
         </div>
+      </div>
     </div>
-            
-            <!-- ゲーム説明のセクション -->
-            <div id="tutorial" class="modal" style="display: none;">
-            <div class="modal-content">
-                <h2>チュートリアル</h2>
-                <p>このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。</p>
-                <p>ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。</p>
-                <button id="startButton" class="common-button" onclick="window.startGame()">スタート</button>
-            </div>
-        </div>
 
-        <!-- ログインチェック用スクリプト -->
-        <script type="module">
-            import { auth, getCurrentUser } from '../firebaseConfig.js';
+    <!-- ゲーム説明のセクション -->
+    <div class="modal hidden" id="tutorial">
+      <div class="modal-content">
+        <h2>チュートリアル</h2>
+        <p>
+          このゲームでは、落ちてくるブロックを左右に動かしたり回転させたりして、下まで到達する前にラインを消していきます。
+        </p>
+        <p>
+          ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。
+        </p>
+        <button
+          id="startButton"
+          class="common-button"
+          onclick="window.startGame()"
+        >
+          スタート<span style="opacity: 0.5"> space</span>
+        </button>
+      </div>
+    </div>
 
-            // 証言状態をチェック
-            getCurrentUser().then(user => {
-                if (user) {
-                    // ログインしている場合、ゲーム画面を表示
-                    document.getElementById("tutorial").style.display = "block";
-                    document.getElementById("game-container").style.display = "block";
-                }
-            }).catch(error => {
-                // ユーザーがログインしていない場合、ログインページにリダイレクト
-                console.error('ログインしていません:', error);
-                window.location.href = "../login.html"; // ログインページにリダイレクト
-            });
-        </script>
+    <!-- ログインチェック用スクリプト -->
+    <script type="module">
+      import { auth, getCurrentUser } from "../firebaseConfig.js";
 
-        <!-- ゲームのスクリプト -->
-        <script type="module" src="/main.js"></script>
-        <script type="module" src="script.js"></script>
-    </body>
-    </html>
+      // Firebase 認証状態をチェック
+      getCurrentUser()
+        .then((user) => {
+          if (user) {
+            // ログインしている場合、必要な要素を表示
+            document.getElementById("tutorial").style.display = "block";
+            document.getElementById("game-container").style.display = "block";
+          }
+        })
+        .catch((error) => {
+          // ログインしていない場合、ログインページにリダイレクト
+          console.error("ログインしていません:", error);
+          window.location.href = "../login.html"; // ログインページにリダイレクト
+        });
+    </script>
+
+    <!-- ゲームのスクリプト -->
+    <script type="module" src="script.js"></script>
+    <script>
+      // スペースキーでゲームを開始できるようにイベントリスナーを追加
+      window.addEventListener("keydown", function (e) {
+        if (e.code === "Space") {
+          // スペースキーのコードは "Space"
+          const tutorialModal = document.getElementById("tutorial");
+          // モーダルが表示されている場合のみゲームを開始
+          if (tutorialModal && tutorialModal.style.display !== "none") {
+            window.startGame(); // 正しい関数を呼び出す
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
