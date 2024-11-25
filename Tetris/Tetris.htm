@@ -58,11 +58,7 @@
           ラインが埋まると消えます。ゲームオーバーになる前にできるだけ高いスコアを目指してください。
         </p>
         <!-- スタートボタン -->
-        <button
-          id="startButton"
-          class="common-button"
-          onclick="window.startGame()"
-        >
+        <button id="startButton" class="common-button">
           スタート<span style="opacity: 0.5"> space</span>
         </button>
       </div>
@@ -88,20 +84,21 @@
         });
     </script>
 
-    <!-- ゲームのメインスクリプト -->
-    <script type="module" src="script.js"></script>
-    <script>
-      // スペースキーでゲームを開始する機能を追加
-      window.addEventListener("keydown", function (e) {
-        if (e.code === "Space") {
-          // スペースキーが押された場合
-          const tutorialModal = document.getElementById("tutorial");
-          // チュートリアルが表示されている場合のみゲームを開始
-          if (tutorialModal && tutorialModal.style.display !== "none") {
-            window.startGame();
-          }
-        }
-      });
-    </script>
+    <!-- 定数の定義 -->
+    <script type="module" src="js/constants.js"></script>
+    <!-- ユーティリティ関数 -->
+    <script type="module" src="js/utils.js"></script>
+    <!-- サウンド関連 -->
+    <script type="module" src="js/sound.js"></script>
+    <!-- 描画関連 -->
+    <script type="module" src="js/draw.js"></script>
+    <!-- ブロックの生成 -->
+    <script type="module" src="js/block.js"></script>
+    <!-- ゲームロジック関連 -->
+    <script type="module" src="js/gameLogic.js"></script>
+    <!-- イベント管理 -->
+    <script type="module" src="js/eventHandlers.js"></script>
+    <!-- メインスクリプト -->
+    <script type="module" src="js/main.js"></script>
   </body>
 </html>
