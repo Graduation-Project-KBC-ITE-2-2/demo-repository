@@ -147,7 +147,8 @@ canvas {
 ボタン関連の設定 
 スタートボタンのスタイル
 */
-#startButton {
+#startButton,
+#retryButton {
   background-color: white; /* ボタンの背景色を白に設定 */
   color: black; /* ボタンのテキストを黒に設定 */
   padding: 10px 20px; /* ボタンの内側に余白を追加 */
@@ -156,6 +157,10 @@ canvas {
   cursor: pointer; /* ホバー時にカーソルを変更 */
   font-size: 18px; /* ボタンテキストのフォントサイズを設定 */
   transition: background-color 0.3s ease; /* 背景色の変化をスムーズに */
+}
+
+.common-button {
+  margin-right: 10px; /* ボタンに適度な余白を設定 */
 }
 
 #startButton:hover {

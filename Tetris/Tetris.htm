@@ -64,6 +64,23 @@
       </div>
     </div>
 
+    <!-- リトライモーダル -->
+    <div class="modal hidden" id="retry">
+      <div class="modal-content">
+        <h2>ゲームオーバー</h2>
+        <!-- ゲームの説明テキスト -->
+
+        <!-- リトライボタン -->
+        <button id="retryButton" class="common-button">
+          リトライ<span style="opacity: 0.5"> R</span>
+        </button>
+        <!-- 戻るボタン -->
+        <a href="index.html" id="returnButton" class="common-button">
+          一覧に戻る
+        </a>
+      </div>
+    </div>
+
     <!-- Firebaseログインチェック用スクリプト -->
     <script type="module">
       import { auth, getCurrentUser } from "../firebaseConfig.js";
