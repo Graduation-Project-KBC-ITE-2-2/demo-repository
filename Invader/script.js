@@ -10,11 +10,17 @@ var ctx, ship, beam, aliens = [], bombs = [],
 var remainingTime = 180; // 3分（180秒）
 var timerInterval = NaN; // タイマー用のインターバルID
 
-
+//背景を読み込み
 var backgroundImg = new Image();
 backgroundImg.src = 'cosmos-1853491_1920.jpg'; // 背景画像のパス
 
 var scrollY = 0; // 背景のY座標を管理する変数
+
+//Pの画像を読み込み
+var playerImg = new Image();
+playerImg.src = 'P-1.png'; // 画像のパスを指定
+
+var playerImgY = -10; // P画像の初期位置（画面外からスタート）
 
 // ビームクラス: プレイヤーの発射するビーム
 function Beam() {
@@ -291,7 +297,8 @@ function mainLoop() {
 
     scrollY += 1; // 背景スクロール
 
-
+    // Pの画像を上から下に流す
+    playerImgY += 2; // Y座標を2ピクセルずつ移動
 
     // ビーム処理
     var hit = -1;
@@ -364,6 +371,10 @@ async function draw() {
     if (!ship.isBlinking || Math.floor(clock / 10) % 2 === 0) {
         ship.draw(ctx);
     }
+
+    // `P`の画像を描画.サイズ調整
+    ctx.drawImage(playerImg, 270, playerImgY, 30, 30); // 幅と高さを30に変更
+
 
     // 点滅終了判定
     if (ship.isBlinking && clock >= ship.blinkEndTime) {
