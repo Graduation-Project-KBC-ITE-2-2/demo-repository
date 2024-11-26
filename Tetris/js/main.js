@@ -1,22 +1,32 @@
-// main.js
+// main.js ゲームのエントリーポイント（プログラム全体のスタート地点）として機能
 
-// 必要なモジュールや関数をインポート
+// 必要な部品（モジュール）を集める（インポート）
 import { initGame } from "./gameLogic.js";
 import { setupEventHandlers } from "./eventHandlers.js";
 import { initCanvas } from "./draw.js";
 import { displayDataInHTMLRealtime } from "../../firebaseConfig.js";
 
-// グローバルなゲーム状態を保持する変数を定義し、エクスポート
+// ゲームの状態を準備する（ゲーム状態を保持する変数を定義）
+
+// ゲームフィールドの状態を保持する配列。各セルにブロックの有無や種類を示す値が格納されます。
 export let field = [];
+//現在落下中のブロックを保持するオブジェクト。value プロパティにブロックの情報が格納されます。
 export let block = { value: null };
+//次に出現するブロックを保持するオブジェクト。次のブロックのプレビュー表示などに使用します。
 export let nextBlock = { value: null };
+//プレイヤーのキー入力イベントを保持する配列。キーの押下情報が格納され、ゲームロジックで処理されます。
 export let keyevents = [];
+//ゲーム内の時間やタイミングを管理するためのカウンターオブジェクト。ゲームの進行やスピード調整に使用します。
 export let count = { value: 0 };
+//ブロックの落下速度を調整するためのオブジェクト。value の値を変化させることでゲームの難易度を調整します。
+//この値は初期値であり難易度を変更したい場合はGameLogic.jsの方を変更して
 export let interval = { value: 40 };
+//プレイヤーの現在のスコアを保持するオブジェクト。ラインを消すごとに加算されます。
 export let score = { value: 0 };
+//ゲームのメインループを管理するためのタイマーオブジェクト。setInterval や clearInterval で使用します。
 export let timer = { value: null };
 
-// ゲームのタイトルを取得
+// ゲームのタイトルを取得（ランキングに使用？）
 const title = document.title;
 
 // ゲームの開始関数を定義
@@ -27,6 +37,13 @@ window.startGame = function () {
     tutorial.style.display = "none";
   } else {
     console.error("チュートリアル要素が見つかりませんでした。");
+  }
+
+  const retry = document.getElementById("retry");
+  if (tutorial) {
+    retry.style.display = "none";
+  } else {
+    console.error("リトライ要素が見つかりませんでした。");
   }
 
   // ゲームコンテナを表示する（必要に応じて）
@@ -59,6 +76,13 @@ window.addEventListener("load", () => {
   } else {
     console.error("スタートボタンが見つかりませんでした。");
   }
+  // リトライボタンのクリックイベントリスナーを設定
+  const retryButton = document.getElementById("retryButton");
+  if (retryButton) {
+    retryButton.addEventListener("click", window.startGame);
+  } else {
+    console.error("リトライボタンが見つかりませんでした。");
+  }
 
   // スペースキーでゲームを開始する機能を追加
   window.addEventListener("keydown", function (e) {
@@ -66,6 +90,16 @@ window.addEventListener("load", () => {
       const tutorialModal = document.getElementById("tutorial");
       if (tutorialModal && tutorialModal.style.display !== "none") {
         window.startGame();
+      }
+    }
+  });
+
+  // リトライモーダルでの「R」キーによるリトライ機能を追加
+  window.addEventListener("keydown", function (e) {
+    if (e.code === "KeyR") {
+      const retryModal = document.getElementById("retry");
+      if (retryModal && retryModal.style.display !== "none") {
+        window.retryGame();
       }
     }
   });

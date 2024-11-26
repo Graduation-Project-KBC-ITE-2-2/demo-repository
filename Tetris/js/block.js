@@ -55,7 +55,12 @@ export function Block() {
 
       switch (code) {
         case "Space":
+          // 時計回りに回転
           nd = (nd + 1) % 4;
+          break;
+        case "KeyZ":
+          // 反時計回りに回転
+          nd = (nd - 1 + 4) % 4; // 負の値を避けるために4を足しています
           break;
         case "ArrowLeft":
           dx = -1;
