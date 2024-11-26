@@ -13,7 +13,7 @@ let bgImage;
 export function initCanvas() {
   const canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
-  ctx.font = "20pt Arial";
+  ctx.font = '18px Consolas, "Courier New", monospace'; //FONT指定
 
   // // 背景画像をロード
   // bgImage = new Image();
@@ -131,18 +131,18 @@ export function draw(gameState) {
     });
   }
 
-  // 次に落ちてくるブロックを表示
+  // 各種情報（ステータス）の描画
+  ctx.fillStyle = "rgb(0,255,0)"; //FONTカラー指定
+  //ctx.strokeStyle = "white"; // 枠線の色を変更
+  //ctx.lineWidth = 1; // 枠線の太さ
+  //ctx.strokeRect(370, 45, 120, 120); // x, y, 幅, 高さ(外枠)
+
+  // 画面にNEXT表示
   ctx.fillText("NEXT", 450, 40);
 
-  // 各種情報の描画
-  ctx.fillStyle = "rgb(0,255,0)";
+  // 画面にSCORE表示
   ctx.fillText("SCORE", 410, 410);
   ctx.fillText(("00000" + score).slice(-5), 510, 440);
-
-  // NEXT の外枠を描画
-  ctx.strokeStyle = "white"; // 枠線の色を変更
-  ctx.lineWidth = 1; // 枠線の太さ
-  //ctx.strokeRect(370, 45, 120, 120); // x, y, 幅, 高さ
 
   // レベル表示
   ctx.fillText("LEVEL", 410, 470);
@@ -154,13 +154,10 @@ export function draw(gameState) {
     ctx.fillText(("0" + level).slice(-3), 500, 490);
   }
 
-  // SCORE の外枠を描画
-  ctx.strokeStyle = "white"; // 枠線の色
-  ctx.lineWidth = 1; // 枠線の太さ
-  //ctx.strokeRect(495, 45, 130, 30); // x, y, 幅, 高さ
-
-  // LEVEL の外枠を描画
-  //ctx.strokeRect(500, 85, 130, 30); // x, y, 幅, 高さ
+  // 難易度表示
+  ctx.fillText("DIFFICULTY", 410, 530);
+  // ノーマル表示
+  ctx.fillText("NOMAL", 490, 560);
 
   // ゲームオーバー時のテキスト表示
   if (!timer) {
