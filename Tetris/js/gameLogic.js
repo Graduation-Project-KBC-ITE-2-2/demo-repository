@@ -6,13 +6,16 @@
 import {
   field,
   block,
-  nextBlock,
+  nextBlocks,
   keyevents,
   count,
   interval,
   score,
+  level,
   timer,
 } from "./main.js";
+// 最大レベルを保持する変数を追加
+export let levelMax = { value: null };
 //block.js ファイルから Block クラスをインポート
 import { Block } from "./block.js";
 //draw.js ファイルから draw 関数をインポート
@@ -40,12 +43,17 @@ export function initGame() {
   // ゲーム状態の初期化
   count.value = 0; //ゲーム内のタイマーやフレームカウンターをリセットします
   score.value = 0; //プレイヤーのスコアを 0 にリセットします
-  interval.value = 40; //ブロックの落下間隔を初期値の 40 に設定します。値が小さいほどブロックの落下速度が速くなります
+  level.value = 1; //プレイヤーのレベルを 1 にリセットします
   keyevents.length = 0; //キー入力イベントを保持する配列をクリアします。前回の入力が残らないようにします。
 
+  levelMax.value = null; // 最大レベルを初期化
+  interval.value = 40; //ブロックの落下間隔を初期値の 40 に設定します。値が小さいほどブロックの落下速度が速くなります
+
   // ブロックの初期化
-  nextBlock.value = null; //次に出現するブロックを初期化します。null に設定することで、最初のブロック生成時に新しいブロックが作成
-  goNextBlock(); //次のブロックを現在のブロックとしてセットし、新しい次のブロックを生成
+  nextBlocks.value = []; //次に出現するブロックを初期化します。null に設定することで、最初のブロック生成時に新しいブロックが作成
+  goNextBlocks(); // 2つのブロックを生成
+
+  consumeBlock(); // 現在のブロックを設定
 
   // メインループの開始
   if (timer.value) {
@@ -56,15 +64,31 @@ export function initGame() {
   // 10ミリだと100FPS 16で60FPS(正確には16.67ms)
   timer.value = setInterval(mainLoop, 16);
 }
+// ブロック消費時の処理
+export function consumeBlock() {
+  if (!nextBlocks.value || !Array.isArray(nextBlocks.value)) {
+    console.error(
+      "consumeBlock: nextBlocks.value is not an array:",
+      nextBlocks.value
+    );
+    nextBlocks.value = [];
+  }
+
+  block.value = nextBlocks.value.shift(); // キューの先頭ブロックを現在のブロックとして設定
+  goNextBlocks(); // キューに新しいブロックを追加
+}
 
 // メインループ関数
 // メインループは、ゲームが動いている間ずっと繰り返し実行される関数で、ゲームの進行や画面の更新を管理します
 export async function mainLoop() {
   count.value++; // ゲーム内の時間を進めています
 
+  // レベルの更新
+  level.value = Math.floor(count.value / 3600) + 1;
+
   // 一定の時間が経過するごとに、ゲームのスピードを上げています
   //カウントが600で割り切れるとき処理を行う（1分ごとに）
-  if (count.value % 600 === 0) {
+  if (count.value % 3600 === 0) {
     //ブロックの落下速度を1ずつ速くしますが、最も速くても「1(1000FPS)」になるようにしています
     interval.value = Math.max(1, interval.value - 1);
   }
@@ -89,8 +113,9 @@ export async function mainLoop() {
   draw({
     field: field, //ブロックがどこにあるか、フィールド全体の状態。
     block: block.value, //現在落ちているブロックの情報。
-    nextBlock: nextBlock.value, //次に出てくるブロックの情報。
+    nextBlocks: nextBlocks.value, //次に出てくるブロックの情報。
     score: score.value, //現在のスコア。
+    level: level.value, // levelを追加
     timer: timer.value, //ゲームのタイマー情報。
   });
 }
@@ -110,10 +135,11 @@ export function isGameOver() {
 }
 
 // 次のブロックを生成する関数
-export function goNextBlock() {
-  //  次に出てくる予定のブロックが存在すればそれを使います。存在しなければ、新しいブロックを作成
-  block.value = nextBlock.value || new Block();
-  nextBlock.value = new Block(); //新しいブロックを作成し,次に出てくるブロックとして保存します。
+export function goNextBlocks() {
+  while (nextBlocks.value.length < 2) {
+    // 2つのブロックを保持
+    nextBlocks.value.push(new Block());
+  }
 }
 
 // ブロックが衝突するか判定する関数

@@ -3,7 +3,7 @@
 // 必要なモジュールや定数をインポート
 import { blocks } from "./constants.js";
 import { rand } from "./utils.js";
-import { isHit, eraseLine, goNextBlock } from "./gameLogic.js";
+import { isHit, eraseLine, consumeBlock } from "./gameLogic.js";
 import { drawBlock } from "./draw.js";
 import { dropSound } from "./sound.js";
 import { field, keyevents, count, interval, score } from "./main.js";
@@ -35,7 +35,7 @@ export function Block() {
       }
 
       keyevents.length = 0; // キーイベントをリセット
-      goNextBlock();
+      consumeBlock();
       return; // これ以上の処理をせずに終了
     }
 
