@@ -399,6 +399,15 @@ async function draw() {
     var seconds = remainingTime % 60;
     ctx.fillText(`残り時間: ${minutes}:${seconds.toString().padStart(2, '0')}`, 450, 20);
 
+    if (isNaN(mainT)) {
+        ctx.fillText('あなたのスコア：', score, 220, 150);
+    
+        const title = document.title;
+        const userEmail = await getUserEmail();
+        await saveScoreAndEmail(title, score, userEmail);
+    }
+    
+
     // リアルタイムデータを表示
     const title = document.title;
     displayDataInHTMLRealtime(title);
