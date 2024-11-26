@@ -81,28 +81,32 @@ export function draw(gameState) {
         var w = Math.sqrt(data.length);
         var x = i % w;
         var y = Math.floor(i / w);
-        drawBlock(400 + x * 25, 300 + y * 25, v);
+        drawBlock(390 + x * 25, 60 + y * 25, v);
       }
     });
   }
 
   // 各種情報の描画
   ctx.fillStyle = "rgb(0,255,0)";
-  ctx.fillText("YOUR SCORE", 400, 110);
-  ctx.fillText(("0000000" + score).slice(-7), 440, 150);
+  ctx.fillText("SCORE", 500, 40);
+  ctx.fillText("NEXT", 390, 40);
+  ctx.fillText(("0000000" + score).slice(-7), 500, 70);
 
   // 外枠のスタイル設定
   ctx.strokeStyle = "white"; // 枠線の色
   ctx.lineWidth = 1; // 枠線の太さ
 
   // SCORE の外枠を描画
-  ctx.strokeRect(390, 125, 200, 30); // x, y, 幅, 高さ
+  ctx.strokeRect(495, 45, 130, 30); // x, y, 幅, 高さ
 
   // NEXT の外枠を描画
-  ctx.strokeRect(380, 290, 120, 120); // x, y, 幅, 高さ
+  ctx.strokeRect(370, 45, 120, 120); // x, y, 幅, 高さ
+
+  // NEXT2 の外枠を描画
+  ctx.strokeRect(370, 180, 120, 120); // x, y, 幅, 高さ
 
   // ゲームオーバー時のテキスト表示
   if (!timer) {
-    ctx.fillText("GAME OVER", 410, 70);
+    ctx.fillText("GAME OVER", 290, 270);
   }
 }
