@@ -2,11 +2,17 @@
 
 // 必要なモジュールや定数をインポート
 import { blocks } from "./constants.js";
-import { rand } from "./utils.js";
 import { isHit, eraseLine, consumeBlock } from "./gameLogic.js";
 import { drawBlock } from "./draw.js";
-import { dropSound } from "./sound.js";
 import { field, keyevents, count, interval, score } from "./main.js";
+
+// サウンドオブジェクトの作成
+export const dropSound = new Audio("block_touch_sound.wav");
+
+// ランダムな整数を生成する関数
+export function rand(r) {
+  return Math.floor(Math.random() * r);
+}
 
 // ブロックのクラス定義
 export function Block() {
