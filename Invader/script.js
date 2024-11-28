@@ -22,6 +22,12 @@ playerImg.src = 'P-1.png'; // 画像のパスを指定
 
 var playerImgY = -10; // P画像の初期位置（画面外からスタート）
 
+var playerImgActive = true; // 「P」がアクティブかどうかのフラグ
+
+var scoreMultiplierActive = false; // スコア倍増のフラグ
+var scoreMultiplierEndTime = 0;   // スコア倍増終了時間
+
+
 // ビームクラス: プレイヤーの発射するビーム
 function Beam() {
     this.x = 0;
@@ -63,7 +69,6 @@ function Ship() {
     this.blinkEndTime = 0; // 点滅終了時間
     this.isEven = function () { return true; }
 }
-
 
 function startTimer() {
     // 既存のタイマーをクリア（再スタート対応）
@@ -118,7 +123,6 @@ function startAlienSpawning() {
         }
     }, 2000); // 2秒間隔
 }
-
 
 // スプライトの描画に関するオブジェクト
 var bitmap = {
@@ -183,6 +187,7 @@ window.start = function () {
     if (isNaN(alienT)) {
         alienT = setTimeout(alienLoop, Alien.interval);
     }
+
     if (isNaN(mainT)) {
         mainT = setInterval(mainLoop, 50);
     };
@@ -204,6 +209,7 @@ window.start = function () {
         }
 
         var attempts = 0; // 試行回数
+
         do {
             x = rand(540) + 30; // ランダムなX座標 (30～570)
             y = rand(200) - 200; // ランダムなY座標 (-200～0)
@@ -219,7 +225,6 @@ window.start = function () {
         }
     }
 
-
     // 配置が重複しないかをチェック
     function isPositionValid(newX, newY, aliens) {
         const margin = 20; // 他のエイリアンとの最低距離
@@ -228,14 +233,17 @@ window.start = function () {
         });
     }
 
-
     // メインループとエイリアン移動ループを開始
     if (isNaN(alienT)) {
         alienT = setTimeout(alienLoop, Alien.interval);
     }
+
     if (isNaN(mainT)) {
         mainT = setInterval(mainLoop, 50);
     }
+
+    playerImgY = -10; // 「P」の初期位置をリセット
+    playerImgActive = true; // 「P」を再びアクティブにする
 };
 
 // キー押下時の処理
@@ -247,7 +255,9 @@ function keyDown(evt) {
             beam.x = ship.x;
         }
     }
+
     if (evt.keyCode == 37) ship.moveL = true; // 左移動
+
     if (evt.keyCode == 39) ship.moveR = true; // 右移動
 }
 
@@ -283,7 +293,6 @@ function alienLoop() {
     setTimeout(alienLoop, Alien.interval);
 }
 
-
 // ゲームオーバー処理
 function gameOver() {
     clearInterval(mainT); mainT = NaN;
@@ -300,7 +309,14 @@ function mainLoop() {
     // Pの画像を上から下に流す
     playerImgY += 2; // Y座標を2ピクセルずつ移動
 
-    // ビーム処理
+    if (playerImgActive &&
+        ship.x < 300 && ship.x + 30 > 270 &&  // 横方向の範囲判定
+        ship.y < playerImgY + 30 && ship.y + 30 > playerImgY) {  // 縦方向の範囲判定
+        playerImgActive = false;  // Pを非アクティブにする
+        scoreMultiplierActive = true;  // スコア倍増フラグを有効にする
+        scoreMultiplierEndTime = clock + 200;  // 10秒後に効果終了 200フレーム
+    }
+
     var hit = -1;
     if (beam.y > -30) {
         beam.y -= 15;
@@ -308,19 +324,28 @@ function mainLoop() {
         aliens.forEach(function (e, i) {
             if (e.x - 15 < beam.x && beam.x < e.x + 15 &&
                 e.y - 10 < beam.y && beam.y < e.y + 20) {
-                hit = i; beam.y = -100; score += e.point; // スコア加算
-                return;
+                hit = i;
+                beam.y = -100;  // ビームがエイリアンに当たったら非表示
+
+                // スコア倍増が有効なら、倍増したスコアを加算
+                if (scoreMultiplierActive) {
+                    score += e.point * 2;  // ポイントを2倍
+                } else {
+                    score += e.point;  // 通常ポイント
+                }
+                return;  // 一度当たったエイリアンは処理しない
             }
         });
     }
-    if (hit >= 0) {
-        aliens.splice(hit, 1); // ヒットしたエイリアンを削除
 
-        if (aliens.length == 0) { // ステージクリア
-            clock = 0;
-            draw();
-            return;
-        }
+    // ヒットしたエイリアンを削除
+    if (hit >= 0) {
+        aliens.splice(hit, 1); 
+    }
+
+    // スコア倍増効果の終了チェック
+    if (scoreMultiplierActive && clock >= scoreMultiplierEndTime) {
+        scoreMultiplierActive = false;  // スコア倍増フラグを無効にする
     }
 
     // 爆弾処理
@@ -350,7 +375,6 @@ function mainLoop() {
         }
     });
 
-
     // 宇宙船の移動処理
     if (ship.moveR) { ship.x = Math.min(ship.x + 5, 570); }
     if (ship.moveL) { ship.x = Math.max(ship.x - 5, 0); }
@@ -373,8 +397,9 @@ async function draw() {
     }
 
     // `P`の画像を描画.サイズ調整
-    ctx.drawImage(playerImg, 270, playerImgY, 30, 30); // 幅と高さを30に変更
-
+    if (playerImgActive) {
+        ctx.drawImage(playerImg, 270, playerImgY, 30, 30); // 幅と高さを30に変更
+    }
 
     // 点滅終了判定
     if (ship.isBlinking && clock >= ship.blinkEndTime) {
@@ -399,17 +424,16 @@ async function draw() {
     var seconds = remainingTime % 60;
     ctx.fillText(`残り時間: ${minutes}:${seconds.toString().padStart(2, '0')}`, 450, 20);
 
+    //ゲーム終了時の表示とスコアを保存
     if (isNaN(mainT)) {
         ctx.fillText('GAME OVER', 220, 150);
-    
+
         const title = document.title;
         const userEmail = await getUserEmail();
         await saveScoreAndEmail(title, score, userEmail);
     }
-    
 
     // リアルタイムデータを表示
     const title = document.title;
     displayDataInHTMLRealtime(title);
 }
-
