@@ -6,7 +6,7 @@ import { setupCounter } from './counter.js'
 document.querySelector('#header').innerHTML = `
 
       <ul class="header">
-          <li class="asteroid"><a href="Asteroid/asteroid.htm">Asteroid</a></li>
+          <li class="asteroid"><a href="demo-repository/Asteroid/asteroid.htm">Asteroid</a></li>
           <li class="Blocks"><a href="Blocks/blocks.htm">Blocks</a></li>
           <li class="MineSweeper"><a href="MineSweeper/minesweeper.html">MineSweeper</a></li>
           <li class="Cave"><a href="Cave/cave.html">Cave</a></li>
