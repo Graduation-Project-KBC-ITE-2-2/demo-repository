@@ -224,7 +224,10 @@ export const displayDataInHTMLRealtime = (collectionName) => {
             let rank = 1;
             // 取得したデータを一行ずつHTMLに表示
             topScores.forEach(score => {
-                const accountName = score.data.nickname.slice(0, 10);  // Eメールの先頭10文字を表示
+                let accountName = score.data.nickname.slice(0, 10);  // Eメールの先頭10文字を表示
+                if(accountName == "NoNickname"){
+                    accountName = score.data.email.slice(0, 10);
+                }
                 const scoreElement = document.createElement('p'); // 各データを表示するための <p> 要素を作成
                 scoreElement.textContent = `${rank} ,ID: ${accountName}, スコア: ${score.data.score}`; // 各データを設定
                 scoreListElement.appendChild(scoreElement); // <p> 要素を追加
