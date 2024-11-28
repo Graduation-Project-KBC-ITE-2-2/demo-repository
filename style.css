@@ -293,3 +293,25 @@ h1 {
       .auth-button:hover {
           background-color: #555;
       }
+
+      /* アニメーション全体の設定 */
+      @keyframes slideIn {
+        0% {
+          transform: translateX(-100%); /* 画面の外から左からスタート */
+          opacity: 0; /* 最初は透明 */
+        }
+        100% {
+          transform: translateX(0); /* 元の位置に到達 */
+          opacity: 1; /* 完全に表示 */
+        }
+      }
+
+      /* h1タグにアニメーションを適用 */
+      .slide-in {
+        display: inline-block;
+        font-size: 3rem; /* フォントサイズ */
+        animation: slideIn 1.5s ease-out; /* アニメーションの設定 */
+        color: #333; /* 文字色 */
+        font-weight: bold;
+        overflow: hidden;
+      }

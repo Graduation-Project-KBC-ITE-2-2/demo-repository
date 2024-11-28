@@ -1,4 +1,4 @@
-import { auth, toggleModalVisibility, guestLogin, NicknameSave,  nickname } from "./firebaseConfig.js"; // Firebase設定をインポート
+import { auth, toggleModalVisibility, guestLogin, NicknameSave,  nickname, loginUser } from "./firebaseConfig.js"; // Firebase設定をインポート
 
 const loginButton = document.getElementById("loginButton");
 const signupButton = document.getElementById("signup-button");
@@ -44,7 +44,7 @@ window.onload = function () {
   });
   auth.onAuthStateChanged((user) => {
     if (user) {
-      document.getElementById("modal").style.display = "none";
+      // document.getElementById("modal").style.display = "none";
 
       // ログアウトボタンに変更
       loginButton.innerText = "ログアウト";
@@ -60,18 +60,14 @@ window.onload = function () {
           });
       };
       signupButton.style.display = "none";
+    }else{
+      createModal();
+
     }
   });
-  guestLoginButton.onclick = async () => {
-    console.log("ゲストログインボタンがクリックされました"); // デバッグ用
-    try {
-      const user = await guestLogin();
-      console.log("ゲストとしてログインしました:", user);
-      location.reload();
-    } catch (error) {
-      console.error("ゲストログイン中にエラーが発生しました:", error);
-    }
-  };
+
 
 
 };
+
+
