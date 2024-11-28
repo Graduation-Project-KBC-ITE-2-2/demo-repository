@@ -13,7 +13,7 @@ export let field = [];
 //現在落下中のブロックを保持するオブジェクト。value プロパティにブロックの情報が格納されます。
 export let block = { value: null };
 //次に出現するブロックを保持するオブジェクト。次のブロックのプレビュー表示などに使用します。
-export let nextBlock = { value: null };
+export let nextBlocks = { value: [] }; // 2つの次のブロックを保持する配列
 //プレイヤーのキー入力イベントを保持する配列。キーの押下情報が格納され、ゲームロジックで処理されます。
 export let keyevents = [];
 //ゲーム内の時間やタイミングを管理するためのカウンターオブジェクト。ゲームの進行やスピード調整に使用します。
@@ -23,6 +23,8 @@ export let count = { value: 0 };
 export let interval = { value: 40 };
 //プレイヤーの現在のスコアを保持するオブジェクト。ラインを消すごとに加算されます。
 export let score = { value: 0 };
+export let level = { value: 1 };
+
 //ゲームのメインループを管理するためのタイマーオブジェクト。setInterval や clearInterval で使用します。
 export let timer = { value: null };
 

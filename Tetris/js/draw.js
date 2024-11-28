@@ -6,19 +6,44 @@ import { colors } from "./constants.js";
 // 描画コンテキストを保持する変数
 export let ctx;
 
+// 背景画像を保持する変数
+let bgImage;
+
 // `ctx` を初期化する関数
 export function initCanvas() {
   const canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
-  ctx.font = "20pt Arial";
+  ctx.font = '18px Consolas, "Courier New", monospace'; //FONT指定
+
+  // // 背景画像をロード
+  // bgImage = new Image();
+  // bgImage.src = "./images/background.png"; // 画像のパスを指定
+
+  // // 画像がロードされたら初期描画を行う
+  // bgImage.onload = () => {
+  //   drawInitial(); // 初期描画関数を呼び出す
+  // };
+}
+
+// 初期描画関数（オプション）
+function drawInitial() {
+  draw({
+    field: [], // 初期フィールドデータ
+    block: null,
+    nextBlocks: [],
+    score: 0,
+    level: 1,
+    levelMax: null,
+    timer: null,
+  });
 }
 
 // ブロックを描画する関数
 export function drawBlock(x, y, colorIndex) {
-  var baseColor = colors[colorIndex];
+  const baseColor = colors[colorIndex];
 
   // グラデーションの作成
-  var grd = ctx.createLinearGradient(x, y, x + 24, y + 24);
+  const grd = ctx.createLinearGradient(x, y, x + 24, y + 24);
   grd.addColorStop(0, lightenColor(baseColor, 0.3)); // 明るい色
   grd.addColorStop(1, baseColor); // 基本色
 
@@ -32,7 +57,7 @@ export function drawBlock(x, y, colorIndex) {
 
 // 色を明るくする関数
 export function lightenColor(color, percent) {
-  var num = parseInt(color.replace("#", ""), 16),
+  let num = parseInt(color.replace("#", ""), 16),
     amt = Math.round(2.55 * percent * 100),
     R = (num >> 16) + amt,
     G = ((num >> 8) & 0x00ff) + amt,
@@ -53,16 +78,29 @@ export function lightenColor(color, percent) {
 
 // フィールド全体を描画する関数
 export function draw(gameState) {
-  const { field, block, nextBlock, score, timer } = gameState;
+  const { field, block, nextBlocks, score, level, levelMax, timer } = gameState;
 
-  // 背景の塗りつぶし
-  ctx.fillStyle = "rgb(0,0,0)";
-  ctx.fillRect(0, 0, 700, 600);
+  // キャンバスサイズを取得
+  const canvasWidth = ctx.canvas.width;
+  const canvasHeight = ctx.canvas.height;
+
+  // 背景の描画（例: 単色背景）
+  ctx.fillStyle = "rgb(0,0,0)"; // 好きな色に変更可能
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  // // 背景の描画
+  // if (bgImage && bgImage.complete) {
+  //   ctx.drawImage(bgImage, 0, 0, canvasWidth, canvasHeight);
+  // } else {
+  //   // 画像がロードされていない場合のフォールバック
+  //   ctx.fillStyle = "rgb(0,0,0)";
+  //   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  // }
 
   // フィールドの描画
-  for (var y = 0; y < field.length; y++) {
-    for (var x = 0; x < field[y].length; x++) {
-      var v = field[y][x];
+  for (let y = 0; y < field.length; y++) {
+    for (let x = 0; x < field[y].length; x++) {
+      const v = field[y][x];
       if (v != 0) {
         drawBlock(50 + x * 25, 25 + y * 25, v);
       }
@@ -75,34 +113,54 @@ export function draw(gameState) {
   }
 
   // 次に出現するブロックの描画
-  if (nextBlock) {
-    nextBlock.data.forEach(function (v, i, data) {
-      if (v != 0) {
-        var w = Math.sqrt(data.length);
-        var x = i % w;
-        var y = Math.floor(i / w);
-        drawBlock(400 + x * 25, 300 + y * 25, v);
+  if (nextBlocks && Array.isArray(nextBlocks)) {
+    nextBlocks.forEach(function (nextBlock, blockIndex) {
+      if (nextBlock) {
+        nextBlock.data.forEach(function (v, i, data) {
+          if (v != 0) {
+            const w = Math.sqrt(data.length);
+            const x = i % w;
+            const y = Math.floor(i / w);
+            // 各次のブロックを異なる位置に描画
+            const posX = 440 + x * 25;
+            const posY = 70 + y * 25 + blockIndex * 150; // インデックスに応じてY位置をずらす
+            drawBlock(posX, posY, v);
+          }
+        });
       }
     });
   }
 
-  // 各種情報の描画
-  ctx.fillStyle = "rgb(0,255,0)";
-  ctx.fillText("YOUR SCORE", 400, 110);
-  ctx.fillText(("0000000" + score).slice(-7), 440, 150);
+  // 各種情報（ステータス）の描画
+  ctx.fillStyle = "rgb(0,255,0)"; //FONTカラー指定
+  //ctx.strokeStyle = "white"; // 枠線の色を変更
+  //ctx.lineWidth = 1; // 枠線の太さ
+  //ctx.strokeRect(370, 45, 120, 120); // x, y, 幅, 高さ(外枠)
 
-  // 外枠のスタイル設定
-  ctx.strokeStyle = "white"; // 枠線の色
-  ctx.lineWidth = 1; // 枠線の太さ
+  // 画面にNEXT表示
+  ctx.fillText("NEXT", 450, 40);
 
-  // SCORE の外枠を描画
-  ctx.strokeRect(390, 125, 200, 30); // x, y, 幅, 高さ
+  // 画面にSCORE表示
+  ctx.fillText("SCORE", 410, 410);
+  ctx.fillText(("00000" + score).slice(-5), 510, 440);
 
-  // NEXT の外枠を描画
-  ctx.strokeRect(380, 290, 120, 120); // x, y, 幅, 高さ
+  // レベル表示
+  ctx.fillText("LEVEL", 410, 470);
+  if (levelMax && level >= levelMax) {
+    // レベルが最大レベルに達した場合
+    ctx.fillText("MAX", 500, 490);
+  } else {
+    // 通常のレベル表示
+    ctx.fillText(("0" + level).slice(-3), 500, 490);
+  }
+
+  // 難易度表示
+  ctx.fillText("DIFFICULTY", 410, 530);
+  // ノーマル表示
+  ctx.fillText("NOMAL", 490, 560);
 
   // ゲームオーバー時のテキスト表示
   if (!timer) {
-    ctx.fillText("GAME OVER", 410, 70);
+    ctx.fillText("GAME OVER", 290, 270);
   }
 }

@@ -1,4 +1,4 @@
-import { auth, toggleModalVisibility, guestLogin } from "./firebaseConfig.js"; // Firebase設定をインポート
+import { auth, toggleModalVisibility, guestLogin, NicknameSave,  nickname } from "./firebaseConfig.js"; // Firebase設定をインポート
 
 const loginButton = document.getElementById("loginButton");
 const signupButton = document.getElementById("signup-button");
@@ -6,20 +6,44 @@ const guestLoginButton = document.getElementById("guestLoginButton"); // ゲス�
 
 window.onload = function () {
   const params = new URLSearchParams(window.location.search);
+  let nicknameValue ="";
   if (params.get("login") === "success") {
     // alert('ログイン成功');
   }
-
-  auth.onAuthStateChanged((user) => {
+  auth.onAuthStateChanged(async(user) => {
     const accountName = document.getElementById("account-name");
-    if (user) {
+    if(user){
       if (user.isAnonymous) {
         accountName.innerText = "ゲスト"; // ゲストユーザーの場合は「ゲスト」と表示
       } else {
-        // ログインしている場合、アカウント名を表示
-        accountName.innerText = user.email.charAt(0);
+        nicknameValue = await nickname(user.email);
+        console.log(nicknameValue);
+        accountName.innerText = nicknameValue.charAt(0);
+        document.getElementById('account-name').addEventListener('click', function () {
+          const dropdownMenu = document.getElementById('dropdown-menu');
+          if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
+            dropdownMenu.style.display = 'block';
+          } else {
+            dropdownMenu.style.display = 'none';
+          }
+        });
+        accountName.style.display = "flex";
+        // 保存ボタンをクリックしたときにニックネームを保存して表示する
+        document.getElementById('save-nickname').addEventListener('click', function () {
+          const nickname = document.getElementById('nickname').value;
+          if (nickname) {
+            NicknameSave(user.email, nickname);
+            document.getElementById('dropdown-menu').style.display = 'none'; // メニューを閉じる
+          }
+        });
       }
-      accountName.style.display = "flex";
+    }else{
+
+    }
+  
+  });
+  auth.onAuthStateChanged((user) => {
+    if (user) {
       document.getElementById("modal").style.display = "none";
 
       // ログアウトボタンに変更
@@ -48,4 +72,6 @@ window.onload = function () {
       console.error("ゲストログイン中にエラーが発生しました:", error);
     }
   };
+
+
 };

@@ -101,6 +101,7 @@ export async function saveScoreAndEmail(collectionName, score, email) {
         // 既存のEメールを持つドキュメントを取得
         const q = query(collection(db, collectionName), where("email", "==", email));
         const querySnapshot = await getDocs(q);
+        const Younickname = await nickname(email)
 
         if (!querySnapshot.empty) {
             // Eメールが既に存在する場合
@@ -125,6 +126,7 @@ export async function saveScoreAndEmail(collectionName, score, email) {
             await addDoc(collection(db, collectionName), {
                 score: score,
                 email: email,
+                nickname: Younickname,
                 timestamp: new Date() // 保存時刻を追加する場合
             });
             console.log("新しいスコアが保存されました");
@@ -133,6 +135,67 @@ export async function saveScoreAndEmail(collectionName, score, email) {
         console.error("エラーが発生しました: ", e);
     }
 }
+
+//ニックネームを保存する
+export async function NicknameSave(email, nickname){
+    const q = query(collection(db, "user_name"), where("nickname", "==", nickname));
+    const querySnapshot = await getDocs(q);
+    const u = query(collection(db, "user_name"), where("email", "==", email));
+    const userSnapshot = await getDocs(u);
+    try{
+        if (!querySnapshot.empty) {
+            console.log("既に存在します");
+        }else{
+            if(!userSnapshot.empty){
+                // Eメールが既に存在する場合
+                let existingDocId = "";
+                let existingnickname = "";
+                userSnapshot.forEach((doc) => {
+                    existingDocId = doc.id; // ドキュメントIDを取得
+                    existingnickname = doc.data().nickname; // 既存のニックネームを取得
+                });
+                await updateDoc(doc(db,"user_name", existingDocId), {
+                    nickname: nickname
+                })
+                console.log("Updated完了");
+            }else{
+                await addDoc(collection(db, "user_name"),{
+                    email: email,
+                    nickname: nickname
+                })
+            }
+        }
+    }catch(e){
+        console.log(e)
+    }
+
+}
+
+export async function nickname(email) {
+    const n = query(
+      collection(db, "user_name"), // user_name コレクションへの参照
+      where("email", "==", email)  // where 条件を正しく記述
+    );
+  
+    try {
+      const snapshot = await getDocs(n); // 非同期でドキュメントを取得
+  
+      if (!snapshot.empty) {
+        let nickname = "";
+        snapshot.forEach((doc) => {
+          nickname = doc.data().nickname; // ニックネームを取得
+        });
+        console.log("取得したニックネーム:", nickname);
+        return nickname;
+      } else {
+        console.log("ニックネームが見つかりません");
+        return "NoNickname";
+      }
+    } catch (e) {
+      console.error(e); // エラーをコンソールに出力
+      return "Error";
+    }
+  }
 
 // スコアボードにランキングを表示する関数（リアルタイム更新対応）
 export const displayDataInHTMLRealtime = (collectionName) => {
@@ -161,7 +224,10 @@ export const displayDataInHTMLRealtime = (collectionName) => {
             let rank = 1;
             // 取得したデータを一行ずつHTMLに表示
             topScores.forEach(score => {
-                const accountName = score.data.email.slice(0, 10);  // Eメールの先頭10文字を表示
+                let accountName = score.data.nickname.slice(0, 10);  // Eメールの先頭10文字を表示
+                if(accountName == "NoNickname"){
+                    accountName = score.data.email.slice(0, 10);
+                }
                 const scoreElement = document.createElement('p'); // 各データを表示するための <p> 要素を作成
                 scoreElement.textContent = `${rank} ,ID: ${accountName}, スコア: ${score.data.score}`; // 各データを設定
                 scoreListElement.appendChild(scoreElement); // <p> 要素を追加
