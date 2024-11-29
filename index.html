@@ -11,6 +11,7 @@ git pull origin main-->
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="login&logout/loginbutton.css">
         <link rel="stylesheet" href="login&logout/login.css">
+        
 
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,13 +29,14 @@ git pull origin main-->
         <!-- メインJavaScriptファイルの読み込み -->
         <script type="module" src="index.js" defer></script>
         <script type="module" src="./login&logout/login.js"></script>
+        <script type="module" src="main.js"></script>
 
     </head>
   <body>
 
     <header>
       <ul class="header">
-        <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
+        <li><a href="Asteroid/asteroid.htm">Asteroid</a></li>
         <li><a href="/Blocks/blocks.htm">Blocks</a></li>
         <li><a href="/Cave/cave.html">Cave</a></li>
         <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
@@ -59,6 +61,7 @@ git pull origin main-->
       </div> -->
 
       <div class="account-container" id="account-container">
+        
         <div class="account-name" id="account-name">アカウント名をクリック</div>
         <div class="dropdown-menu" id="dropdown-menu">
           <div class="nickname-input">
@@ -156,6 +159,6 @@ git pull origin main-->
         <button id="loginButton" class="common-button">ログイン<span style="opacity: 0.5;"> space</span></button>
         <!-- <button id="signup-button" class="auth-button">新規登録</button> -->
     </div>
-
+    <div id="footer"></div>
   </body>
 </html>
