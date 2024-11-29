@@ -158,12 +158,15 @@ export async function NicknameSave(email, nickname){
                 await updateDoc(doc(db,"user_name", existingDocId), {
                     nickname: nickname
                 })
-                console.log("Updated完了");
+                location.reload();
+                alert("Updated完了");
             }else{
                 await addDoc(collection(db, "user_name"),{
                     email: email,
                     nickname: nickname
                 })
+                location.reload();
+                alert("ニックネームを登録しました")
             }
         }
     }catch(e){
