@@ -145,6 +145,7 @@ export async function NicknameSave(email, nickname){
     try{
         if (!querySnapshot.empty) {
             console.log("既に存在します");
+            alert("既に存在します。再度違う名前を入力してください");
         }else{
             if(!userSnapshot.empty){
                 // Eメールが既に存在する場合
