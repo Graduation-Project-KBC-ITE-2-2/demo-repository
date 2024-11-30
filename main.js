@@ -34,7 +34,7 @@ document.querySelector('#footer').innerHTML = `
       `;
 
       function loadCSS(href) {
-        const baseURL = import.meta.env.BASE_URL; // ViteのベースURL
+        const baseURL = '/demo-repository/'; // ViteのベースURL
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = baseURL + href; // ベースURL + 相対パス
