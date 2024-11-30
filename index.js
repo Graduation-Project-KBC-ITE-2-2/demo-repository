@@ -16,9 +16,17 @@ window.onload = function () {
       if (user.isAnonymous) {
         accountName.innerText = "ゲスト"; // ゲストユーザーの場合は「ゲスト」と表示
       } else {
+        const useremail = user.email;
         nicknameValue = await nickname(user.email);
         console.log(nicknameValue);
-        accountName.innerText = nicknameValue.charAt(0);
+        const fullnickname = document.getElementById("fullnickname");
+        if(nicknameValue == "NoNickname"){
+          accountName.innerText = useremail.charAt(0);
+          fullnickname.innerText = useremail;
+        }else{
+          accountName.innerText = nicknameValue.charAt(0);
+          fullnickname.innerText = nicknameValue;
+        }
         document.getElementById('account-name').addEventListener('click', function () {
           const dropdownMenu = document.getElementById('dropdown-menu');
           if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
