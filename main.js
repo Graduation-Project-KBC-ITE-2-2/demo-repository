@@ -45,7 +45,7 @@ document.querySelector('#footer').innerHTML = `
 
       // baseUrl.js
       function updateLinksWithBaseURL() {
-        const baseURL = import.meta.env.BASE_URL; // Vite のベースURL
+        const baseURL = '/demo-repository/'; // Vite のベースURL
         const links = document.querySelectorAll('a'); // すべてのリンクを取得
 
         links.forEach((link) => {
