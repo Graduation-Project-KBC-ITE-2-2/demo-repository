@@ -43,21 +43,27 @@ document.querySelector('#footer').innerHTML = `
 
       loadCSS('main.css');
 
-      // baseUrl.js
       function updateLinksWithBaseURL() {
         const baseURL = '/demo-repository/'; // Vite のベースURL
         const links = document.querySelectorAll('a'); // すべてのリンクを取得
-
+      
         links.forEach((link) => {
-            const href = link.getAttribute('href');
-            // hrefが絶対パスで '/' で始まっている場合、ベースURLを追加
-            if (href && href.startsWith('/')) {
-                link.setAttribute('href', baseURL + href.slice(1)); // '/' を取り除いて結合
-            }
+          const href = link.getAttribute('href');
+      
+          // href が '/' で始まる場合のみベースURLを追加
+          if (href && href.startsWith('/')) {
+            // もし baseURL の末尾が '/' で、href の先頭も '/' の場合、二重スラッシュを防ぐ
+            const updatedHref = baseURL.endsWith('/')
+              ? baseURL.slice(0, -1) + href
+              : baseURL + href;
+      
+            link.setAttribute('href', updatedHref);
+          }
         });
       }
-
+      
       // ページが読み込まれた後にリンクを更新
       document.addEventListener('DOMContentLoaded', updateLinksWithBaseURL);
+      
 
 
