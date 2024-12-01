@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
     <script type="module" src="../main.js"></script>
+    <script type="module" src="mypage.js"></script>
 </head>
 <body>
     <header>
@@ -36,7 +37,7 @@
             <h2>プレイ履歴</h2>
             <div id="game-list">
                 <!-- ゲームの履歴が動的に表示されます -->
-                <p>まだプレイしたゲームはありません。</p>
+            
             </div>
         </section>
 
@@ -44,38 +45,15 @@
             <h2>ランキング</h2>
             <div id="scorelist">
                 <!-- ランキングデータが動的に表示されます -->
-                <p>スコアはまだありません。</p>
             </div>
         </section>
     </main>
 
     
 
-    <script>
-        // ユーザー情報を動的に表示する例
-        document.addEventListener('DOMContentLoaded', function () {
-            // Firebaseや他のデータソースからユーザー情報を取得
-            const username = ''; // サンプルデータ
-            const email = ''; // サンプルデータ
 
-            document.getElementById('username').textContent = username;
-            document.getElementById('email').textContent = email;
+        
 
-            // ゲーム履歴を動的に表示する処理
-            const gameHistory = [
-                { name: 'Asteroid', score: 100 },
-                { name: 'Blocks', score: 200 },
-            ];
-
-            const gameList = document.getElementById('game-list');
-            gameList.innerHTML = ''; // 初期メッセージをクリア
-            gameHistory.forEach(game => {
-                const gameItem = document.createElement('p');
-                gameItem.textContent = `${game.name} - スコア: ${game.score}`;
-                gameList.appendChild(gameItem);
-            });
-        });
-    </script>
     <div id = "footer"></div>
 </body>
 
