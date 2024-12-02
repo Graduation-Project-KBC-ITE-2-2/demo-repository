@@ -1,4 +1,4 @@
-import {getUserEmail, nickname, getUserScoresByEmail} from "../firebaseConfig";
+import {getUserEmail, nickname, getUserScoresByEmail} from "../firebaseConfig.js";
 
 
     
