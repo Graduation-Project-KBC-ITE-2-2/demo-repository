@@ -88,18 +88,19 @@ function startTimer() {
 }
 
 function spawnAlien() {
-    var x = rand(540) + 30; // ランダムなX座標 (30～570)
-    var y = rand(200) - 200; // ランダムなY座標 (-200～0)
-    var offset = rand(2) === 0 ? 96 : 144; // スプライトの種類をランダム化
-    // 50～100の10刻みでランダムな値を生成
-    var randomPoints = (Math.floor(Math.random() * 6) * 10) + 50;
-    var newAlien = new Alien(x, y, randomPoints, offset);
+    for (let i = 0; i < 2; i++) { // 1回で2体生成
+        var x = rand(540) + 30; // ランダムなX座標 (30～570)
+        var y = rand(200) - 200; // ランダムなY座標 (-200～0)
+        var offset = rand(2) === 0 ? 96 : 144; // スプライトの種類をランダム化
+        var randomPoints = (Math.floor(Math.random() * 6) * 10) + 50;
+        var newAlien = new Alien(x, y, randomPoints, offset);
 
-    if (isPositionValid(x, y, aliens)) {
-        aliens.push(newAlien);
-        bombs.push(new Bomb());
-    } else {
-        console.error('Failed to find a valid position for Alien.');
+        if (isPositionValid(x, y, aliens)) {
+            aliens.push(newAlien);
+            bombs.push(new Bomb());
+        } else {
+            console.error('Failed to find a valid position for Alien.');
+        }
     }
 }
 
@@ -114,14 +115,14 @@ function isPositionValid(newX, newY, aliens) {
 var alienSpawnInterval = NaN; // エイリアン出現用のインターバルID
 
 function startAlienSpawning() {
-    // 一定間隔でエイリアンを生成（例: 2秒ごと）
+    // 一定間隔でエイリアンを生成
     alienSpawnInterval = setInterval(function () {
         if (remainingTime > 0) { // タイマーが0以上の場合のみ生成
             spawnAlien();
         } else {
             clearInterval(alienSpawnInterval); // タイマーが0になったら停止
         }
-    }, 2000); // 2秒間隔
+    }, 500); // 0.5秒間隔(エイリアンの出現間隔)
 }
 
 // スプライトの描画に関するオブジェクト
@@ -172,8 +173,7 @@ window.start = function () {
     ship = new Ship(); // 宇宙船の初期化
     beam = new Beam(); // ビームの初期化
     clock = 0;
-    //Alien.interval = 1000 - stage * 50; // ステージ進行でエイリアンの移動速度アップ
-
+    
     // タイマーの初期化と開始
     remainingTime = 180; // タイマーをリセット
     startTimer()
@@ -289,7 +289,7 @@ function alienLoop() {
     });
 
     // エイリアン移動の間隔を調整して再呼び出し
-    Alien.interval = 300 + rand(200); // より速くなるように調整（300～500ms）
+    Alien.interval = 50 + rand(50); // より速くなるように調整(200～300ms）
     setTimeout(alienLoop, Alien.interval);
 }
 
@@ -340,7 +340,7 @@ function mainLoop() {
 
     // ヒットしたエイリアンを削除
     if (hit >= 0) {
-        aliens.splice(hit, 1); 
+        aliens.splice(hit, 1);
     }
 
     // スコア倍増効果の終了チェック
