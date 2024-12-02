@@ -147,17 +147,26 @@ export async function saveScoreAndEmail(collectionName, score, email) {
 }
 
 //ニックネームを保存する
-export async function NicknameSave(email, nickname){
-    const q = query(collection(db, "user_name"), where("nickname", "==", nickname));
+export async function NicknameSave(email, nickname) {
+    const trimmedNickname = nickname.trim(); // ニックネームの前後の空白を除去
+
+    // 空白のみのニックネーム、または空白を含むニックネームを無効にする
+    if (trimmedNickname === "" || /\s/.test(trimmedNickname)) {
+        alert("ニックネームに空白を含むことはできません。再度入力してください。");
+        return; // 処理を中断
+    }
+
+    const q = query(collection(db, "user_name"), where("nickname", "==", trimmedNickname));
     const querySnapshot = await getDocs(q);
     const u = query(collection(db, "user_name"), where("email", "==", email));
     const userSnapshot = await getDocs(u);
-    try{
+
+    try {
         if (!querySnapshot.empty) {
             console.log("既に存在します");
             alert("既に存在します。再度違う名前を入力してください");
-        }else{
-            if(!userSnapshot.empty){
+        } else {
+            if (!userSnapshot.empty) {
                 // Eメールが既に存在する場合
                 let existingDocId = "";
                 let existingnickname = "";
@@ -165,25 +174,25 @@ export async function NicknameSave(email, nickname){
                     existingDocId = doc.id; // ドキュメントIDを取得
                     existingnickname = doc.data().nickname; // 既存のニックネームを取得
                 });
-                await updateDoc(doc(db,"user_name", existingDocId), {
-                    nickname: nickname
-                })
+                await updateDoc(doc(db, "user_name", existingDocId), {
+                    nickname: trimmedNickname // 空白除去後のニックネームを保存
+                });
                 location.reload();
                 alert("Updated完了");
-            }else{
-                await addDoc(collection(db, "user_name"),{
+            } else {
+                await addDoc(collection(db, "user_name"), {
                     email: email,
-                    nickname: nickname
-                })
+                    nickname: trimmedNickname // 空白除去後のニックネームを保存
+                });
                 location.reload();
-                alert("ニックネームを登録しました")
+                alert("ニックネームを登録しました");
             }
         }
-    }catch(e){
-        console.log(e)
+    } catch (e) {
+        console.log(e);
     }
-
 }
+
 
 export async function nickname(email) {
     const n = query(
