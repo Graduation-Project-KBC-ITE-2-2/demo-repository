@@ -102,23 +102,32 @@ export async function saveScoreAndEmail(collectionName, score, email) {
         // 既存のEメールを持つドキュメントを取得
         const q = query(collection(db, collectionName), where("email", "==", email));
         const querySnapshot = await getDocs(q);
+        //現在のニックネームを取得
         const Younickname = await nickname(email)
 
         if (!querySnapshot.empty) {
             // Eメールが既に存在する場合
             let existingDocId = "";
+            let existingnic = "";
             let existingScore = 0;
             querySnapshot.forEach((doc) => {
                 existingDocId = doc.id; // ドキュメントIDを取得
+                existingnic = doc.data().nickname;//保存されたニックネームを取得
                 existingScore = doc.data().score; // 既存のスコアを取得
             });
+            console.log(existingnic);
 
             // 新しいスコアが既存のスコアよりも大きい場合に更新
             if (score > existingScore) {
                 await updateDoc(doc(db, collectionName, existingDocId), {
+                    nickname: Younickname,
                     score: score // スコアを更新
                 });
                 console.log("既存のスコアが更新されました");
+            }else if( Younickname !== existingnic){
+                await updateDoc(doc(db, collectionName, existingDocId), {
+                    nickname: Younickname //ニックネームを更新
+                });
             } else {
                 console.log("既存のスコアの方が大きいため、保存しませんでした");
             }
