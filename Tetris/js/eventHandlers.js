@@ -5,15 +5,15 @@ import { keyevents } from "./main.js";
 
 // イベントハンドラーを設定する関数をエクスポート
 export function setupEventHandlers() {
-  // キーイベントのリスナーを登録
+  // キーボードの入力（キーが押されたとき）を監視します
   window.addEventListener("keydown", function (e) {
-    // デフォルトの動作を防ぐ
+    // 特定のキーの標準の動きを止めます（例えば、スペースキーでページがスクロールしないように）
     if (["Space", "ArrowLeft", "ArrowRight", "ArrowDown"].includes(e.code)) {
-      e.preventDefault();
+      e.preventDefault(); // ブラウザのデフォルトの動作を防ぎます
     }
+    // 押されたキーがまだ記録されていなければ、キーの情報を保存します
     if (!keyevents.includes(e.code)) {
-      // キーイベントが重複しないようにする
-      keyevents.push(e.code);
+      keyevents.push(e.code); // キーの情報をリストに追加します
     }
   });
 
@@ -24,6 +24,6 @@ export function setupEventHandlers() {
 
   // ゲーム一覧に戻るボタンの処理
   window.returnToIndex = function () {
-    window.location.href = "../index.html";
+    window.location.href = "../index.html"; // ゲーム一覧のページに移動します
   };
 }

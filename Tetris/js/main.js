@@ -48,7 +48,7 @@ window.startGame = function () {
     console.error("リトライ要素が見つかりませんでした。");
   }
 
-  // ゲームコンテナを表示する（必要に応じて）
+  // ゲームコンテナを表示する
   const container = document.getElementById("container");
   if (container) {
     container.style.display = "flex";

@@ -68,7 +68,7 @@ export function initGame() {
 export function consumeBlock() {
   if (!nextBlocks.value || !Array.isArray(nextBlocks.value)) {
     console.error(
-      "consumeBlock: nextBlocks.value is not an array:",
+      "nextBlocks.value が存在しないもしくは配列ではありません",
       nextBlocks.value
     );
     nextBlocks.value = [];

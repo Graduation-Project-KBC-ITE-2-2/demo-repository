@@ -1,19 +1,17 @@
 // draw.js
 
 // 必要なモジュールや定数をインポート
-import { colors } from "./constants.js";
+import { colors } from "./constants.js"; //色のデータを読み込
 
-// 描画コンテキストを保持する変数
-export let ctx;
+export let ctx; //描画ツール（ctx）の準備
 
-// 背景画像を保持する変数
-let bgImage;
+let bgImage; // 背景画像を保持する変数
 
 // `ctx` を初期化する関数
 export function initCanvas() {
-  const canvas = document.getElementById("canvas");
-  ctx = canvas.getContext("2d");
-  ctx.font = '18px Consolas, "Courier New", monospace'; //FONT指定
+  const canvas = document.getElementById("canvas"); //キャンバスを取得
+  ctx = canvas.getContext("2d"); //描画ツールの設定
+  ctx.font = '18px Consolas, "Courier New", monospace'; //文字のスタイルを設定
 
   // // 背景画像をロード
   // bgImage = new Image();
@@ -26,17 +24,17 @@ export function initCanvas() {
 }
 
 // 初期描画関数（オプション）
-function drawInitial() {
-  draw({
-    field: [], // 初期フィールドデータ
-    block: null,
-    nextBlocks: [],
-    score: 0,
-    level: 1,
-    levelMax: null,
-    timer: null,
-  });
-}
+// function drawInitial() {
+//   draw({
+//     field: [], // 初期フィールドデータ
+//     block: null,
+//     nextBlocks: [],
+//     score: 0,
+//     level: 1,
+//     levelMax: null,
+//     timer: null,
+//   });
+// }
 
 // ブロックを描画する関数
 export function drawBlock(x, y, colorIndex) {
@@ -50,12 +48,11 @@ export function drawBlock(x, y, colorIndex) {
   ctx.fillStyle = grd;
   ctx.fillRect(x, y, 24, 24);
 
-  // ブロックの枠線を描画（任意）
+  // ブロックの枠線を描く（オプション）
   ctx.strokeStyle = "rgba(0, 0, 0, 0.2)";
   ctx.strokeRect(x, y, 24, 24);
 }
-
-// 色を明るくする関数
+// 指定した色を、パーセントで指定した分だけ明るくします。色を明るくする関数
 export function lightenColor(color, percent) {
   let num = parseInt(color.replace("#", ""), 16),
     amt = Math.round(2.55 * percent * 100),
@@ -76,7 +73,7 @@ export function lightenColor(color, percent) {
   );
 }
 
-// フィールド全体を描画する関数
+// ゲーム画面全体を描く関数
 export function draw(gameState) {
   const { field, block, nextBlocks, score, level, levelMax, timer } = gameState;
 
@@ -84,8 +81,8 @@ export function draw(gameState) {
   const canvasWidth = ctx.canvas.width;
   const canvasHeight = ctx.canvas.height;
 
-  // 背景の描画（例: 単色背景）
-  ctx.fillStyle = "rgb(0,0,0)"; // 好きな色に変更可能
+  // 背景を塗りつぶす
+  ctx.fillStyle = "rgb(0,0,0)"; // 背景色を黒に設定
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   // // 背景の描画
@@ -97,7 +94,7 @@ export function draw(gameState) {
   //   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   // }
 
-  // フィールドの描画
+  // フィールド（プレイエリア）の描画
   for (let y = 0; y < field.length; y++) {
     for (let x = 0; x < field[y].length; x++) {
       const v = field[y][x];
@@ -121,9 +118,9 @@ export function draw(gameState) {
             const w = Math.sqrt(data.length);
             const x = i % w;
             const y = Math.floor(i / w);
-            // 各次のブロックを異なる位置に描画
+            // 描画位置を計算
             const posX = 440 + x * 25;
-            const posY = 70 + y * 25 + blockIndex * 150; // インデックスに応じてY位置をずらす
+            const posY = 70 + y * 25 + blockIndex * 150;
             drawBlock(posX, posY, v);
           }
         });
@@ -131,8 +128,8 @@ export function draw(gameState) {
     });
   }
 
-  // 各種情報（ステータス）の描画
-  ctx.fillStyle = "rgb(0,255,0)"; //FONTカラー指定
+  // スコアやレベルなどの情報を表示
+  ctx.fillStyle = "rgb(0,255,0)"; // 文字の色を緑に設定
   //ctx.strokeStyle = "white"; // 枠線の色を変更
   //ctx.lineWidth = 1; // 枠線の太さ
   //ctx.strokeRect(370, 45, 120, 120); // x, y, 幅, 高さ(外枠)
@@ -140,26 +137,23 @@ export function draw(gameState) {
   // 画面にNEXT表示
   ctx.fillText("NEXT", 450, 40);
 
-  // 画面にSCORE表示
+  // 「SCORE」の表示とスコアの数値
   ctx.fillText("SCORE", 410, 410);
   ctx.fillText(("00000" + score).slice(-5), 510, 440);
 
-  // レベル表示
+  // 「LEVEL」の表示とレベルの数値
   ctx.fillText("LEVEL", 410, 470);
   if (levelMax && level >= levelMax) {
-    // レベルが最大レベルに達した場合
     ctx.fillText("MAX", 500, 490);
   } else {
-    // 通常のレベル表示
     ctx.fillText(("0" + level).slice(-3), 500, 490);
   }
 
-  // 難易度表示
+  // 「DIFFICULTY」の表示と難易度
   ctx.fillText("DIFFICULTY", 410, 530);
-  // ノーマル表示
   ctx.fillText("NOMAL", 490, 560);
 
-  // ゲームオーバー時のテキスト表示
+  // ゲームオーバー時のメッセージ表示
   if (!timer) {
     ctx.fillText("GAME OVER", 290, 270);
   }
