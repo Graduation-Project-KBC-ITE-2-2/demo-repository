@@ -122,7 +122,7 @@ function startAlienSpawning() {
         } else {
             clearInterval(alienSpawnInterval); // タイマーが0になったら停止
         }
-    }, 500); // 0.5秒間隔(エイリアンの出現間隔)
+    }, 1000); // 1秒間隔(エイリアンの出現間隔)
 }
 
 // スプライトの描画に関するオブジェクト
@@ -289,7 +289,7 @@ function alienLoop() {
     });
 
     // エイリアン移動の間隔を調整して再呼び出し
-    Alien.interval = 50 + rand(50); // より速くなるように調整(200～300ms）
+    Alien.interval = 200 + rand(100); // エイリアンの移動速度調整(200～300ms）
     setTimeout(alienLoop, Alien.interval);
 }
 
