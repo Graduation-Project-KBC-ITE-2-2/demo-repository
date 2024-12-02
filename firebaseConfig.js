@@ -5,6 +5,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js';
 import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, onSnapshot  } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
+//import {totle} from "/Mypage/mypage.js";
 
 // Firebaseの設定情報
 const firebaseConfig = {
@@ -145,6 +146,7 @@ export async function NicknameSave(email, nickname){
     try{
         if (!querySnapshot.empty) {
             console.log("既に存在します");
+            alert("既に存在します。再度違う名前を入力してください");
         }else{
             if(!userSnapshot.empty){
                 // Eメールが既に存在する場合
@@ -157,12 +159,15 @@ export async function NicknameSave(email, nickname){
                 await updateDoc(doc(db,"user_name", existingDocId), {
                     nickname: nickname
                 })
-                console.log("Updated完了");
+                location.reload();
+                alert("Updated完了");
             }else{
                 await addDoc(collection(db, "user_name"),{
                     email: email,
                     nickname: nickname
                 })
+                location.reload();
+                alert("ニックネームを登録しました")
             }
         }
     }catch(e){
@@ -239,6 +244,51 @@ export const displayDataInHTMLRealtime = (collectionName) => {
     }
 };
 
+//特定のユーザーのスコアを取得
+export async function getUserScoreByEmail(email, collectionName) {
+    try {
+      const collectionRef = collection(db, collectionName); // コレクションを参照
+      const q = query(collectionRef, where('email', '==', email)); // クエリ作成
+      const querySnapshot = await getDocs(q); // クエリを実行
+  
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0]; // 最初のドキュメントを取得
+        const data = doc.data(); // ドキュメントデータを取得
+        return data.score || null; // スコアが存在する場合は返す、なければ null
+      } else {
+        return null; // 該当するデータがない場合
+      }
+    } catch (error) {
+      console.error('データ取得中にエラーが発生しました:', error);
+      throw error;
+    }
+  }
+
+  // 特定のユーザーのスコアを複数のコレクションから取得
+export async function getUserScoresByEmail(email, collectionNames) {
+    const scores = {}; // 各コレクションのスコアを格納するオブジェクト
+  
+    try {
+      for (const collectionName of collectionNames) {
+        const collectionRef = collection(db, collectionName); // コレクションを参照
+        const q = query(collectionRef, where('email', '==', email)); // クエリ作成
+        const querySnapshot = await getDocs(q); // クエリを実行
+  
+        if (!querySnapshot.empty) {
+          const doc = querySnapshot.docs[0]; // 最初のドキュメントを取得
+          const data = doc.data(); // ドキュメントデータを取得
+          scores[collectionName] = data.score || null; // スコアをコレクション名をキーにして格納
+        } else {
+          scores[collectionName] = null; // 該当データがない場合は null を格納
+        }
+      }
+  
+      return scores; // すべてのスコアを返す
+    } catch (error) {
+      console.error('データ取得中にエラーが発生しました:', error);
+      throw error;
+    }
+  }
 
 
 export function toggleModalVisibility(noneId) {

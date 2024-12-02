@@ -11,6 +11,7 @@ git pull origin main-->
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="login&logout/loginbutton.css">
         <link rel="stylesheet" href="login&logout/login.css">
+        
 
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,13 +29,14 @@ git pull origin main-->
         <!-- メインJavaScriptファイルの読み込み -->
         <script type="module" src="index.js" defer></script>
         <script type="module" src="./login&logout/login.js"></script>
+        <script type="module" src="main.js"></script>
 
     </head>
   <body>
 
     <header>
       <ul class="header">
-        <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
+        <li><a href="Asteroid/asteroid.htm">Asteroid</a></li>
         <li><a href="/Blocks/blocks.htm">Blocks</a></li>
         <li><a href="/Cave/cave.html">Cave</a></li>
         <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
@@ -59,8 +61,11 @@ git pull origin main-->
       </div> -->
 
       <div class="account-container" id="account-container">
-        <div class="account-name" id="account-name">アカウント名をクリック</div>
+        
+        <div class="account-name" id="account-name"></div>
         <div class="dropdown-menu" id="dropdown-menu">
+        <div class="fullnickname" id="fullnickname"></div>
+        <div class="mypage" id="mypage"><a href="Mypage/mypage.html">マイページ</a></div>
           <div class="nickname-input">
             <input type="text" id="nickname" placeholder="ニックネームを入力" />
             <button id="save-nickname">保存</button>
@@ -70,7 +75,7 @@ git pull origin main-->
       
     </header>
 
-    <h1>ミニゲーム集へようこそ！</h1>
+    <h1 class="slide-in">ミニゲーム集へようこそ！</h1>
 
     <div class="game-list">
         <div class="game-item">
@@ -138,7 +143,7 @@ git pull origin main-->
     
 
 
-    <div id="modal">
+    <!-- <div id="modal">
         <div class="modal-content">
 
             <div class="login-container">
@@ -151,11 +156,11 @@ git pull origin main-->
             </div>
 
         </div>
-    </div>
+    </div> -->
     <div class="auth-buttons">
         <button id="loginButton" class="common-button">ログイン<span style="opacity: 0.5;"> space</span></button>
         <!-- <button id="signup-button" class="auth-button">新規登録</button> -->
     </div>
-
+    <div id="footer"></div>
   </body>
 </html>

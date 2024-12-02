@@ -1,4 +1,4 @@
-import { auth, toggleModalVisibility, guestLogin, NicknameSave,  nickname } from "./firebaseConfig.js"; // Firebase設定をインポート
+import { auth, toggleModalVisibility, guestLogin, NicknameSave,  nickname, loginUser } from "./firebaseConfig.js"; // Firebase設定をインポート
 
 const loginButton = document.getElementById("loginButton");
 const signupButton = document.getElementById("signup-button");
@@ -16,9 +16,17 @@ window.onload = function () {
       if (user.isAnonymous) {
         accountName.innerText = "ゲスト"; // ゲストユーザーの場合は「ゲスト」と表示
       } else {
+        const useremail = user.email;
         nicknameValue = await nickname(user.email);
         console.log(nicknameValue);
-        accountName.innerText = nicknameValue.charAt(0);
+        const fullnickname = document.getElementById("fullnickname");
+        if(nicknameValue == "NoNickname"){
+          accountName.innerText = useremail.charAt(0);
+          fullnickname.innerText = useremail;
+        }else{
+          accountName.innerText = nicknameValue.charAt(0);
+          fullnickname.innerText = nicknameValue;
+        }
         document.getElementById('account-name').addEventListener('click', function () {
           const dropdownMenu = document.getElementById('dropdown-menu');
           if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
@@ -44,7 +52,7 @@ window.onload = function () {
   });
   auth.onAuthStateChanged((user) => {
     if (user) {
-      document.getElementById("modal").style.display = "none";
+      // document.getElementById("modal").style.display = "none";
 
       // ログアウトボタンに変更
       loginButton.innerText = "ログアウト";
@@ -60,18 +68,14 @@ window.onload = function () {
           });
       };
       signupButton.style.display = "none";
+    }else{
+      createModal();
+
     }
   });
-  guestLoginButton.onclick = async () => {
-    console.log("ゲストログインボタンがクリックされました"); // デバッグ用
-    try {
-      const user = await guestLogin();
-      console.log("ゲストとしてログインしました:", user);
-      location.reload();
-    } catch (error) {
-      console.error("ゲストログイン中にエラーが発生しました:", error);
-    }
-  };
+
 
 
 };
+
+

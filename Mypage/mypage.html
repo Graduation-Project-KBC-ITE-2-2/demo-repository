@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイページ</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <script type="module" src="../main.js"></script>
+    <script type="module" src="mypage.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul class="header">
+                <li><a href="/index.html">ホーム</a></li>
+                <li><a href="mypage.html">マイページ</a></li>
+                <li><a href="logout.html">ログアウト</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="user-info">
+            <h1>マイページ</h1>
+            <div class="profile">
+                <h2>ユーザー情報</h2>
+                <p><strong>ユーザー名:</strong> <span id="username">未設定</span></p>
+                <p><strong>メールアドレス:</strong> <span id="email">user@example.com</span></p>
+                <button id="edit-profile">プロフィールを編集</button>
+            </div>
+        </section>
+
+        <section class="game-history">
+            <h2>プレイ履歴</h2>
+            <div id="game-list">
+                <!-- ゲームの履歴が動的に表示されます -->
+            
+            </div>
+        </section>
+
+        <section class="scoreboard">
+            <h2>ランキング</h2>
+            <div id="scorelist">
+                <!-- ランキングデータが動的に表示されます -->
+            </div>
+        </section>
+    </main>
+
+    
+
+
+        
+
+    <div id = "footer"></div>
+</body>
+
+</html>
