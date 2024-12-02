@@ -50,6 +50,7 @@ export function Block() {
     if (this.fire < count.value) {
       // this.fireとcount.valueを比較して、次に落下するタイミングを決定します。
       this.fire = count.value + interval.value;
+      this.y++;
     }
 
     // keyevents配列からユーザーのキー入力を取得し、ブロックの動作を決定
