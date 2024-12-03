@@ -1,10 +1,9 @@
-import {getUserEmail, nickname, getUserScoresByEmail} from "../firebaseConfig.js";
+import {getUserEmail, nickname, getUserScoresByEmail,getUsertotleScoresByEmail} from "../firebaseConfig.js";
 
 
     
         const email = await getUserEmail();
         const Nickname = await nickname(email);
-        let totle = 0;
         
         const Myname = document.getElementById("username");
         const Myemail = document.getElementById("email");
@@ -22,12 +21,13 @@ import {getUserEmail, nickname, getUserScoresByEmail} from "../firebaseConfig.js
                 let gemaname = document.getElementById(col);
                 if( data[col] != null){
                     gemaname.innerText = `${col} - スコア: ${data[col]}`;
-                    totle += data[col];
                 }
                 
             }
-            console.log(totle )
         })
 
-        export {totle};
+        const totle = await getUsertotleScoresByEmail(email);
+        let totlescore = document.getElementById("totleScore");
+        totlescore.innerText = `トータルスコア: ${totle}`;
+
         

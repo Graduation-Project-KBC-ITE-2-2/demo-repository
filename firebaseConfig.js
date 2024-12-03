@@ -262,6 +262,8 @@ export const displayDataInHTMLRealtime = (collectionName) => {
     }
 };
 
+const firebasecollections = ['Asteroid', 'Blocks', 'MineSweeper','Cave','MissileCommand','Qix','Invader','Memorizer','SnakeBite','Tetris'];
+
 //特定のユーザーのスコアを取得
 export async function getUserScoreByEmail(email, collectionName) {
     try {
@@ -307,6 +309,59 @@ export async function getUserScoresByEmail(email, collectionNames) {
       throw error;
     }
   }
+
+  export async function getUsertotleScoresByEmail(email) {
+    try {
+        // `getUserScoresByEmail` を実行してスコアデータを取得
+        const data = await getUserScoresByEmail(email, firebasecollections);
+
+        let totle = 0; // 合計スコア
+        // Firestoreから該当するユーザーのデータを取得
+        const q = query(collection(db, "user_name"), where("email", "==", email));
+        const querySnapshot = await getDocs(q);
+
+        for (const col of firebasecollections) {
+            if (data[col] != null) {
+                totle += data[col]; // スコアを合計
+            }
+        }
+
+        if (!querySnapshot.empty) {
+            // Eメールが既に存在する場合
+            let existingDocId = "";
+            let existotleScore = 0;
+            querySnapshot.forEach((doc) => {
+                existingDocId = doc.id; // ドキュメントIDを取得
+                existotleScore = doc.data().totleScore; // 既存のスコアを取得
+            });
+            console.log(existotleScore);
+
+            // 新しいスコアが既存のスコアよりも大きい場合に更新
+            if (existotleScore !== totle) {
+                await updateDoc(doc(db, "user_name", existingDocId), {
+                    totleScore: totle // スコアを更新
+                });
+                console.log("トータルスコアが更新されました");
+            }else {
+                console.log("変化ありませんでした");
+            }
+        } else {
+            // Eメールが存在しない場合、新しいスコアを保存
+            await addDoc(collection(db, "user_name"), {
+                email: email,
+                nickname: "NoNickname",
+                totleScore: totle,
+                timestamp: new Date() // 保存時刻を追加する場合
+            });
+            console.log("新しいスコアが保存されました");
+        }
+
+        console.log(`合計スコア: ${totle}`);
+        return totle; // 必要に応じて関数の呼び出し元に返す
+    } catch (error) {
+        console.error("エラーが発生しました:", error);
+    }
+}
 
 
 export function toggleModalVisibility(noneId) {
