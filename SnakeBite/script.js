@@ -61,20 +61,20 @@ function init() {
     H = numCellsY;
 
     // マスのサイズを再計算
-    S = canvasWidth / numCellsX;
+    S = Math.min(canvasWidth / numCellsX, canvasHeight / numCellsY);
 
     // フォントサイズを再設定
     ctx.font = S * 0.8 + "px sans-serif";
 
-    // 壁の初期化
+    // 壁の初期化（内側に配置）
     walls = [];
-    for (var x = 0; x < W; x++) {
-      walls.push(new Point(x, 0)); // 上辺
-      walls.push(new Point(x, H - 1)); // 下辺
+    for (var x = 1; x < W - 1; x++) {
+      walls.push(new Point(x, 1)); // 上辺
+      walls.push(new Point(x, H - 2)); // 下辺
     }
-    for (var y = 1; y < H - 1; y++) {
-      walls.push(new Point(0, y)); // 左辺
-      walls.push(new Point(W - 1, y)); // 右辺
+    for (var y = 2; y < H - 2; y++) {
+      walls.push(new Point(1, y)); // 左辺
+      walls.push(new Point(W - 2, y)); // 右辺
     }
 
     // 蛇と餌をリセット
@@ -135,9 +135,11 @@ window.retryGame = function () {
 function addFood() {
   let attempts = 0;
   while (true) {
-    var x = Math.floor(Math.random() * W);
-    var y = Math.floor(Math.random() * H);
+    // 壁の内側に限定するため、ランダムな位置を設定
+    var x = Math.floor(Math.random() * (W - 2)) + 1; // 1 ～ W-2
+    var y = Math.floor(Math.random() * (H - 2)) + 1; // 1 ～ H-2
 
+    // 蛇、既存の餌、壁と重ならない場合のみ餌を追加
     if (!isHit(snake, x, y) && !isHit(foods, x, y) && !isHit(walls, x, y)) {
       foods.push(new Point(x, y));
       break;
@@ -145,7 +147,7 @@ function addFood() {
 
     attempts++;
     if (attempts > 100) {
-      console.warn("餌の追加に失敗しました。適切な位置が見つかりません。");
+      console.warn("餌の配置に失敗しました。");
       break;
     }
   }
@@ -240,7 +242,7 @@ function paint() {
   });
 
   ctx.fillStyle = "rgb(256,0,0)";
-  ctx.fillText("Score " + point, S, S * 2);
+  ctx.fillText("Score " + point, S, S * 1);
 }
 
 function keydown(event) {
