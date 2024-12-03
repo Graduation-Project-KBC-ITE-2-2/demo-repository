@@ -49,9 +49,10 @@ header {
 ゲーム画面となるキャンバス要素のデザイン
 */
 canvas {
-  display: block; /* ブロック要素として表示 */
-  margin: 0; /* キャンバスの余白を完全にリセット */
-  background-color: black; /* ゲームエリアの背景を黒色に設定 */
+  width: 100%;
+  height: 100%; /* 親要素に基づいて自動調整 */
+  display: block;
+  background-color: black; /* ゲーム背景色 */
 }
 
 #gameArea {
@@ -68,14 +69,13 @@ canvas {
 スコア表示やタイトルのスタイル
 */
 #scoreboard {
-  flex-basis: 300px; /* ランキングエリアの幅を固定 */
-  color: white; /* テキストを白色に設定 */
-  font-size: 16px; /* フォントサイズを調整 */
-  background-color: rgba(0, 0, 0, 0.7); /* 背景を半透明の黒に設定 */
-  padding: 20px; /* 内側の余白を設定 */
-  border-radius: 10px; /* ボックスを角丸にする */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 外枠に影を追加 */
-  margin: 0; /* 不要な外側の余白を削除 */
+  width: 100%;
+  max-width: 300px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
 }
 
 #scoreboard h3 {
@@ -169,4 +169,12 @@ canvas {
   */
 .hidden {
   display: none; /* 要素を非表示に設定 */
+}
+
+/* ゲームコンテナのレスポンシブ設定 */
+#game-container {
+  width: 100%;
+  max-width: 800px; /* 最大幅を指定 */
+  aspect-ratio: 4 / 3; /* アスペクト比を固定 */
+  position: relative;
 }
