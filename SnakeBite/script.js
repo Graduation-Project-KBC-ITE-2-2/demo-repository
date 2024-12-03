@@ -11,8 +11,7 @@ var snake = [],
   foods = [],
   walls = [];
 var keyCode = 0,
-  point = 0,
-  bestScore = localStorage.getItem("bestScore") || 0;
+  point = 0;
 var timer = NaN,
   canvas,
   ctx,
@@ -22,7 +21,7 @@ var foodsEaten = 0; // 食べた餌の数
 
 // ステージ管理の変数を追加
 var currentStage = 1;
-var maxStage = 3;
+var maxStage = 10;
 
 // Pointオブジェクト
 function Point(x, y) {
@@ -33,8 +32,15 @@ function Point(x, y) {
 // ステージ設定の追加
 var stageSettings = {
   1: { totalFoods: 5, speed: 300, numCellsX: 20, numCellsY: 15 },
-  2: { totalFoods: 10, speed: 250, numCellsX: 21, numCellsY: 16 },
-  3: { totalFoods: 15, speed: 200, numCellsX: 23, numCellsY: 17 },
+  2: { totalFoods: 10, speed: 280, numCellsX: 21, numCellsY: 16 },
+  3: { totalFoods: 15, speed: 260, numCellsX: 23, numCellsY: 17 },
+  4: { totalFoods: 20, speed: 240, numCellsX: 24, numCellsY: 18 },
+  5: { totalFoods: 25, speed: 220, numCellsX: 25, numCellsY: 19 },
+  6: { totalFoods: 30, speed: 200, numCellsX: 26, numCellsY: 20 },
+  7: { totalFoods: 35, speed: 180, numCellsX: 27, numCellsY: 21 },
+  8: { totalFoods: 40, speed: 160, numCellsX: 28, numCellsY: 22 },
+  9: { totalFoods: 45, speed: 140, numCellsX: 29, numCellsY: 23 },
+  10: { totalFoods: 50, speed: 120, numCellsX: 30, numCellsY: 24 },
 };
 
 function init() {
@@ -121,6 +127,7 @@ window.retryGame = function () {
   document.getElementById("retryButton").style.display = "none";
   gameStarted = true;
   currentStage = 1; // ステージをリセット
+  point = 0; // スコアをリセット
   init();
 };
 
@@ -214,9 +221,6 @@ async function tick() {
 
 function paint() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "rgb(256,0,0)";
-  ctx.fillText("Score " + point, S, S * 2);
-  ctx.fillText("Best Score " + bestScore, S, S * 3);
 
   // 壁の描画
   ctx.fillStyle = "rgb(128,128,128)";
@@ -234,6 +238,9 @@ function paint() {
   snake.forEach(function (p) {
     ctx.fillText("🐍", p.x * S, (p.y + 1) * S);
   });
+
+  ctx.fillStyle = "rgb(256,0,0)";
+  ctx.fillText("Score " + point, S, S * 2);
 }
 
 function keydown(event) {
@@ -244,11 +251,6 @@ function keydown(event) {
 async function endGame(message) {
   clearInterval(timer);
   gameStarted = false;
-
-  if (point > bestScore) {
-    bestScore = point;
-    localStorage.setItem("bestScore", bestScore);
-  }
 
   const title = document.title;
   const userEmail = await getUserEmail();
@@ -280,7 +282,11 @@ async function endGame(message) {
       ctx.font = "40px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("All Stages Clear!", canvas.width / 2, canvas.height / 2);
+      ctx.fillText(
+        "全ステージクリア！おめでとうございます！",
+        canvas.width / 2,
+        canvas.height / 2
+      );
       document.getElementById("retryButton").style.display = "block";
     }
   } else {
