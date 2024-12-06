@@ -1,14 +1,13 @@
 import {getUserEmail, nickname, getUserScoresByEmail,getUsertotleScoresByEmail} from "../firebaseConfig.js";
 
 
-    
         const email = await getUserEmail();
         const Nickname = await nickname(email);
         
         const Myname = document.getElementById("username");
         const Myemail = document.getElementById("email");
         const gameList = document.getElementById('game-list');
-        const collections = ['Asteroid', 'Blocks', 'MineSweeper','Cave','MissileCommand','Qix','Invader','Memorizer','SnakeBite','Tetris'];
+        const collections = ['Asteroid', 'Blocks', 'MineSweeper','Cave','Missile Command','Qix','Invader','Memorizer','SnakeBite','Tetris'];
 
         Myname.innerText = Nickname;
         Myemail.innerText = email;
@@ -31,3 +30,5 @@ import {getUserEmail, nickname, getUserScoresByEmail,getUsertotleScoresByEmail} 
         totlescore.innerText = `トータルスコア: ${totle}`;
 
         
+
+    

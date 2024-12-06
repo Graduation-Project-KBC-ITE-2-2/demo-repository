@@ -262,7 +262,7 @@ export const displayDataInHTMLRealtime = (collectionName) => {
     }
 };
 
-const firebasecollections = ['Asteroid', 'Blocks', 'MineSweeper','Cave','MissileCommand','Qix','Invader','Memorizer','SnakeBite','Tetris'];
+const firebasecollections = ['Asteroid', 'Blocks', 'MineSweeper','Cave','Missile Command','Qix','Invader','Memorizer','SnakeBite','Tetris'];
 
 //特定のユーザーのスコアを取得
 export async function getUserScoreByEmail(email, collectionName) {
