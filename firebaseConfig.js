@@ -25,6 +25,9 @@ const db = getFirestore(app);
 
 export {auth,db};
 
+const firebasecollections = ['Asteroid', 'Blocks', 'MineSweeper','Cave','Missile Command','Qix','Invader','Memorizer','SnakeBite','Tetris'];
+//await getAllCollections();
+
 // ログインしているユーザー情報を取得する関数
 export const getCurrentUser = () => {
     return new Promise((resolve, reject) => {
@@ -321,8 +324,7 @@ export async function getAllCollections() {
     }
 }
 
-const firebasecollections = ['Asteroid', 'Blocks', 'MineSweeper','Cave','Missile Command','Qix','Invader','Memorizer','SnakeBite','Tetris'];
-//await getAllCollections();
+
 
 //特定のユーザーのスコアを取得
 export async function getUserScoreByEmail(email, collectionName) {

@@ -14,25 +14,45 @@ window.addEventListener("load",  async function () {
             const Nickname = await nickname(email);
             const totle = await getUsertotleScoresByEmail(email);
             let totlescore = document.getElementById("totleScore");
-            const rank = getScoreRank();
-
+            const rank =  await getScoreRank();
             Myname.innerText = Nickname;
             Myemail.innerText = email;
 
             getUserScoresByEmail(email,collections).then((data) => {
                 for(const col of collections){
                     const gameItem = document.createElement("p");
+                    const gameItemrank = document.createElement("p");
                     gameItem.id = col;
+                    gameItemrank.id = col+"rank";
                     gameList.appendChild(gameItem);
+                    scorelist.appendChild(gameItemrank);
                     let gemaname = document.getElementById(col);
+                    let gemarankname = document.getElementById(col+"rank");
+
+                    
                     if( data[col] != null){
                         gemaname.innerText = `${col} - スコア: ${data[col]}`;
+                        // let Rank = 0;
+                        // let userall = 0;
+                        // for(const rank of rank.userranks){
+                        //     if (rank.has(col)) {
+                        //         Rank = rank.get(col);
+                        //         break;
+                        //     }
+                        // }
+                        // for(const all of rank.useralls){
+                        //     if (all.has(col)) {
+                        //         userall = all.get(col);
+                        //         break;
+                        //     }
+                        // }
+                        // gemarankname.innerText = `${col} - ランク: ${Rank}/${userall}`;
                     }
                     
                 }
             })
             totlescore.innerText = `トータルスコア: ${totle}`;
-            console.log(rank.userranks);
+            console.log(rank.userranks["Asteroid"]);
             console.log(rank.useralls);
 
         }catch(e){
