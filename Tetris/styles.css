@@ -8,6 +8,7 @@ body {
   background-color: #333; /* 背景を暗めのグレーに設定 */
   position: relative; /* 要素の位置調整を可能にする */
   overflow: hidden; /* スクロールバーを非表示に */
+  height: 100vh;
 }
 
 /* 
@@ -110,6 +111,7 @@ canvas {
   padding: 20px 0;
   gap: 20px;
   box-sizing: border-box;
+  height: 100%;
 }
 
 /* 
@@ -176,5 +178,9 @@ canvas {
   width: 100%;
   max-width: 800px; /* 最大幅を指定 */
   aspect-ratio: 4 / 3; /* アスペクト比を固定 */
-  position: relative;
+  height: 100%;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
