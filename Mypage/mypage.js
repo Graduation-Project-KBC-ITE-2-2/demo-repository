@@ -1,79 +1,52 @@
-import {getUserEmail, nickname, getUserScoresByEmail,getUsertotleScoresByEmail, getScoreRank} from "../firebaseConfig.js";
+import { getUserEmail, nickname, getUserScoresByEmail, getUsertotleScoresByEmail, getScoreRank } from "../firebaseConfig.js";
 
-window.addEventListener("load",  async function () {
+window.addEventListener("load", async function () {
+    const collections = ['Asteroid', 'Blocks', 'MineSweeper', 'Cave', 'Missile Command', 'Qix', 'Invader', 'Memorizer', 'SnakeBite', 'Tetris'];
+    const loading = document.getElementById("loading");
+    const gameList = document.getElementById('game-list');
+    const scorelist = document.getElementById('scorelist');
+    const Myname = document.getElementById("username");
+    const Myemail = document.getElementById("email");
+    const totlescore = document.getElementById("totleScore");
 
-        
-        const Myname = document.getElementById("username");
-        const Myemail = document.getElementById("email");
-        const gameList = document.getElementById('game-list');
-        const loading = document.getElementById("loading");
-        const collections = ['Asteroid', 'Blocks', 'MineSweeper','Cave','Missile Command','Qix','Invader','Memorizer','SnakeBite','Tetris'];
+    try {
+        // 非同期で必要なデータを取得
+        const email = await getUserEmail();
+        const Nickname = await nickname(email);
+        const totle = await getUsertotleScoresByEmail(email);
+        const rank = await getScoreRank();
 
-        try{
-            const email = await getUserEmail();
-            const Nickname = await nickname(email);
-            const totle = await getUsertotleScoresByEmail(email);
-            let totlescore = document.getElementById("totleScore");
-            const rank =  await getScoreRank();
-            Myname.innerText = Nickname;
-            Myemail.innerText = email;
+        // ユーザー情報を表示
+        Myname.innerText = Nickname;
+        Myemail.innerText = email;
 
-            getUserScoresByEmail(email,collections).then((data) => {
-                for(const col of collections){
-                    const gameItem = document.createElement("p");
-                    const gameItemrank = document.createElement("p");
-                    gameItem.id = col;
-                    gameItemrank.id = col+"rank";
-                    gameList.appendChild(gameItem);
-                    scorelist.appendChild(gameItemrank);
-                    let gemaname = document.getElementById(col);
-                    let gemarankname = document.getElementById(col+"rank");
+        // 各ゲームのスコアとランクを表示
+        const data = await getUserScoresByEmail(email, collections);
+        for (const col of collections) {
+            // ゲームのスコアとランク用の DOM 要素を作成
+            const gameItem = document.createElement("p");
+            const gameItemrank = document.createElement("p");
+            gameItem.id = col;
+            gameItemrank.id = col + "rank";
+            gameList.appendChild(gameItem);
+            scorelist.appendChild(gameItemrank);
 
-                    
-                    if( data[col] != null){
-                        gemaname.innerText = `${col} - スコア: ${data[col]}`;
-                        // let Rank = 0;
-                        // let userall = 0;
-                        // for(const rank of rank.userranks){
-                        //     if (rank.has(col)) {
-                        //         Rank = rank.get(col);
-                        //         break;
-                        //     }
-                        // }
-                        // for(const all of rank.useralls){
-                        //     if (all.has(col)) {
-                        //         userall = all.get(col);
-                        //         break;
-                        //     }
-                        // }
-                        // gemarankname.innerText = `${col} - ランク: ${Rank}/${userall}`;
-                    }
-                    
-                }
-            })
-            totlescore.innerText = `トータルスコア: ${totle}`;
-            console.log(rank.userranks["Asteroid"]);
-            console.log(rank.useralls);
+            if (data[col] != null) {
+                let Rank = rank.userranks.get(col) || 0; // 該当するランクを取得
+                let userall = rank.useralls.get(col) || 0; // 該当する全体ランクを取得
 
-        }catch(e){
-            console.error("エラーが発生しました：", e);
-
-        }finally{
-            loading.style.display = "none";
+                gameItem.innerText = `${col} - スコア: ${data[col]}`;
+                gameItemrank.innerText = `${col} - ランク: ${Rank}/${userall}`;
+            }
         }
 
+        // トータルスコアを表示
+        totlescore.innerText = `トータルスコア: ${totle}`;
 
-
-        
-
-        
-            // ローディング画面を非表示にしてメインコンテンツを表示
-
-        });
-        
-
-
-
-        
-
-    
+    } catch (e) {
+        console.error("エラーが発生しました：", e);
+    } finally {
+        // ローディング画面を非表示
+        loading.style.display = "none";
+    }
+});
