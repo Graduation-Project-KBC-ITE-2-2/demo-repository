@@ -262,7 +262,67 @@ export const displayDataInHTMLRealtime = (collectionName) => {
     }
 };
 
+export function getScoreRank(){
+    let userranks = new Map();
+    let useralls = new Map();
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const email = user.email;
+    try {
+        for(const key of firebasecollections ){
+            // Firestoreのコレクションを監視し、リアルタイム更新
+            const collectionRef = collection(db, key);
+            onSnapshot(collectionRef, (snapshot) => {
+                const Scores = [];
+
+                // スナップショットからデータを取得し、スコアを大きい順に並べ替え
+                snapshot.forEach(doc => {
+                    Scores.push({ id: doc.id, data: doc.data() });
+                });
+
+                // スコアを降順に並べ替え
+                Scores.sort((a, b) => b.data.score - a.data.score);
+
+                let rank = 1;
+                auth
+                
+                Scores.forEach(score => {
+                    const accountEmail = score.data.email;
+                    if (accountEmail == email){
+                        const userScore = rank;
+                        userranks.set(key, userScore);
+                    }
+                    rank++;
+                });
+                useralls.set(key, rank-1);
+            });
+        }
+        return {
+            userranks: userranks,
+            useralls: useralls
+        };
+
+    } catch (error) {
+        console.error('データの表示中にエラーが発生しました:', error);
+    }
+}
+
+
+export async function getAllCollections() {
+    const collectionsArray = [];
+    try {
+        const querySnapshot = await getDocs(collection(db, "your_collection")); // ルートレベルを取得
+        querySnapshot.forEach((doc) => {
+            collectionsArray.push(doc.id);
+        });
+        return collectionsArray;
+    } catch (error) {
+        console.error("コレクション取得時にエラーが発生しました：", error);
+    }
+}
+
 const firebasecollections = ['Asteroid', 'Blocks', 'MineSweeper','Cave','Missile Command','Qix','Invader','Memorizer','SnakeBite','Tetris'];
+//await getAllCollections();
 
 //特定のユーザーのスコアを取得
 export async function getUserScoreByEmail(email, collectionName) {
