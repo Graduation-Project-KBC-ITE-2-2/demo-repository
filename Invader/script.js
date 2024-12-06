@@ -24,6 +24,9 @@ var playerImgY = -10; // P画像の初期位置（画面外からスタート）
 
 var playerImgActive = true; // 「P」がアクティブかどうかのフラグ
 
+var playerImgSpawnClock = 0; // 「P」の出現を管理するタイマー
+var playerImgSpawnInterval = 1800; // 30秒（1800フレーム：1フレーム50ms）
+
 var scoreMultiplierActive = false; // スコア倍増のフラグ
 var scoreMultiplierEndTime = 0;   // スコア倍増終了時間
 
@@ -58,7 +61,7 @@ function Alien(x, y, point, offset) {
     this.isEven = function () { return Alien.isEven; }
 }
 
-// プレイヤーキャラクター（宇宙船）クラス
+// 宇宙船クラス：プレイヤーキャラクター
 function Ship() {
     this.x = 0;
     this.y = 550; // 初期位置
@@ -173,7 +176,7 @@ window.start = function () {
     ship = new Ship(); // 宇宙船の初期化
     beam = new Beam(); // ビームの初期化
     clock = 0;
-    
+
     // タイマーの初期化と開始
     remainingTime = 180; // タイマーをリセット
     startTimer()
@@ -244,6 +247,7 @@ window.start = function () {
 
     playerImgY = -10; // 「P」の初期位置をリセット
     playerImgActive = true; // 「P」を再びアクティブにする
+    playerImgSpawnClock = clock; // 出現タイミングをリセット
 };
 
 // キー押下時の処理
@@ -306,8 +310,16 @@ function mainLoop() {
 
     scrollY += 1; // 背景スクロール
 
-    // Pの画像を上から下に流す
-    playerImgY += 2; // Y座標を2ピクセルずつ移動
+    // 「P」の出現管理
+    if (clock - playerImgSpawnClock >= playerImgSpawnInterval && !playerImgActive) {
+        playerImgActive = true; // 「P」を再びアクティブにする
+        playerImgY = -10; // 「P」の初期位置をリセット
+        playerImgSpawnClock = clock; // 出現タイミングを記録
+    }
+
+    if (playerImgActive) {
+        playerImgY += 2; // Y座標を2ピクセルずつ移動
+    }
 
     if (playerImgActive &&
         ship.x < 300 && ship.x + 30 > 270 &&  // 横方向の範囲判定
