@@ -25,7 +25,7 @@ const db = getFirestore(app);
 
 export {auth,db};
 
-const firebasecollections = ['Asteroid', 'Blocks', 'MineSweeper','Cave','Missile Command','Qix','Invader','Memorizer','SnakeBite','Tetris'];
+const firebasecollections = ['Asteroid', 'Bloks Game', 'MineSweeper','Cave','Missile Command','Qix','SpaceInvader','Memorizer','SnakeBite','Tetris'];
 //await getAllCollections();
 
 // ログインしているユーザー情報を取得する関数

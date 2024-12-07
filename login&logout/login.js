@@ -48,9 +48,9 @@ function createModal() {
     loginButton.innerText = 'ログイン';
   
     // ゲストログインボタンを作成
-    const guestLoginButton = document.createElement('button');
-    guestLoginButton.id = 'guestLoginButton';
-    guestLoginButton.innerText = 'ゲストログイン';
+    // const guestLoginButton = document.createElement('button');
+    // guestLoginButton.id = 'guestLoginButton';
+    // guestLoginButton.innerText = 'ゲストログイン';
   
     // エラーメッセージ表示用のdivを作成
     const errorMessage = document.createElement('div');
@@ -62,7 +62,7 @@ function createModal() {
     loginContainer.appendChild(emailInput);
     loginContainer.appendChild(passwordInput);
     loginContainer.appendChild(loginButton);
-    loginContainer.appendChild(guestLoginButton);
+    // loginContainer.appendChild(guestLoginButton);
     loginContainer.appendChild(errorMessage);
     modalContent.appendChild(loginContainer);
     modal.appendChild(modalContent);
