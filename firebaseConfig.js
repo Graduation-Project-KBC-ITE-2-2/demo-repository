@@ -25,7 +25,7 @@ const db = getFirestore(app);
 
 export {auth,db};
 
-const firebasecollections = ['Asteroid', 'Bloks Game', 'MineSweeper','Cave','Missile Command','Qix','SpaceInvader','Memorizer','SnakeBite','Tetris'];
+const firebasecollections = ['Asteroid', 'Bloks Game', 'MineSweeper','Cave','Missile Command','Qix','SpaceInvader','Memorizer','SnakeBite','Tetris','user_name'];
 //await getAllCollections();
 
 // ログインしているユーザー情報を取得する関数
@@ -383,9 +383,12 @@ export async function getUserScoresByEmail(email, collectionNames) {
         const querySnapshot = await getDocs(q);
 
         for (const col of firebasecollections) {
-            if (data[col] != null) {
-                totle += data[col]; // スコアを合計
+            if(col !== "user_name"){
+                if (data[col] != null) {
+                    totle += data[col]; // スコアを合計
+                }
             }
+
         }
 
         if (!querySnapshot.empty) {
@@ -394,14 +397,14 @@ export async function getUserScoresByEmail(email, collectionNames) {
             let existotleScore = 0;
             querySnapshot.forEach((doc) => {
                 existingDocId = doc.id; // ドキュメントIDを取得
-                existotleScore = doc.data().totleScore; // 既存のスコアを取得
+                existotleScore = doc.data().score; // 既存のスコアを取得
             });
             console.log(existotleScore);
 
             // 新しいスコアが既存のスコアよりも大きい場合に更新
             if (existotleScore !== totle) {
                 await updateDoc(doc(db, "user_name", existingDocId), {
-                    totleScore: totle // スコアを更新
+                    score: totle // スコアを更新
                 });
                 console.log("トータルスコアが更新されました");
             }else {
@@ -412,7 +415,7 @@ export async function getUserScoresByEmail(email, collectionNames) {
             await addDoc(collection(db, "user_name"), {
                 email: email,
                 nickname: "NoNickname",
-                totleScore: totle,
+                score: totle,
                 timestamp: new Date() // 保存時刻を追加する場合
             });
             console.log("新しいスコアが保存されました");
