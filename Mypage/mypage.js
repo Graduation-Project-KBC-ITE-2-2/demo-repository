@@ -23,36 +23,43 @@ window.addEventListener("load", async function () {
         // 各ゲームのスコアとランクを表示
         const data = await getUserScoresByEmail(email, collections);
         for (const col of collections) {
+
             // ゲームのスコアとランク用の DOM 要素を作成
-            const gameItem = document.createElement("p");
+            let gameItem;
+            if(col === "user_name"){
+                gameItem = document.createElement("h3");
+            }else{
+                gameItem = document.createElement("p");
+            }
+            
             gameItem.id = col;
             gameList.appendChild(gameItem);
+            const crownIcon = document.createElement("img");
 
             if (data[col] != null) {
                 let Rank = rank.userranks.get(col) || 0; // 該当するランクを取得
                 let userall = rank.useralls.get(col) || 0; // 該当する全体ランクを取得
+
                 if(col == "user_name"){
-                    gameItem.innerText = `トータルスコア - スコア: ${data[col]} - 総合ランク: ${Rank}/${userall} 位`;
+                    gameItem.innerText = `トータル - スコア: ${data[col]} - 総合ランク: ${Rank}/${userall} 位`;
                 }else{
                     gameItem.innerText = `${col} - スコア: ${data[col]} - ランク: ${Rank}/${userall} 位`;
                 }
-                const crownIcon = document.createElement("img");
                 if (Rank === 1) {
                     crownIcon.src = "1icon.png";
-                    crownIcon.alt = "Crown";
-                    crownIcon.style.width = "30px"; // 必要に応じてサイズを調整
-                    gameItem.appendChild(crownIcon);
                 }else if(Rank === 2){
                     crownIcon.src = "2icon.png";
-                    crownIcon.alt = "Crown";
-                    crownIcon.style.width = "30px"; // 必要に応じてサイズを調整
-                    gameItem.appendChild(crownIcon);
                 }else if(Rank === 3){
                     crownIcon.src = "3icon.png";
-                    crownIcon.alt = "Crown";
-                    crownIcon.style.width = "30px"; // 必要に応じてサイズを調整
-                    gameItem.appendChild(crownIcon);
                 }
+                crownIcon.alt = "Crown";
+                if(col == "user_name"){
+                    crownIcon.style.width = "80px";
+                }else{
+                    crownIcon.style.width = "30px"; // 必要に応じてサイズを調整
+                }
+                
+                gameItem.appendChild(crownIcon);
                 
             }
         }
