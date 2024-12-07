@@ -46,7 +46,7 @@ window.addEventListener("load", async function () {
                     gameItem.innerText = `${col} - スコア: ${data[col]} - ランク: ${Rank}/${userall} 位`;
                 }
                 if (Rank === 1) {
-                    crownIcon.src = "1icon.png";
+                    crownIcon.src = "icon.png";
                 }else if(Rank === 2){
                     crownIcon.src = "2icon.png";
                 }else if(Rank === 3){
