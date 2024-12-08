@@ -41,9 +41,9 @@ window.addEventListener("load", async function () {
                 let userall = rank.useralls.get(col) || 0; // 該当する全体ランクを取得
 
                 if(col == "user_name"){
-                    gameItem.innerText = `トータル - スコア: ${data[col]} - 総合ランク: ${Rank}/${userall} 位`;
+                    gameItem.innerText = `トータル - スコア: ${data[col]} - 総合ランク: ${Rank}位 /${userall}人中`;
                 }else{
-                    gameItem.innerText = `${col} - スコア: ${data[col]} - ランク: ${Rank}/${userall} 位`;
+                    gameItem.innerText = `${col} - スコア: ${data[col]} - ランク: ${Rank}位 /${userall}人中`;
                 }
                 if (Rank === 1) {
                     crownIcon.src = "icon.png";
