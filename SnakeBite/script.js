@@ -33,6 +33,9 @@ dirtTexture.src = "dirt.png"; // 土の画像のパスを指定
 var wallTexture = new Image();
 wallTexture.src = "wall.png"; // 壁の画像のパスを指定
 
+// ゲームのタイトルを取得（ランキングに使用？）
+const title = document.title;
+
 // Pointオブジェクト
 function Point(x, y) {
   this.x = x;
@@ -55,7 +58,7 @@ var stageSettings = {
 
 var backgroundPattern = []; // 背景パターンを格納する配列
 
-function init() {
+function initCanvas() {
   canvas = document.getElementById("field");
   if (canvas) {
     canvas.width = canvasWidth;
@@ -122,31 +125,45 @@ function init() {
 
 // スタートボタンが押されたときにゲームを開始する関数
 window.startGame = function () {
-  const tutorialElement = document.getElementById("tutorial");
-  const containerElement = document.getElementById("container");
-
-  if (tutorialElement) {
-    tutorialElement.style.display = "none";
+  // チュートリアルを非表示にする
+  const tutorial = document.getElementById("tutorial");
+  if (tutorial) {
+    tutorial.style.display = "none";
   } else {
     console.error("チュートリアル要素が見つかりませんでした。");
-    return;
   }
 
-  if (containerElement) {
-    containerElement.style.display = "flex";
+  const retry = document.getElementById("retry");
+  if (tutorial) {
+    retry.style.display = "none";
+  } else {
+    console.error("リトライ要素が見つかりませんでした。");
   }
 
-  gameStarted = true;
-  init();
+  // ゲームコンテナを表示する
+  const container = document.getElementById("container");
+  if (container) {
+    container.style.display = "flex";
+  } else {
+    console.error("コンテナ要素が見つかりませんでした。");
+  }
+
+  // ゲームの初期化
+  initGame();
 };
-
-// リトライ関数の修正
 window.retryGame = function () {
   document.getElementById("retryButton").style.display = "none";
+  const retryModal = document.getElementById("retry");
+  if (retryModal) {
+    retry.style.display = "none";
+  } else {
+    console.error("リトライ要素が見つかりませんでした。");
+  }
+
   gameStarted = true;
   currentStage = 1; // ステージをリセット
   point = 0; // スコアをリセット
-  init();
+  initCanvas();
 };
 
 function addFood() {
@@ -290,7 +307,6 @@ function keydown(event) {
   keyCode = event.keyCode;
 }
 
-// endGame関数の修正
 async function endGame(message) {
   clearInterval(timer);
   gameStarted = false;
@@ -318,9 +334,10 @@ async function endGame(message) {
       // 2秒後に次のステージを開始
       setTimeout(() => {
         currentStage++;
-        init();
+        initCanvas();
       }, 2000);
     } else {
+      // 最終ステージクリア時
       ctx.fillStyle = "green";
       ctx.font = "40px sans-serif";
       ctx.textAlign = "center";
@@ -330,23 +347,80 @@ async function endGame(message) {
         canvas.width / 2,
         canvas.height / 2
       );
-      document.getElementById("retryButton").style.display = "block";
+      // リトライボタンを表示
+      const retryButton = document.getElementById("retryButton");
+      if (retryButton) {
+        retryButton.style.display = "block"; // ボタンを表示
+      } else {
+        console.error("リトライボタンが見つかりませんでした。");
+      }
+
+      // ゲームクリア時には retry モーダルは表示しないか、
+      // 表示する場合は別のクリア用モーダルを用意するなど対応する
+      // document.getElementById("retry").style.display = "none"; // 非表示のままにする
     }
   } else {
+    // Game Over の場合のみ表示
     ctx.fillStyle = "red";
     ctx.font = "40px sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(message, canvas.width / 2, canvas.height / 2);
-    document.getElementById("retryButton").style.display = "block";
+    // モーダルウィンドウを表示
+    const retryModal = document.getElementById("retry");
+    retryModal.style.display = "flex";
+
+    const retryButton = document.getElementById("retryButton");
+    if (retryButton) {
+      retryButton.style.display = "block"; // ここでボタンを再び表示
+    } else {
+      console.error("リトライボタンが見つかりませんでした。");
+    }
   }
 }
 
 grassTexture.onload = () => {
   dirtTexture.onload = () => {
-    init(); // 画像がロードされてから初期化
+    initCanvas(); // 画像がロードされてから初期化
   };
 };
 
-const title = document.title;
-displayDataInHTMLRealtime(title);
+window.addEventListener("load", () => {
+  // キャンバスの初期化
+  initCanvas();
+
+  // リアルタイムデータの表示
+  displayDataInHTMLRealtime(title);
+
+  // スタートボタンのクリックイベントリスナー
+  const startButton = document.getElementById("startButton");
+  if (startButton) {
+    startButton.addEventListener("click", window.startGame);
+  }
+
+  // リトライボタンのクリックイベントリスナー
+  const retryButton = document.getElementById("retryButton");
+  if (retryButton) {
+    retryButton.addEventListener("click", window.retryGame); // `retryGame` 関数を呼び出す
+  }
+
+  // スペースキーでゲームを開始する機能を追加
+  window.addEventListener("keydown", function (e) {
+    if (e.code === "Space") {
+      const tutorialModal = document.getElementById("tutorial");
+      if (tutorialModal && tutorialModal.style.display !== "none") {
+        window.startGame();
+      }
+    }
+  });
+
+  // リトライモーダルでの「R」キーによるリトライ機能を追加
+  window.addEventListener("keydown", function (e) {
+    if (e.code === "KeyR") {
+      const retryModal = document.getElementById("retry");
+      if (retryModal && retryModal.style.display !== "none") {
+        window.retryGame();
+      }
+    }
+  });
+});
