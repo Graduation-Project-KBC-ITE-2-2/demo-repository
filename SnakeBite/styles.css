@@ -1,150 +1,59 @@
+/* 
+  全体の基本設定 
+  背景色やスクロールの非表示設定など、全ページに影響を与えるスタイルを記述
+  */
 body {
-  margin: 0;
-  padding: 0;
-  background-color: #333;
-  position: relative;
-  overflow: hidden;
+  margin: 0; /* ページ全体の余白を削除 */
+  padding: 0; /* ページ全体のパディングを削除 */
+  background-color: #333; /* 背景を暗めのグレーに設定 */
+  position: relative; /* 要素の位置調整を可能にする */
+  overflow: hidden; /* スクロールバーを非表示に */
+  height: 100vh;
 }
+
+/* 
+  ヘッダーの設定 
+  ページ上部のナビゲーションバーのスタイル
+  */
 header {
-  padding: 0;
+  padding: 0; /* ヘッダー内の余白を削除 */
 }
+
 .header {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  justify-content: center;
+  list-style: none; /* ナビゲーションリストのマーカーを非表示 */
+  padding: 0; /* ナビゲーションリスト内の余白を削除 */
+  margin: 0; /* ナビゲーションリスト外の余白を削除 */
+  display: flex; /* リスト項目を横並びに */
+  justify-content: center; /* リスト項目を中央に配置 */
 }
+
 .header li {
-  margin: 0 20px;
+  margin: 0 20px; /* 各リスト項目間にスペースを追加 */
 }
+
 .header a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 15px;
-  padding: 10px 15px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  color: white; /* リンクテキストを白色に設定 */
+  text-decoration: none; /* 下線を非表示 */
+  font-weight: bold; /* テキストを太字に設定 */
+  font-size: 15px; /* フォントサイズを調整 */
+  padding: 10px 15px; /* リンク周囲に余白を追加 */
+  border-radius: 5px; /* リンクを角丸にする */
+  transition: background-color 0.3s ease; /* 背景色の変化をスムーズに */
 }
+
 .header a:hover {
-  background-color: #555;
+  background-color: #555; /* リンクをホバー時に暗めの背景色に変更 */
 }
+
+/* 
+  ゲームエリアの設定 
+  ゲーム画面となるキャンバス要素のデザイン
+  */
 canvas {
+  width: 100%;
+  height: 100%; /* 親要素に基づいて自動調整 */
   display: block;
-  margin: 0; /* マージンを完全にリセット */
-  background-color: black; /* ゲームエリアの背景色 */
-}
-.modal {
-  position: fixed;
-  z-index: 10;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background-color: #333;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 300px; /* 幅を指定 */
-  text-align: center;
-  border-radius: 10px;
-  position: absolute; /* 絶対位置にする */
-  top: 50%; /* 縦中央に配置 */
-  left: 50%; /* 横中央に配置 */
-  transform: translate(-50%, -50%); /* 位置を中央に調整 */
-}
-
-#tutorial {
-  display: flex;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  text-align: center;
-  align-items: center; /* 縦中央に配置 */
-  justify-content: center; /* 横中央に配置 */
-  z-index: 10;
-  padding: 0; /* paddingを削除 */
-}
-#startButton {
-  background-color: white;
-  color: black;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 18px;
-  transition: background-color 0.3s ease;
-}
-#startButton:hover {
-  background-color: #ccc;
-}
-
-#gameArea {
-  flex-grow: 2; /* ゲームエリアを広めに確保 */
-  margin: 0; /* 不要なマージンを削除 */
-}
-
-#field {
-  position: relative;
-}
-
-#retryButton {
-  position: absolute;
-  top: 60%;
-  left: 38%;
-  transform: translate(-50%, -50%); /* ボタンを中央に配置 */
-  padding: 10px 20px;
-  font-size: 20px;
-  display: none; /* 初期は非表示 */
-  z-index: 10; /* キャンバスより前面に表示 */
-}
-
-#scoreboard h3 {
-  color: white;
-  text-align: center;
-  font-size: 20px;
-  margin-bottom: 10px; /* タイトルとランキングリストの間のスペース */
-  font-weight: bold; /* タイトルの強調 */
-}
-
-#scorelist {
-  list-style: none; /* リストスタイルを無効化 */
-  padding: 0;
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-
-#scorelist li {
-  margin: 5px 0; /* 各スコア項目間に余白を設定 */
-  padding: 10px; /* 内側の余白を設定して見やすくする */
-  background-color: rgba(255, 255, 255, 0.1); /* 背景を少し明るくして区別 */
-  border-radius: 5px; /* 項目に丸みを持たせる */
-  text-align: left; /* テキストを左揃えにする */
-}
-
-#container {
-  display: flex;
-  justify-content: flex-start; /* 要素を左詰めで配置 */
-  align-items: flex-start;
-  max-width: 1200px;
-  margin: 0 auto; /* コンテナ全体を中央に配置 */
-  padding: 20px 0; /* 上下の余白を調整 */
-  gap: 20px; /* ゲームエリアとランキングの間の間隔を設定 */
-  box-sizing: border-box;
+  background-color: black; /* ゲーム背景色 */
 }
 
 #gameArea {
@@ -152,13 +61,146 @@ canvas {
   margin-right: 20px; /* ランキングとの間に余白を追加 */
 }
 
-#scoreboard {
-  flex-basis: 300px; /* 固定の幅を指定してランキングエリアを確保 */
-  color: white;
-  font-size: 16px;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  margin: 0; /* 不要なマージンを削除 */
+#field {
+  position: relative;
 }
+
+/* 
+  ランキングエリアの設定 
+  スコア表示やタイトルのスタイル
+  */
+#scoreboard {
+  width: 100%;
+  max-width: 300px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
+}
+
+#scoreboard h3 {
+  color: white; /* タイトルを白色に設定 */
+  text-align: center; /* タイトルを中央揃えに */
+  font-size: 20px; /* タイトルのフォントサイズを大きめに */
+  margin-bottom: 10px; /* タイトルとランキングリストの間にスペースを追加 */
+  font-weight: bold; /* タイトルを太字に設定 */
+}
+
+#scorelist {
+  list-style: none; /* リストマーカーを非表示 */
+  padding: 0; /* リスト内の余白を削除 */
+  margin: 0; /* リスト外の余白を削除 */
+  font-family: Arial, sans-serif; /* フォントを設定 */
+}
+
+#scorelist li {
+  margin: 5px 0; /* 各スコア項目間にスペースを追加 */
+  padding: 10px; /* 内側に余白を追加して見やすく */
+  background-color: rgba(255, 255, 255, 0.1); /* 背景を少し明るく設定 */
+  border-radius: 5px; /* 項目を角丸にする */
+  text-align: left; /* テキストを左揃えに */
+}
+
+/* 全体レイアウト */
+#container {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto; /* 中央に配置 */
+  padding: 20px 0;
+  gap: 20px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+/* 
+  モーダル関連の設定 
+  チュートリアルやポップアップの表示に使用
+  */
+.modal {
+  position: fixed; /* ビューポート全体に固定表示 */
+  z-index: 10; /* モーダルを前面に表示 */
+  left: 0;
+  top: 0;
+  width: 100%; /* 横幅を画面全体に設定 */
+  height: 100%; /* 高さを画面全体に設定 */
+  background-color: rgba(0, 0, 0, 0.8); /* 背景を半透明の黒に設定 */
+  color: white; /* テキストを白色に設定 */
+  display: flex; /* フレックスボックスで中央揃えに */
+  align-items: center; /* 縦方向で中央に揃える */
+  justify-content: center; /* 横方向で中央に揃える */
+}
+
+.modal-content {
+  background-color: #333; /* モーダルの背景を暗めのグレーに設定 */
+  padding: 20px; /* 内側に余白を追加 */
+  border: 1px solid #888; /* 外枠をグレーに設定 */
+  width: 300px; /* 幅を指定 */
+  text-align: center; /* テキストを中央揃えに */
+  border-radius: 10px; /* ボックスを角丸に */
+  position: absolute; /* 絶対位置にする */
+  top: 50%; /* 縦中央に配置 */
+  left: 50%; /* 横中央に配置 */
+  transform: translate(-50%, -50%); /* 中央揃えの位置調整 */
+}
+
+/* 
+  ボタン関連の設定 
+  スタートボタンのスタイル
+  */
+.common-button {
+  background-color: white; /* ボタンの背景色を白に設定 */
+  color: black; /* ボタンのテキストを黒に設定 */
+  padding: 10px 20px; /* ボタンの内側に余白を追加 */
+  border: none; /* ボーダーを削除 */
+  border-radius: 5px; /* ボタンを角丸に */
+  cursor: pointer; /* ホバー時にカーソルを変更 */
+  font-size: 18px; /* ボタンテキストのフォントサイズを設定 */
+  transition: background-color 0.3s ease; /* 背景色の変化をスムーズに */
+  margin-right: 10px; /* ボタンに適度な余白を設定 */
+}
+
+#startButton:hover {
+  background-color: #ccc; /* ホバー時に背景を灰色に変更 */
+}
+
+/* 
+    非表示クラス 
+    要素を非表示にするためのクラス
+    */
+.hidden {
+  display: none; /* 要素を非表示に設定 */
+}
+
+/* ゲームコンテナのレスポンシブ設定 */
+#game-container {
+  width: 100%;
+  max-width: 800px; /* 最大幅を指定 */
+  aspect-ratio: 4 / 3; /* アスペクト比を固定 */
+  height: 100%;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#retry .modal-content {
+  display: flex;
+  flex-direction: column; /* 見出しとボタン群は縦方向で整列 */
+  align-items: center;
+  justify-content: center;
+}
+
+#retry .modal-content h2 {
+  margin-bottom: 20px; /* タイトル下に余白を入れる */
+}
+
+/* 新しく追加したbutton-groupクラスでボタンを横並びにする */
+#retry .modal-content .button-group {
+  display: flex;
+  flex-direction: row; /* ボタンを横並びに */
+  gap: 20px; /* ボタン同士に余白を追加 */
+  justify-content: center; /* 横方向中央寄せ */
+}
+
+/* ボタンのスタイルは共通クラス.common-buttonで既に指定済み */
