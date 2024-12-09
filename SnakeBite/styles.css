@@ -1,13 +1,11 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #333;
+  background-color: hsl(0, 0%, 20%);
   position: relative;
   overflow: hidden;
 }
-header {
-  padding: 0;
-}
+
 .header {
   list-style: none;
   padding: 0;
@@ -30,11 +28,13 @@ header {
 .header a:hover {
   background-color: #555;
 }
+
 canvas {
   display: block;
-  margin: 0; /* マージンを完全にリセット */
-  background-color: black; /* ゲームエリアの背景色 */
+  margin: 0 auto;
+  background-color: hsl(0, 0%, 20%);
 }
+
 .modal {
   position: fixed;
   z-index: 10;
@@ -50,18 +50,17 @@ canvas {
   align-items: center;
   justify-content: center;
 }
-
 .modal-content {
   background-color: #333;
   padding: 20px;
   border: 1px solid #888;
-  width: 300px; /* 幅を指定 */
+  width: 300px;
   text-align: center;
   border-radius: 10px;
-  position: absolute; /* 絶対位置にする */
-  top: 50%; /* 縦中央に配置 */
-  left: 50%; /* 横中央に配置 */
-  transform: translate(-50%, -50%); /* 位置を中央に調整 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 #tutorial {
@@ -74,11 +73,11 @@ canvas {
   background: rgba(0, 0, 0, 0.8);
   color: white;
   text-align: center;
-  align-items: center; /* 縦中央に配置 */
-  justify-content: center; /* 横中央に配置 */
+  align-items: center;
+  justify-content: center;
   z-index: 10;
-  padding: 0; /* paddingを削除 */
 }
+
 #startButton {
   background-color: white;
   color: black;
@@ -94,71 +93,39 @@ canvas {
 }
 
 #gameArea {
-  flex-grow: 2; /* ゲームエリアを広めに確保 */
-  margin: 0; /* 不要なマージンを削除 */
-}
-
-#field {
-  position: relative;
-}
-
-#retryButton {
-  position: absolute;
-  top: 60%;
-  left: 38%;
-  transform: translate(-50%, -50%); /* ボタンを中央に配置 */
-  padding: 10px 20px;
-  font-size: 20px;
-  display: none; /* 初期は非表示 */
-  z-index: 10; /* キャンバスより前面に表示 */
-}
-
-#scoreboard h3 {
-  color: white;
-  text-align: center;
-  font-size: 20px;
-  margin-bottom: 10px; /* タイトルとランキングリストの間のスペース */
-  font-weight: bold; /* タイトルの強調 */
-}
-
-#scorelist {
-  list-style: none; /* リストスタイルを無効化 */
-  padding: 0;
+  flex-grow: 2;
   margin: 0;
-  font-family: Arial, sans-serif;
-}
-
-#scorelist li {
-  margin: 5px 0; /* 各スコア項目間に余白を設定 */
-  padding: 10px; /* 内側の余白を設定して見やすくする */
-  background-color: rgba(255, 255, 255, 0.1); /* 背景を少し明るくして区別 */
-  border-radius: 5px; /* 項目に丸みを持たせる */
-  text-align: left; /* テキストを左揃えにする */
-}
-
-#container {
-  display: flex;
-  justify-content: flex-start; /* 要素を左詰めで配置 */
-  align-items: flex-start;
-  max-width: 1200px;
-  margin: 0 auto; /* コンテナ全体を中央に配置 */
-  padding: 20px 0; /* 上下の余白を調整 */
-  gap: 20px; /* ゲームエリアとランキングの間の間隔を設定 */
-  box-sizing: border-box;
-}
-
-#gameArea {
-  flex-grow: 2; /* ゲームエリアを広めに確保 */
-  margin-right: 20px; /* ランキングとの間に余白を追加 */
+  background-color: transparent;
 }
 
 #scoreboard {
-  flex-basis: 300px; /* 固定の幅を指定してランキングエリアを確保 */
+  flex-basis: 300px;
   color: white;
   font-size: 16px;
   background-color: rgba(0, 0, 0, 0.7);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  margin: 0; /* 不要なマージンを削除 */
+}
+
+#retryButton {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px 20px;
+  font-size: 20px;
+  display: none;
+  z-index: 10;
+}
+
+#container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0;
+  gap: 20px;
+  box-sizing: border-box;
 }

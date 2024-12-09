@@ -4,24 +4,23 @@
     <title>SnakeBite</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css" />
   </head>
 
   <body>
     <header>
       <ul class="header">
-          <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
-          <li><a href="/Blocks/blocks.htm">Blocks</a></li>
-          <li><a href="/Cave/cave.html">Cave</a></li>
-          <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
-          <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
-          <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
-          <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-          <li><a href="/Qix/Qix.htm">Qix</a></li>
-          <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
-          <li><a href="/index.html">Top</a></li>
+        <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
+        <li><a href="/Blocks/blocks.htm">Blocks</a></li>
+        <li><a href="/Cave/cave.html">Cave</a></li>
+        <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
+        <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
+        <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
+        <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
+        <li><a href="/Qix/Qix.htm">Qix</a></li>
+        <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
+        <li><a href="/index.html">Top</a></li>
       </ul>
-  </header>
+    </header>
 
     <div id="container">
       <!-- ゲームエリア -->
@@ -69,7 +68,7 @@
           const user = await getCurrentUser();
           if (user) {
             document.getElementById("tutorial").style.display = "block";
-            document.getElementById("container").style.display = "flex";
+            document.getElementById("container").style.display = "none";
           } else {
             window.location.href = "../index.html";
           }
@@ -91,7 +90,6 @@
       };
     </script>
 
-    <script type="module" src="/main.js"></script>
     <script type="module" src="script.js"></script>
   </body>
 </html>

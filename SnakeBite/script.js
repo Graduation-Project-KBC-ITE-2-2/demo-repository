@@ -23,6 +23,16 @@ var foodsEaten = 0; // 食べた餌の数
 var currentStage = 1;
 var maxStage = 10;
 
+// 草や土のテクスチャ画像を読み込む
+var grassTexture = new Image();
+grassTexture.src = "grass.png"; // 草の画像のパスを指定
+var dirtTexture = new Image();
+dirtTexture.src = "dirt.png"; // 土の画像のパスを指定
+
+// 壁のテクスチャ画像を読み込む
+var wallTexture = new Image();
+wallTexture.src = "wall.png"; // 壁の画像のパスを指定
+
 // Pointオブジェクト
 function Point(x, y) {
   this.x = x;
@@ -43,6 +53,8 @@ var stageSettings = {
   10: { totalFoods: 50, speed: 120, numCellsX: 30, numCellsY: 24 },
 };
 
+var backgroundPattern = []; // 背景パターンを格納する配列
+
 function init() {
   canvas = document.getElementById("field");
   if (canvas) {
@@ -53,20 +65,19 @@ function init() {
 
     // ステージ設定の適用
     var settings = stageSettings[currentStage];
-
-    // ステージごとのフィールドサイズを更新
     numCellsX = settings.numCellsX;
     numCellsY = settings.numCellsY;
+
+    // ブロックサイズの均一化: キャンバスに合わせた一貫したサイズを計算
+    S = Math.floor(Math.min(canvasWidth / numCellsX, canvasHeight / numCellsY));
+
     W = numCellsX;
     H = numCellsY;
-
-    // マスのサイズを再計算
-    S = Math.min(canvasWidth / numCellsX, canvasHeight / numCellsY);
 
     // フォントサイズを再設定
     ctx.font = S * 0.8 + "px sans-serif";
 
-    // 壁の初期化（内側に配置）
+    // 壁の初期化
     walls = [];
     for (var x = 1; x < W - 1; x++) {
       walls.push(new Point(x, 1)); // 上辺
@@ -77,16 +88,24 @@ function init() {
       walls.push(new Point(W - 2, y)); // 右辺
     }
 
+    // 背景パターンを生成
+    backgroundPattern = [];
+    for (let y = 0; y < numCellsY; y++) {
+      const row = [];
+      for (let x = 0; x < numCellsX; x++) {
+        row.push(Math.random() < 0.5 ? "grass" : "dirt"); // ランダムで草または土
+      }
+      backgroundPattern.push(row);
+    }
+
     // 蛇と餌をリセット
     snake = [];
     foods = [];
     foodsEaten = 0;
     totalFoods = settings.totalFoods;
 
-    // 蛇の初期化
     snake.push(new Point(Math.floor(W / 2), Math.floor(H / 2)));
 
-    // 餌の初期化
     for (var i = 0; i < totalFoods; i++) {
       addFood();
     }
@@ -94,7 +113,6 @@ function init() {
     window.onkeydown = keydown;
     paint();
 
-    // ゲーム速度の設定
     if (timer) clearInterval(timer);
     timer = setInterval(tick, settings.speed);
   } else {
@@ -131,7 +149,6 @@ window.retryGame = function () {
   init();
 };
 
-// 餌の追加
 function addFood() {
   let attempts = 0;
   while (true) {
@@ -222,18 +239,42 @@ async function tick() {
 }
 
 function paint() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // キャンバス全体に背景色を塗る
+  ctx.fillStyle = "rgb(51, 51, 51)"; // 背景色を黒に設定
+  ctx.fillRect(0, 0, canvas.width, canvas.height); // 背景全体を塗りつぶす
+
+  // 背景の固定描画
+  if (grassTexture.complete && dirtTexture.complete) {
+    for (let y = 1; y < numCellsY - 1; y++) {
+      // 上下の壁を避ける
+      for (let x = 1; x < numCellsX - 1; x++) {
+        // 左右の壁を避ける
+        const texture =
+          backgroundPattern[y][x] === "grass" ? grassTexture : dirtTexture;
+        ctx.drawImage(texture, x * S, y * S, S, S); // 各グリッドに対応するテクスチャを描画
+      }
+    }
+  } else {
+    ctx.fillStyle = "rgb(200,200,200)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
 
   // 壁の描画
-  ctx.fillStyle = "rgb(128,128,128)";
   walls.forEach(function (p) {
-    ctx.fillText("🔲", p.x * S, (p.y + 1) * S); // 壁の絵文字を変更
+    if (wallTexture.complete) {
+      // 壁画像を描画
+      ctx.drawImage(wallTexture, p.x * S, p.y * S, S, S);
+    } else {
+      // 画像がロードされていない場合はデフォルトの四角形を描画
+      ctx.fillStyle = "rgb(128,128,128)";
+      ctx.fillRect(p.x * S, p.y * S, S, S);
+    }
   });
 
   // 餌の描画
   ctx.fillStyle = "rgb(0,0,255)";
   foods.forEach(function (p) {
-    ctx.fillText("🐀", p.x * S, (p.y + 1) * S); // 餌の絵文字を変更
+    ctx.fillText("🐀", p.x * S, (p.y + 1) * S);
   });
 
   // 蛇の描画
@@ -300,6 +341,12 @@ async function endGame(message) {
     document.getElementById("retryButton").style.display = "block";
   }
 }
+
+grassTexture.onload = () => {
+  dirtTexture.onload = () => {
+    init(); // 画像がロードされてから初期化
+  };
+};
 
 const title = document.title;
 displayDataInHTMLRealtime(title);
