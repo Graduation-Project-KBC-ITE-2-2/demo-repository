@@ -9,4 +9,7 @@ const game = urlParams.get('game');
 displayDataInHTMLRealtimeall(game);
 
 const title = document.getElementById('rankingtitle');
+if(game === "user_name"){
+    title.innerText = "総合 - ランキング";
+}
 title.innerText = game+" - "+ "ランキング";
