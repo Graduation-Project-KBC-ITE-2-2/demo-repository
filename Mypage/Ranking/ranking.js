@@ -11,5 +11,6 @@ displayDataInHTMLRealtimeall(game);
 const title = document.getElementById('rankingtitle');
 if(game === "user_name"){
     title.innerText = "総合 - ランキング";
+}else{
+    title.innerText = game+" - "+ "ランキング";
 }
-title.innerText = game+" - "+ "ランキング";
