@@ -176,7 +176,7 @@ window.addEventListener("load", async function () {
                 } else if (Rank === 3) {
                     crownIcon.src = "3icon.png";
                 } else {
-                    crownIcon.src = ""; // 非表示
+                    crownIcon.src = "zako.jpg"; 
                 }
         
                 // アイコンを gameItem に追加
