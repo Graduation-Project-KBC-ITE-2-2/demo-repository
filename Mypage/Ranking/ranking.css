@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f4f4f9;
+}
+h1 {
+    font-size: 3rem;
+    margin: 20px 0;
+}
+.ranking-container {
+    max-width: 600px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+.ranking-item {
+    font-size: 1.5rem;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+.ranking-item:last-child {
+    border-bottom: none;
+}
+.first {
+    font-weight: bold;
+    color: gold;
+}
+.second {
+    font-weight: bold;
+    color: silver;
+}
+.third {
+    font-weight: bold;
+    color: #cd7f32;
+}

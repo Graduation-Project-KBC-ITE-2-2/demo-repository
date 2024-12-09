@@ -22,47 +22,172 @@ window.addEventListener("load", async function () {
 
         // 各ゲームのスコアとランクを表示
         const data = await getUserScoresByEmail(email, collections);
-        for (const col of collections) {
+        // for (const col of collections) {
 
-            // ゲームのスコアとランク用の DOM 要素を作成
+        //     // ゲームのスコアとランク用の DOM 要素を作成
+        //     let gameItem;
+        //     if(col === "user_name"){
+        //         gameItem = document.createElement("h3");
+        //     }else{
+        //         gameItem = document.createElement("p");
+        //     }
+            
+        //     gameItem.id = col;
+        //     gameList.appendChild(gameItem);
+        //     const crownIcon = document.createElement("img");
+
+        //     if (data[col] != null) {
+        //         let Rank = rank.userranks.get(col) || 0; // 該当するランクを取得
+        //         let userall = rank.useralls.get(col) || 0; // 該当する全体ランクを取得
+        //         const link = document.createElement("a");
+        //         link.href = `rankings.html?game=${encodeURIComponent(col)}`;
+        //         if(col == "user_name"){
+        //             gameItem.innerText = `トータル - スコア: ${data[col]} - 総合ランク: ${userall}人中 / ${Rank}位 `;
+        //         }else{
+        //             gameItem.innerText = `${col} - スコア: ${data[col]} - ランク: ${userall}人中 / ${Rank}位`;
+        //         }
+        //         crownIcon.alt = "Crown";
+        //         if (Rank === 1) {
+        //             crownIcon.src = "icon.png";
+        //         }else if(Rank === 2){
+        //             crownIcon.src = "2icon.png";
+        //         }else if(Rank === 3){
+        //             crownIcon.src = "3icon.png";
+        //         }else{
+
+        //             crownIcon.src = "zako.jpg";
+                    
+        //         }
+                
+        //         if(col == "user_name"){
+        //             crownIcon.style.width = "80px";
+        //         }else{
+        //             crownIcon.style.width = "30px"; // 必要に応じてサイズを調整
+        //         }
+                
+        //         gameItem.appendChild(crownIcon);
+                
+        //     }
+        // }
+
+        // for (const col of collections) {
+        //     // ゲームのスコアとランク用の DOM 要素を作成
+        //     let gameItem;
+        //     if (col === "user_name") {
+        //         gameItem = document.createElement("h3");
+        //     } else {
+        //         gameItem = document.createElement("p");
+        //     }
+        
+        //     gameItem.id = col;
+        //     gameList.appendChild(gameItem);
+        
+        //     // スコアとランクが存在する場合のみ処理
+        //     if (data[col] != null) {
+        //         let Rank = rank.userranks.get(col) || 0; // 該当するランクを取得
+        //         let userall = rank.useralls.get(col) || 0; // 該当する全体ランクを取得
+        
+        //         // リンク要素を作成して、ゲーム名を含める
+        //         const link = document.createElement("a");
+        //         link.href = `rankings.html?game=${encodeURIComponent(col)}`;
+        //         link.style.textDecoration = "none"; // リンクのスタイル調整
+        //         link.style.color = "inherit"; // 親の色に合わせる
+        
+        //         if (col === "user_name") {
+        //             link.innerText = `トータル - スコア: ${data[col]} - 総合ランク: ${userall}人中 / ${Rank}位 `;
+        //         } else {
+        //             link.innerText = `${col} - スコア: ${data[col]} - ランク: ${userall}人中 / ${Rank}位`;
+        //         }
+        
+        //         // 王冠アイコンの作成
+        //         const crownIcon = document.createElement("img");
+        //         crownIcon.alt = "Crown";
+        
+        //         // ランクに応じたアイコンを設定
+        //         if (Rank === 1) {
+        //             crownIcon.src = "icon.png";
+        //         } else if (Rank === 2) {
+        //             crownIcon.src = "2icon.png";
+        //         } else if (Rank === 3) {
+        //             crownIcon.src = "3icon.png";
+        //         } else {
+        //             crownIcon.src = "zako.jpg";
+        //         }
+        
+        //         // アイコンのスタイル調整
+        //         if (col === "user_name") {
+        //             crownIcon.style.width = "80px";
+        //         } else {
+        //             crownIcon.style.width = "30px"; // 必要に応じてサイズを調整
+        //         }
+        
+        //         // リンクとアイコンを gameItem に追加
+        //         gameItem.appendChild(link);
+        //         if (crownIcon.src) {
+        //             gameItem.appendChild(crownIcon);
+        //         }
+        //     }
+        // }
+
+        for (const col of collections) {
             let gameItem;
-            if(col === "user_name"){
+            if (col === "user_name") {
                 gameItem = document.createElement("h3");
-            }else{
+            } else {
                 gameItem = document.createElement("p");
             }
-            
+        
             gameItem.id = col;
             gameList.appendChild(gameItem);
-            const crownIcon = document.createElement("img");
-
+        
             if (data[col] != null) {
                 let Rank = rank.userranks.get(col) || 0; // 該当するランクを取得
                 let userall = rank.useralls.get(col) || 0; // 該当する全体ランクを取得
+                const lowerCol = col.toLowerCase(); // colを小文字に変換
 
+                // メインのリンク作成（col部分以外のテキストリンク）
+                const mainLink = `Ranking/ranking.html?game=${encodeURIComponent(col)}`;
+                
+                // col部分だけ別URL
+                const colLink = `../${col}/${lowerCol}.html`;
+        
+                // innerHTMLを使って部分リンクを設定
                 if(col == "user_name"){
-                    gameItem.innerText = `トータル - スコア: ${data[col]} - 総合ランク: ${Rank}位 /${userall}人中`;
+                    gameItem.innerHTML = `
+                    <a href="${colLink}" style="color: blue; text-decoration: underline;">トータル</a> 
+                    <a href="${mainLink}" style="color: blue; text-decoration: underline;">- スコア: ${data[col]} 
+                    - ランク: ${userall}人中 / ${Rank}位</a> 
+                `;
                 }else{
-                    gameItem.innerText = `${col} - スコア: ${data[col]} - ランク: ${Rank}位 /${userall}人中`;
+                    gameItem.innerHTML = `
+                    <a href="${colLink}" style="color: blue; text-decoration: underline;">${col}</a> 
+                    - スコア: ${data[col]} - <a href="${mainLink}" style="color: blue; text-decoration: underline;">
+                    ランク: ${userall}人中 / ${Rank}位</a> 
+                `;
                 }
+        
+                // 王冠アイコンの設定
+                const crownIcon = document.createElement("img");
+                crownIcon.alt = "Crown";
                 if (Rank === 1) {
                     crownIcon.src = "icon.png";
-                }else if(Rank === 2){
+                } else if (Rank === 2) {
                     crownIcon.src = "2icon.png";
-                }else if(Rank === 3){
+                } else if (Rank === 3) {
                     crownIcon.src = "3icon.png";
+                } else {
+                    crownIcon.src = ""; // 非表示
                 }
-                crownIcon.alt = "Crown";
-                if(col == "user_name"){
-                    crownIcon.style.width = "80px";
-                }else{
-                    crownIcon.style.width = "30px"; // 必要に応じてサイズを調整
+        
+                // アイコンを gameItem に追加
+                if (crownIcon.src) {
+                    crownIcon.style.width = col === "user_name" ? "80px" : "30px";
+                    gameItem.appendChild(crownIcon);
                 }
-                
-                gameItem.appendChild(crownIcon);
-                
             }
         }
+        
+        
 
 
     } catch (e) {

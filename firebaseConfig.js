@@ -265,6 +265,47 @@ export const displayDataInHTMLRealtime = (collectionName) => {
     }
 };
 
+export const displayDataInHTMLRealtimeall = (collectionName) => {
+    try {
+        const scoreListElement = document.getElementById('scorelist'); // データを挿入するHTML要素を取得
+
+        // Firestoreのコレクションを監視し、リアルタイム更新
+        const collectionRef = collection(db, collectionName);
+        onSnapshot(collectionRef, (snapshot) => {
+            const scores = [];
+
+            // スナップショットからデータを取得し、スコアを大きい順に並べ替え
+            snapshot.forEach(doc => {
+                scores.push({ id: doc.id, data: doc.data() });
+            });
+
+            // scoreListElementを初期化
+            scoreListElement.innerHTML = '';
+
+            // スコアを降順に並べ替え
+            scores.sort((a, b) => b.data.score - a.data.score);
+
+            // 上位10人だけを抽出
+            const allScores = scores;  // 最初の10人を取得
+
+            let rank = 1;
+            // 取得したデータを一行ずつHTMLに表示
+            allScores.forEach(score => {
+                let accountName = score.data.nickname.slice(0, 10);  // Eメールの先頭10文字を表示
+                if(accountName == "NoNickname"){
+                    accountName = score.data.email.slice(0, 10);
+                }
+                const scoreElement = document.createElement('p'); // 各データを表示するための <p> 要素を作成
+                scoreElement.textContent = `${rank} ,ID: ${accountName}, スコア: ${score.data.score}`; // 各データを設定
+                scoreListElement.appendChild(scoreElement); // <p> 要素を追加
+                rank++;
+            });
+        });
+    } catch (error) {
+        console.error('データの表示中にエラーが発生しました:', error);
+    }
+};
+
 export function getScoreRank(){
     let userranks = new Map();
     let useralls = new Map();
