@@ -135,3 +135,29 @@ td.open {
     color: white;
     margin-top: 10px;
 }
+
+
+#timer {
+    font-size: 18px;
+    margin-left: 20px;
+    color: #f5f5f5;
+}
+
+#retryButton {
+    position: absolute; /* 親要素内で位置を制御 */
+    top: 50%; /* 垂直方向の中央 */
+    left: 50%; /* 水平方向の中央 */
+    transform: translate(-50%, -50%); /* 自身の大きさを考慮して中央に調整 */
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #ff6666;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#retryButton:hover {
+    background-color: #ff4d4d;
+}
+

@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css">
     <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
-    <script src="script.js" defer></script>
+    <script type="module" src="script.js" defer></script>
 </head>
 
 <body>
@@ -61,11 +61,15 @@
         <!-- ゲームコンテナ -->
         <div id="game-container">
             <h1 id="title">Mine Sweeper</h1>
-            <table id="main" border="1"></table>
+            <table id="main" border="1">
+            </table>
+            <button id="retryButton" style="display: none;" onclick="retryGame()">Retry</button>
+            <span id="timer">Time: 0</span>
         </div>
 
         <!-- ゲームの横に表示するランキング要素 -->
         <div class="parent">
+             
             <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
             <div class="overlay-text">
                 ランキング<br>
