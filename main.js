@@ -26,8 +26,10 @@ document.querySelector('#footer').innerHTML = `
       <div class="footer-content">
         <p>© 2024 ミニゲーム集. All Rights Reserved.</p>
         <nav class="footer-nav">
+          <a href="/index.html">TOP</a>
           <a href="/privacy-policy.html">プライバシーポリシー</a>
           <a href="/terms-of-service.html">利用規約</a>
+          <a href="/Production/production.html">製作</a>
           <a href="/contact.html">お問い合わせ</a>
         </nav>
       </div>
