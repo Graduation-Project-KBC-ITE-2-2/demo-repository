@@ -19,8 +19,12 @@ import { setupCounter } from './counter.js';
 //           <li><a href="index.html">Top</a></li>
 
 //       </ul>
+const title = document.title;
+const header = document.getElementById(title);
+if(header){
+  header.style.display = "none"
+}
 
-      
 document.querySelector('#footer').innerHTML = `
 
       <div class="footer-content">
