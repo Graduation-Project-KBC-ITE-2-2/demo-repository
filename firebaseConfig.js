@@ -228,9 +228,13 @@ export const displayDataInHTMLRealtime = (collectionName) => {
     try {
         const scoreListElement = document.getElementById('scorelist'); // データを挿入するHTML要素を取得
 
-        // Firestoreのコレクションを監視し、リアルタイム更新
-        const collectionRef = collection(db, collectionName);
-        onSnapshot(collectionRef, (snapshot) => {
+        // ユーザー情報を事前に取得
+        auth.onAuthStateChanged(async (user) => {
+            if(user){
+                const userEmail = user.email;
+            // Firestoreのコレクションを監視し、リアルタイム更新
+            const collectionRef = collection(db, collectionName);
+            onSnapshot(collectionRef, (snapshot) => {
             const scores = [];
 
             // スナップショットからデータを取得し、スコアを大きい順に並べ替え
@@ -251,55 +255,81 @@ export const displayDataInHTMLRealtime = (collectionName) => {
             // 取得したデータを一行ずつHTMLに表示
             topScores.forEach(score => {
                 let accountName = score.data.nickname.slice(0, 10);  // Eメールの先頭10文字を表示
+                const accountEmail = score.data.email;
                 if(accountName == "NoNickname"){
                     accountName = score.data.email.slice(0, 10);
                 }
                 const scoreElement = document.createElement('p'); // 各データを表示するための <p> 要素を作成
                 scoreElement.textContent = `${rank} ,ID: ${accountName}, スコア: ${score.data.score}`; // 各データを設定
+                        // 現在のログインユーザーの場合、文字色を赤に設定
+                        if (accountEmail === userEmail) {
+                            scoreElement.style.color = 'red';
+                        }
                 scoreListElement.appendChild(scoreElement); // <p> 要素を追加
-                rank++;
-            });
+                rank++;                
+                    });
+                    
+                });
+            } else {
+                console.error("ログインユーザーが存在しません");
+            }
         });
-    } catch (error) {
+        } catch (error) {
         console.error('データの表示中にエラーが発生しました:', error);
-    }
-};
+        }
+        };
+
 
 export const displayDataInHTMLRealtimeall = (collectionName) => {
     try {
         const scoreListElement = document.getElementById('scorelist'); // データを挿入するHTML要素を取得
 
-        // Firestoreのコレクションを監視し、リアルタイム更新
-        const collectionRef = collection(db, collectionName);
-        onSnapshot(collectionRef, (snapshot) => {
-            const scores = [];
+        // ユーザー情報を事前に取得
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                const userEmail = user.email; // 現在のユーザーのメールアドレスを取得
 
-            // スナップショットからデータを取得し、スコアを大きい順に並べ替え
-            snapshot.forEach(doc => {
-                scores.push({ id: doc.id, data: doc.data() });
-            });
+                // Firestoreのコレクションを監視し、リアルタイム更新
+                const collectionRef = collection(db, collectionName);
+                onSnapshot(collectionRef, (snapshot) => {
+                    const scores = [];
 
-            // scoreListElementを初期化
-            scoreListElement.innerHTML = '';
+                    // スナップショットからデータを取得し、スコアを大きい順に並べ替え
+                    snapshot.forEach(doc => {
+                        scores.push({ id: doc.id, data: doc.data() });
+                    });
 
-            // スコアを降順に並べ替え
-            scores.sort((a, b) => b.data.score - a.data.score);
+                    // scoreListElementを初期化
+                    scoreListElement.innerHTML = '';
 
-            // 上位10人だけを抽出
-            const allScores = scores;  // 最初の10人を取得
+                    // スコアを降順に並べ替え
+                    scores.sort((a, b) => b.data.score - a.data.score);
 
-            let rank = 1;
-            // 取得したデータを一行ずつHTMLに表示
-            allScores.forEach(score => {
-                let accountName = score.data.nickname.slice(0, 10);  // Eメールの先頭10文字を表示
-                if(accountName == "NoNickname"){
-                    accountName = score.data.email.slice(0, 10);
-                }
-                const scoreElement = document.createElement('p'); // 各データを表示するための <p> 要素を作成
-                scoreElement.textContent = `${rank} ,ID: ${accountName}, スコア: ${score.data.score}`; // 各データを設定
-                scoreListElement.appendChild(scoreElement); // <p> 要素を追加
-                rank++;
-            });
+                    let rank = 1;
+                    // 取得したデータを一行ずつHTMLに表示
+                    scores.forEach(score => {
+                        let accountName = score.data.nickname.slice(0, 10);  // ニックネームの先頭10文字を表示
+                        const accountEmail = score.data.email;
+
+                        if (accountName === "NoNickname") {
+                            accountName = score.data.email.slice(0, 10); // ニックネームが未設定ならメールアドレスの先頭10文字を使用
+                        }
+
+                        const scoreElement = document.createElement('p'); // 各データを表示するための <p> 要素を作成
+                        scoreElement.textContent = `${rank} ,ID: ${accountName}, スコア: ${score.data.score}`; // 各データを設定
+
+                        // 現在のログインユーザーの場合、文字色を赤に設定
+                        if (accountEmail === userEmail) {
+                            scoreElement.style.color = 'red';
+                        }
+
+                        scoreListElement.appendChild(scoreElement); // <p> 要素を追加
+                        rank++;
+                    });
+                });
+            } else {
+                console.error("ログインユーザーが存在しません");
+            }
         });
     } catch (error) {
         console.error('データの表示中にエラーが発生しました:', error);

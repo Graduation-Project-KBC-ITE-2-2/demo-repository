@@ -154,8 +154,8 @@ window.addEventListener("load", async function () {
                 // innerHTMLを使って部分リンクを設定
                 if(col == "user_name"){
                     gameItem.innerHTML = `
-                    <a href="${colLink}" style="color: blue; text-decoration: underline;">トータル</a> 
-                    <a href="${mainLink}" style="color: blue; text-decoration: underline;">- スコア: ${data[col]} 
+                    
+                    <a href="${mainLink}" style="color: blue; text-decoration: underline;">トータル - スコア: ${data[col]} 
                     - ランク: ${userall}人中 / ${Rank}位</a> 
                 `;
                 }else{
