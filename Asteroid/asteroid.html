@@ -1,28 +1,13 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8" />
     <title>Asteroid</title>
-    <link rel="stylesheet" type="text/css" href="styles.css"> 
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
-</head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="../scoreboard.css" />
+  </head>
 
-<header>
-    <ul class="header">
-        <li><a href="/Blocks/blocks.htm">Blocks</a></li>
-        <li><a href="/Cave/cave.html">Cave</a></li>
-        <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
-        <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
-        <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
-        <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-        <li><a href="/Qix/Qix.htm">Qix</a></li>
-        <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-        <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
-        <li><a href="/index.html">Top</a></li>
-    </ul>
-</header>
-
-<body>
+  <body>
     <div id="header"></div>
 
     <!-- Firebase Configの読み込み -->
@@ -30,67 +15,87 @@
 
     <!-- ログインチェック用スクリプト -->
     <script type="module">
-        import { auth, getCurrentUser } from '../firebaseConfig.js';
+      import { auth, getCurrentUser } from "../firebaseConfig.js";
 
-        // 認証状態をチェック
-        getCurrentUser().then(user => {
-            if (user) {
-                // ログインしている場合、ゲーム画面を表示
-                document.getElementById("modal").style.display = "block";
-                document.getElementById("canvas").style.display = "block";
-            }
-        }).catch(error => {
-            // ユーザーがログインしていない場合、ログインページにリダイレクト
-            console.error('ログインしていません:', error);
-            window.location.href = "../index.html"; // ログインページにリダイレクト
+      // 認証状態をチェック
+      getCurrentUser()
+        .then((user) => {
+          if (user) {
+            // ログインしている場合、ゲーム画面を表示
+            document.getElementById("modal").style.display = "block";
+            document.getElementById("canvas").style.display = "block";
+          }
+        })
+        .catch((error) => {
+          // ユーザーがログインしていない場合、ログインページにリダイレクト
+          console.error("ログインしていません:", error);
+          window.location.href = "../index.html"; // ログインページにリダイレクト
         });
     </script>
 
     <div id="modal">
-        <div class="modal-content">
-            <h1>チュートリアル</h1>
-            <p>このゲームでは、宇宙船を操作して、画面上の隕石を避けながら敵を撃退します。</p>
-            <p>矢印キーで宇宙船を左右に動かしたり、前進させたりすることができます。</p>
-            <p>スペースキーを押すと弾を発射し、隕石を破壊することができます。</p>
-            <p>隕石を避けながら、できるだけ高いスコアを目指してください！</p>
-            <button id="startButton" class="common-button" onclick="window.init()">ゲームを開始<span style="opacity: 0.5;"> space</span></button>
-        </div>
+      <div class="modal-content">
+        <h1>チュートリアル</h1>
+        <p>
+          このゲームでは、宇宙船を操作して、画面上の隕石を避けながら敵を撃退します。
+        </p>
+        <p>
+          矢印キーで宇宙船を左右に動かしたり、前進させたりすることができます。
+        </p>
+        <p>スペースキーを押すと弾を発射し、隕石を破壊することができます。</p>
+        <p>隕石を避けながら、できるだけ高いスコアを目指してください！</p>
+        <button id="startButton" class="common-button" onclick="window.init()">
+          ゲームを開始<span style="opacity: 0.5"> space</span>
+        </button>
+      </div>
     </div>
 
     <!-- フレックスボックスコンテナに変更 -->
     <div>
-        <!-- ゲーム部分 -->
-        <div>
-            <canvas id="canvas" width="800" height="800" style="display: none;"></canvas>
-            <img id="ship" src="ship.png" style="display:none;" />
-            <img id="bg" src="bg.png" style="display:none;" />
-            <img id="rock" src="rock.png" style="display:none;" />
-            <img id="bang" src="bang.png" style="display:none;" />
-        </div>
+      <!-- ゲーム部分 -->
+      <div>
+        <canvas
+          id="canvas"
+          width="800"
+          height="800"
+          style="display: none"
+        ></canvas>
+        <img id="ship" src="ship.png" style="display: none" />
+        <img id="bg" src="bg.png" style="display: none" />
+        <img id="rock" src="rock.png" style="display: none" />
+        <img id="bang" src="bang.png" style="display: none" />
+      </div>
 
-        <!-- ゲームの横に表示する要素 -->
-        <div class="parent">
-            <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
-            <div class="overlay-text">
-                ランキング<br>
-                <div id="scorelist"></div>
-            </div>
+      <!-- ゲームの横に表示する要素 -->
+      <div class="parent">
+        <img
+          class="overlay"
+          src="../frame_clover03.jpg"
+          alt="Background Image"
+        />
+        <div class="overlay-text">
+          ランキング<br />
+          <div id="scorelist"></div>
         </div>
+      </div>
     </div>
 
     <!-- 修正: srcを正しく指定 -->
     <script type="module" src="/demo-repository/main.js"></script>
     <script type="module" src="script.js"></script>
     <script>
-        // スペースキーでゲームを開始できるようにイベントリスナーを追加
-        window.addEventListener('keydown', function(e) {
-            if (e.keyCode === 32) {  // スペースキーのキーコードは32
-                // モーダルが表示されているときのみゲーム開始を呼び出し
-                if (document.getElementById('modal').style.display !== 'none') {
-                    window.init();
-                }
-            }
-        });
+      // スペースキーでゲームを開始できるようにイベントリスナーを追加
+      window.addEventListener("keydown", function (e) {
+        if (e.keyCode === 32) {
+          // スペースキーのキーコードは32
+          // モーダルが表示されているときのみゲーム開始を呼び出し
+          if (document.getElementById("modal").style.display !== "none") {
+            window.init();
+          }
+        }
+      });
     </script>
-</body>
+    <!--header読み込み-->
+    <script type="module" src="../header.js"></script>
+  </body>
 </html>

@@ -1,62 +1,62 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Cave</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css"> 
-    <link rel="stylesheet" href="../scoreboard.css">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../scoreboard.css" />
     <script type="module" src="script.js"></script>
-</head>
+  </head>
 
-<header>
-    <ul class="header">
-        <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
-        <li><a href="/Blocks/blocks.htm">Blocks</a></li>
-        <li><a href="/Invader/SpaceInvader.htm">Invader</a></li>
-        <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
-        <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
-        <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-        <li><a href="/Qix/Qix.htm">Qix</a></li>
-        <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-        <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
-        <li><a href="/index.html">Top</a></li>
-    </ul>
-</header>
-
-<body>
+  <body>
     <!-- ヘッダーを上に表示する -->
     <header id="header"></header>
     <script type="module" src="/main.js"></script>
 
     <div id="modal">
-        <div class="modal-content">
-            <h1>チュートリアル</h1>
-            <p>このゲームでは、隙間を避けながら宇宙船を操縦します。<br>
-            上キーを押して上昇し、下キーを押して下降します。</p>
-            <button id="startButton" class="common-button" onclick="window.startGame()">ゲームを開始</button>
-        </div>
+      <div class="modal-content">
+        <h1>チュートリアル</h1>
+        <p>
+          このゲームでは、隙間を避けながら宇宙船を操縦します。<br />
+          上キーを押して上昇し、下キーを押して下降します。
+        </p>
+        <button
+          id="startButton"
+          class="common-button"
+          onclick="window.startGame()"
+        >
+          ゲームを開始
+        </button>
+      </div>
     </div>
 
     <div>
-        <div id="main">
-            <img id="ship" src="ship.png" style="height:97px;" />
-            <img id="bang" src="bang.png" />
-            <div id="gameOver">ゲームオーバー</div>
-            <div id="score">Score: 0</div> <!-- スコア要素を1つだけ残します -->
-        </div>
-    
-        <!-- ゲーム再開ボタン -->
-        <button id="retryButton" onclick="window.retryGame()" style="display: none;">リトライ</button>
-    
+      <div id="main">
+        <img id="ship" src="ship.png" style="height: 97px" />
+        <img id="bang" src="bang.png" />
+        <div id="gameOver">ゲームオーバー</div>
+        <div id="score">Score: 0</div>
+        <!-- スコア要素を1つだけ残します -->
+      </div>
+
+      <!-- ゲーム再開ボタン -->
+      <button
+        id="retryButton"
+        onclick="window.retryGame()"
+        style="display: none"
+      >
+        リトライ
+      </button>
     </div>
 
-
     <div class="parent">
-        <div class="overlay-text">
-            ランキング<br>
-            <div id="scorelist"></div>
-        </div>
-    </div>  
+      <div class="overlay-text">
+        ランキング<br />
+        <div id="scorelist"></div>
+      </div>
+    </div>
 
-</body>
+    <!--header読み込み-->
+    <script type="module" src="../header.js"></script>
+  </body>
 </html>
