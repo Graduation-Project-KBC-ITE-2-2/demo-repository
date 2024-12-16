@@ -19,57 +19,57 @@ import { setupCounter } from './counter.js';
 //           <li><a href="index.html">Top</a></li>
 
 //       </ul>
-const title = document.title;
-const header = document.getElementById(title);
-if(header){
-  header.style.display = "none"
-}
+// const title = document.title;
+// const header = document.getElementById(title);
+// if(header){
+//   header.style.display = "none"
+// }
 
-document.querySelector('#footer').innerHTML = `
+// document.querySelector('#footer').innerHTML = `
 
-      <div class="footer-content">
-        <p>© 2024 ミニゲーム集. All Rights Reserved.</p>
-        <nav class="footer-nav">
-          <a href="/index.html">TOP</a>
-          <a href="/privacy-policy.html">プライバシーポリシー</a>
-          <a href="/terms-of-service.html">利用規約</a>
-          <a href="/Production/production.html">製作</a>
-          <a href="/contact.html">お問い合わせ</a>
-        </nav>
-      </div>
-      `;
+//       <div class="footer-content">
+//         <p>© 2024 ミニゲーム集. All Rights Reserved.</p>
+//         <nav class="footer-nav">
+//           <a href="/index.html">TOP</a>
+//           <a href="/privacy-policy.html">プライバシーポリシー</a>
+//           <a href="/terms-of-service.html">利用規約</a>
+//           <a href="/Production/production.html">製作</a>
+//           <a href="/contact.html">お問い合わせ</a>
+//         </nav>
+//       </div>
+//       `;
 
-      function loadCSS(href) {
-        const baseURL = '/demo-repository/'; // ViteのベースURL
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = baseURL + href; // ベースURL + 相対パス
-        document.head.appendChild(link);
-      }
+//       function loadCSS(href) {
+//         const baseURL = '/demo-repository/'; // ViteのベースURL
+//         const link = document.createElement('link');
+//         link.rel = 'stylesheet';
+//         link.href = baseURL + href; // ベースURL + 相対パス
+//         document.head.appendChild(link);
+//       }
 
-      loadCSS('main.css');
+//       loadCSS('main.css');
 
-      function updateLinksWithBaseURL() {
-        const baseURL = '/demo-repository/'; // Vite のベースURL
-        const links = document.querySelectorAll('a'); // すべてのリンクを取得
+//       function updateLinksWithBaseURL() {
+//         const baseURL = '/demo-repository/'; // Vite のベースURL
+//         const links = document.querySelectorAll('a'); // すべてのリンクを取得
       
-        links.forEach((link) => {
-          const href = link.getAttribute('href');
+//         links.forEach((link) => {
+//           const href = link.getAttribute('href');
       
-          // href が '/' で始まる場合のみベースURLを追加
-          if (href && href.startsWith('/')) {
-            // もし baseURL の末尾が '/' で、href の先頭も '/' の場合、二重スラッシュを防ぐ
-            const updatedHref = baseURL.endsWith('/')
-              ? baseURL.slice(0, -1) + href
-              : baseURL + href;
+//           // href が '/' で始まる場合のみベースURLを追加
+//           if (href && href.startsWith('/')) {
+//             // もし baseURL の末尾が '/' で、href の先頭も '/' の場合、二重スラッシュを防ぐ
+//             const updatedHref = baseURL.endsWith('/')
+//               ? baseURL.slice(0, -1) + href
+//               : baseURL + href;
       
-            link.setAttribute('href', updatedHref);
-          }
-        });
-      }
+//             link.setAttribute('href', updatedHref);
+//           }
+//         });
+//       }
       
-      // ページが読み込まれた後にリンクを更新
-      document.addEventListener('DOMContentLoaded', updateLinksWithBaseURL);
+//       // ページが読み込まれた後にリンクを更新
+//       document.addEventListener('DOMContentLoaded', updateLinksWithBaseURL);
       
 
 
