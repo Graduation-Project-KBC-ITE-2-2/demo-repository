@@ -3,7 +3,7 @@ import { getUserEmail, saveScoreAndEmail, displayDataInHTMLRealtime } from '../f
 "use strict";
 
 // グローバル変数の定義
-var ctx, ship, beam, aliens = [], bombs = [],
+var ctx, ship, beam, aliens = [], bombs = [], item,
     score = 0, stage = 1, clock = 0, mainT = NaN, alienT = NaN;
 
 // タイマー関連の変数
@@ -16,16 +16,12 @@ backgroundImg.src = 'cosmos-1853491_1920.jpg'; // 背景画像のパス
 
 var scrollY = 0; // 背景のY座標を管理する変数
 
-//Pの画像を読み込み
-var playerImg = new Image();
-playerImg.src = 'P-1.png'; // 画像のパスを指定
+var powerItemImgY = -10; // PowerItem画像の初期位置（画面外からスタート）
 
-var playerImgY = -10; // P画像の初期位置（画面外からスタート）
+var powerItemImgActive = true; // 「PowerItem」がアクティブかどうかのフラグ
 
-var playerImgActive = true; // 「P」がアクティブかどうかのフラグ
-
-var playerImgSpawnClock = 0; // 「P」の出現を管理するタイマー
-var playerImgSpawnInterval = 1800; // 30秒（1800フレーム：1フレーム50ms）
+var powerItemImgSpawnInterval = 1800; // 30秒（1800フレーム：1フレーム50ms）
+var powerItemImgSpawnClock = powerItemImgSpawnInterval; // 「PowerItem」の出現を管理するタイマー
 
 var scoreMultiplierActive = false; // スコア倍増のフラグ
 var scoreMultiplierEndTime = 0;   // スコア倍増終了時間
@@ -63,7 +59,7 @@ function Alien(x, y, point, offset) {
 
 // 宇宙船クラス：プレイヤーキャラクター
 function Ship() {
-    this.x = 0;
+    this.x = 290;
     this.y = 550; // 初期位置
     this.offset = 192;
     this.moveL = false; // 左移動フラグ
@@ -71,6 +67,17 @@ function Ship() {
     this.isBlinking = false; // 点滅中フラグ
     this.blinkEndTime = 0; // 点滅終了時間
     this.isEven = function () { return true; }
+}
+
+// 'P-1.png'
+function Item(image, drawX, drawY) {
+    this.image = new Image();
+    this.image.src = image;
+    this.x = drawX;
+    this.y = drawY;
+    this.offset = 100;
+    this.sizeX = 30;
+    this.sizeY = 30;
 }
 
 function startTimer() {
@@ -129,7 +136,7 @@ function startAlienSpawning() {
 }
 
 // スプライトの描画に関するオブジェクト
-var bitmap = {
+var baseBitmap = {
     draw: function (ctx) {
         if (!this.strip) {
             this.strip = document.getElementById('strip'); // スプライトシートの取得
@@ -140,8 +147,16 @@ var bitmap = {
     }
 };
 
+var itemBitmap = {
+    draw: function (ctx) {
+        ctx.drawImage(this.image, this.x, this.y, 30, 30);
+    }
+}
+
 // 各クラスに描画の機能を継承
-Ship.prototype = Beam.prototype = Alien.prototype = Bomb.prototype = bitmap;
+Ship.prototype = Beam.prototype = Alien.prototype = Bomb.prototype = baseBitmap;
+
+Item.prototype = itemBitmap;
 
 // エイリアンの移動や状態管理のプロパティ
 Alien.isEven = false; // 描画状態の切り替え
@@ -245,9 +260,10 @@ window.start = function () {
         mainT = setInterval(mainLoop, 50);
     }
 
-    playerImgY = -10; // 「P」の初期位置をリセット
-    playerImgActive = true; // 「P」を再びアクティブにする
-    playerImgSpawnClock = clock; // 出現タイミングをリセット
+
+    setTimeout(() => {
+        item = new Item('P-1.png', 270, 0);
+    }, 5000);
 };
 
 // キー押下時の処理
@@ -310,24 +326,27 @@ function mainLoop() {
 
     scrollY += 1; // 背景スクロール
 
+    // setInterval(spawnItem(playerImg, 270, 50 += clock, () => {}), 5);
+
+
     // 「P」の出現管理
-    if (clock - playerImgSpawnClock >= playerImgSpawnInterval && !playerImgActive) {
-        playerImgActive = true; // 「P」を再びアクティブにする
-        playerImgY = -10; // 「P」の初期位置をリセット
-        playerImgSpawnClock = clock; // 出現タイミングを記録
-    }
+    // if (clock - playerImgSpawnClock >= playerImgSpawnInterval && !playerImgActive) {
+    //     playerImgActive; // Pをアクティブにする
+    //     playerImgY; // Pの初期位置
+    //     playerImgSpawnClock = clock; // 出現タイミングを記録
+    // }
 
-    if (playerImgActive) {
-        playerImgY += 2; // Y座標を2ピクセルずつ移動
-    }
+    // if (playerImgActive) {
+    //     playerImgY += 2; // Y座標を2ピクセルずつ移動
+    // }
 
-    if (playerImgActive &&
-        ship.x < 300 && ship.x + 30 > 270 &&  // 横方向の範囲判定
-        ship.y < playerImgY + 30 && ship.y + 30 > playerImgY) {  // 縦方向の範囲判定
-        playerImgActive = false;  // Pを非アクティブにする
-        scoreMultiplierActive = true;  // スコア倍増フラグを有効にする
-        scoreMultiplierEndTime = clock + 200;  // 10秒後に効果終了 200フレーム
-    }
+    // if (playerImgActive &&
+    //     ship.x < 300 && ship.x + 30 > 270 &&  // 横方向の範囲判定
+    //     ship.y < playerImgY + 30 && ship.y + 30 > playerImgY) {  // 縦方向の範囲判定
+    //     playerImgActive = false;  // Pを非アクティブにする
+    //     scoreMultiplierActive = true;  // スコア倍増フラグを有効にする
+    //     scoreMultiplierEndTime = clock + 200;  // 10秒後に効果終了 200フレーム
+    // }
 
     var hit = -1;
     if (beam.y > -30) {
@@ -408,10 +427,15 @@ async function draw() {
         ship.draw(ctx);
     }
 
-    // `P`の画像を描画.サイズ調整
-    if (playerImgActive) {
-        ctx.drawImage(playerImg, 270, playerImgY, 30, 30); // 幅と高さを30に変更
+    if (item) {
+        item.draw(ctx);
+        item.y += 1;
     }
+
+    // Pの画像を描画.サイズ調整
+    // if (playerImgActive) {
+    //     ctx.drawImage(playerImg, 270, playerImgY, 30, 30); // 幅と高さを30に変更
+    // }
 
     // 点滅終了判定
     if (ship.isBlinking && clock >= ship.blinkEndTime) {
@@ -429,12 +453,14 @@ async function draw() {
     ctx.fillStyle = 'rgb(0,255,0)';
     ctx.fillText(`スコア: ${('0000000' + score).slice(-7)}`, 450, 40);
 
+
     // タイマーを描画
     ctx.font = "14pt Arial"; // タイマー用の文字サイズ
     ctx.fillStyle = 'rgb(255,255,255)';
     var minutes = Math.floor(remainingTime / 60);
     var seconds = remainingTime % 60;
     ctx.fillText(`残り時間: ${minutes}:${seconds.toString().padStart(2, '0')}`, 450, 20);
+
 
     //ゲーム終了時の表示とスコアを保存
     if (isNaN(mainT)) {

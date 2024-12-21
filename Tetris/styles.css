@@ -2,6 +2,29 @@
 全体の基本設定 
 背景色やスクロールの非表示設定など、全ページに影響を与えるスタイルを記述
 */
+
+header {
+  position: fixed; /* ページ最上部に固定 */
+  /*top: 0;*/
+  /*width: 100%;*/
+  z-index: 9999; /* モーダル(z-index:10)より大きな値を設定 */
+  /*padding: 10px;*/
+}
+
+/* ヘッダー内のリストも見やすいように余白を調整 
+.header {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+*/
+/*
+.header li {
+  margin: 0 20px;
+}
+*/
+
 body {
   margin: 0; /* ページ全体の余白を削除 */
   padding: 0; /* ページ全体のパディングを削除 */
