@@ -41,6 +41,10 @@ header {
   background-color: #555;
 }
 
+#title{
+  text-align: center;
+}
+
 /* 全体を包むコンテナ */
 #container {
   display: flex;

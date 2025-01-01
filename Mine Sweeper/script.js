@@ -6,14 +6,23 @@ import {
   displayDataInHTMLRealtime,
 } from "../firebaseConfig.js";
 
-var W = 12,
-  H = 12,
-  BOMB = 20,
-  cell = [],
-  opened = 0;
+var stages = [
+  { width: 8, height: 8, bombs: 10 }, // ステージ1
+  { width: 12, height: 12, bombs: 20 }, // ステージ2
+  { width: 16, height: 16, bombs: 40 }, // ステージ3
+];
+var currentStage = 0; // 現在のステージ
+var W, H, BOMB;
+var cell = [],
+  opened = 0,
+  totle = 0;
 var timerInterval, startTime; // タイマー用変数
 
 function init() {
+  const stage = stages[currentStage]; // 現在のステージ設定を取得
+  W = stage.width;
+  H = stage.height;
+  BOMB = stage.bombs;
   var main = document.getElementById("main");
   main.innerHTML = ""; // 既存のテーブルをクリア
 
@@ -27,9 +36,11 @@ function init() {
     for (var j = 0; j < W; j++) {
       var td = document.createElement("td");
       td.addEventListener("click", click);
+      td.addEventListener("contextmenu", flagCell); // 右クリックイベント追加
       td.className = "cell";
       td.y = i;
       td.x = j;
+      td.flagged = false; // フラグ状態を初期化
       cell[i][j] = td;
       tr.appendChild(td);
     }
@@ -104,40 +115,59 @@ async function flip(cell) {
     const title = document.title; // ゲームのタイトルを取得
     const userEmail = await getUserEmail(); // ユーザーのメールを取得
     const score = 1000 - elapsed;
-    await saveScoreAndEmail(title, score, userEmail); // スコアとメールを保存
+    // await saveScoreAndEmail(title, score, userEmail); 
     document.getElementById(
       "title"
     ).textContent = `Good Job! Time: ${elapsed}s - スコア ${score}`;
+
+
+    if (currentStage < stages.length - 1) {
+      // 次のステージへ
+      currentStage++;
+       setTimeout(async() => {
+        init(); // 次のステージを初期化
+        totle += score;
+        await saveScoreAndEmail(title, totle, userEmail);
+      }, 2000);
+    } else {
+      // 最終ステージクリア
+      document.getElementById("title").textContent = "Congratulations! 全ステージクリア！";
+      await saveScoreAndEmail(title, totle, userEmail);
+    }
   }
 }
 
-// function click(e) {
-//     var src = e.currentTarget;
-//     if (src.bomb) {
-//         cell.forEach(function (tr) {
-//             tr.forEach(function (td) {
-//                 if (td.bomb) {
-//                     td.textContent = "+";
-//                 }
-//             });
-//         });
-//         stopTimer(); // ゲームオーバー時にタイマー停止
-//         document.getElementById("title").textContent = "Game Over";
-//     } else {
-//         open(src.x, src.y);
-//     }
-// }
+function flagCell(e) {
+  e.preventDefault(); // 右クリックのデフォルト動作をキャンセル
+
+  var src = e.currentTarget;
+
+  if (src.opened) return; // すでに開かれているセルはフラグ不可
+
+  if (src.flagged) {
+    // 既にフラグがある場合、フラグを解除
+    src.textContent = "";
+    src.flagged = false;
+  } else {
+    // フラグを設置
+    src.textContent = "🚩";
+    src.flagged = true;
+  }
+}
+
 
 function click(e) {
   var src = e.currentTarget;
+  if (src.flagged) return; // フラグがあるセルはクリック不可
   if (src.bomb) {
     // 全セルの爆弾を表示
     cell.forEach(function (tr) {
       tr.forEach(function (td) {
         if (td.bomb) {
-          td.textContent = "+";
+          td.textContent = "💣";
         }
         td.removeEventListener("click", click); // クリックイベントを無効化
+        td.removeEventListener("contextmenu", flagCell); // フラグイベントも無効化
       });
     });
 
