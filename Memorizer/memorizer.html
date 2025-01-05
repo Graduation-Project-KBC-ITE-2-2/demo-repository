@@ -1,12 +1,33 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="jp">
   <head>
     <meta charset="utf-8" />
     <title>memorizer</title>
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css" />
-  </head>
+    <style>
+      #buttonContainer {
+        display: grid;
+        gap: 10px;
+      }
 
+      .easy {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .normal {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .hard {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      button {
+        width: 100px;
+        height: 100px;
+      }
+    </style>
+  </head>
   <body onload="window.init()">
     <!-- Firebase Configの読み込み -->
     <script type="module" src="../firebaseConfig.js"></script>
@@ -15,34 +36,39 @@
     <script type="module">
       import { auth, getCurrentUser } from "../firebaseConfig.js";
 
-      // 認証状態をチェック
       getCurrentUser()
         .then((user) => {
           if (user) {
-            // ログインしている場合、ゲーム画面を表示
             document.getElementById("tutorial").style.display = "block";
             document.getElementById("gameArea").style.display = "block";
           }
         })
         .catch((error) => {
-          // ユーザーがログインしていない場合、ログインページにリダイレクト
           console.error("ログインしていません:", error);
-          window.location.href = "../login.html"; // ログインページにリダイレクト
+          window.location.href = "../login.html";
         });
     </script>
+
+    <!-- 難易度選択画面 -->
+    <div id="difficultySelection" style="display: none">
+      <h2>難易度を選択してください</h2>
+      <button onclick="window.startGame(4); setGridClass('easy');">
+        イージー (4ボタン)
+      </button>
+      <button onclick="window.startGame(9); setGridClass('normal');">
+        ノーマル (9ボタン)
+      </button>
+      <button onclick="window.startGame(16); setGridClass('hard');">
+        ハード (16ボタン)
+      </button>
+    </div>
 
     <!-- ゲームコンテナ -->
     <div id="container">
       <div id="gameArea" style="position: relative; display: none">
-        <!-- メッセージとボタンを同じ親要素に配置 -->
         <p id="message"></p>
-        <!-- メッセージ要素をゲームエリア内に配置 -->
-        <button id="b0" style="background-color: #600" data-index="0"></button>
-        <button id="b1" style="background-color: #660" data-index="1"></button>
-        <br />
-        <button id="b2" style="background-color: #060" data-index="2"></button>
-        <button id="b3" style="background-color: #006" data-index="3"></button>
-        <!-- リトライボタン -->
+        <div id="buttonContainer"></div>
+        <!-- ボタンがここに生成される -->
         <button
           id="retryButton"
           onclick="window.retryGame()"
@@ -50,9 +76,7 @@
         >
           リトライ
         </button>
-
         <p id="bestScore"></p>
-        <!-- ベストスコアを表示する要素 -->
       </div>
 
       <div id="scoreboard">
@@ -61,19 +85,40 @@
       </div>
     </div>
 
+    <!-- チュートリアル -->
     <div id="tutorial" style="display: none">
       <div>
         <h2>チュートリアル</h2>
         <p>ボタンが点滅します。それを覚えて、順番に押してください。</p>
-        <button id="startButton" onclick="window.hideTutorial()">
-          スタート
-        </button>
+        <div id="difficultySelection" style="display: block; margin-top: 20px">
+          <h2>難易度を選択してください</h2>
+          <button
+            onclick="window.hideTutorial(); window.startGame(4); setGridClass('easy');"
+          >
+            イージー (4ボタン)
+          </button>
+          <button
+            onclick="window.hideTutorial(); window.startGame(9); setGridClass('normal');"
+          >
+            ノーマル (9ボタン)
+          </button>
+          <button
+            onclick="window.hideTutorial(); window.startGame(16); setGridClass('hard');"
+          >
+            ハード (16ボタン)
+          </button>
+        </div>
       </div>
     </div>
 
-    <script type="module" src="/main.js"></script>
+    <!-- 必要なスクリプト -->
     <script type="module" src="script.js"></script>
-    <!--header読み込み-->
     <script type="module" src="../header.js"></script>
+    <script>
+      function setGridClass(level) {
+        const buttonContainer = document.getElementById("buttonContainer");
+        buttonContainer.className = level;
+      }
+    </script>
   </body>
 </html>
