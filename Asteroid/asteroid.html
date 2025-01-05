@@ -1,14 +1,54 @@
 ﻿<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
     <title>Asteroid</title>
+    <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css" />
   </head>
 
   <body>
     <div id="header"></div>
+    <!-- メインコンテナ（ゲーム画面とランキング表示をまとめる） -->
+    <div id="container">
+      <!-- ゲーム描画用のキャンバス -->
+      <div id="game-container">
+        <canvas
+          id="canvas"
+          width="800"
+          height="800"
+          style="display: none"
+        ></canvas>
+        <img id="ship" src="ship.png" style="display: none" />
+        <img id="bg" src="bg.png" style="display: none" />
+        <img id="rock" src="rock.png" style="display: none" />
+        <img id="bang" src="bang.png" style="display: none" />
+      </div>
+
+      <!-- ランキングエリア -->
+      <div id="scoreboard">
+        <h3>ランキング</h3>
+        <div id="scorelist">
+          <!-- ランキングデータがここに動的に表示される -->
+        </div>
+      </div>
+    </div>
+
+    <div id="modal">
+      <div class="modal-content">
+        <h1>チュートリアル</h1>
+        <p>
+          このゲームでは、宇宙船を操作して、画面上の隕石を避けながら敵を撃退します。
+        </p>
+        <p>
+          矢印キーで宇宙船を左右に動かしたり、前進させたりすることができます。
+        </p>
+        <p>スペースキーを押すと弾を発射し、隕石を破壊することができます。</p>
+        <p>隕石を避けながら、できるだけ高いスコアを目指してください！</p>
+        <button id="startButton" class="common-button" onclick="window.init()">
+          ゲームを開始<span style="opacity: 0.5"> space</span>
+        </button>
+      </div>
+    </div>
 
     <!-- Firebase Configの読み込み -->
     <script type="module" src="../firebaseConfig.js"></script>
@@ -33,55 +73,6 @@
         });
     </script>
 
-    <div id="modal">
-      <div class="modal-content">
-        <h1>チュートリアル</h1>
-        <p>
-          このゲームでは、宇宙船を操作して、画面上の隕石を避けながら敵を撃退します。
-        </p>
-        <p>
-          矢印キーで宇宙船を左右に動かしたり、前進させたりすることができます。
-        </p>
-        <p>スペースキーを押すと弾を発射し、隕石を破壊することができます。</p>
-        <p>隕石を避けながら、できるだけ高いスコアを目指してください！</p>
-        <button id="startButton" class="common-button" onclick="window.init()">
-          ゲームを開始<span style="opacity: 0.5"> space</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- フレックスボックスコンテナに変更 -->
-    <div>
-      <!-- ゲーム部分 -->
-      <div>
-        <canvas
-          id="canvas"
-          width="800"
-          height="800"
-          style="display: none"
-        ></canvas>
-        <img id="ship" src="ship.png" style="display: none" />
-        <img id="bg" src="bg.png" style="display: none" />
-        <img id="rock" src="rock.png" style="display: none" />
-        <img id="bang" src="bang.png" style="display: none" />
-      </div>
-
-      <!-- ゲームの横に表示する要素 -->
-      <div class="parent">
-        <img
-          class="overlay"
-          src="../frame_clover03.jpg"
-          alt="Background Image"
-        />
-        <div class="overlay-text">
-          ランキング<br />
-          <div id="scorelist"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 修正: srcを正しく指定 -->
-    <script type="module" src="/demo-repository/main.js"></script>
     <script type="module" src="script.js"></script>
     <script>
       // スペースキーでゲームを開始できるようにイベントリスナーを追加
