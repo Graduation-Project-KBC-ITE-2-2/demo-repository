@@ -16,13 +16,6 @@ backgroundImg.src = 'cosmos-1853491_1920.jpg'; // 背景画像のパス
 
 var scrollY = 0; // 背景のY座標を管理する変数
 
-var powerItemImgY = -10; // PowerItem画像の初期位置（画面外からスタート）
-
-var powerItemImgActive = true; // 「PowerItem」がアクティブかどうかのフラグ
-
-var powerItemImgSpawnInterval = 1800; // 30秒（1800フレーム：1フレーム50ms）
-var powerItemImgSpawnClock = powerItemImgSpawnInterval; // 「PowerItem」の出現を管理するタイマー
-
 var scoreMultiplierActive = false; // スコア倍増のフラグ
 var scoreMultiplierEndTime = 0;   // スコア倍増終了時間
 
@@ -67,17 +60,6 @@ function Ship() {
     this.isBlinking = false; // 点滅中フラグ
     this.blinkEndTime = 0; // 点滅終了時間
     this.isEven = function () { return true; }
-}
-
-// 'P-1.png'
-function Item(image, drawX, drawY) {
-    this.image = new Image();
-    this.image.src = image;
-    this.x = drawX;
-    this.y = drawY;
-    this.offset = 100;
-    this.sizeX = 30;
-    this.sizeY = 30;
 }
 
 function startTimer() {
@@ -155,8 +137,6 @@ var itemBitmap = {
 
 // 各クラスに描画の機能を継承
 Ship.prototype = Beam.prototype = Alien.prototype = Bomb.prototype = baseBitmap;
-
-Item.prototype = itemBitmap;
 
 // エイリアンの移動や状態管理のプロパティ
 Alien.isEven = false; // 描画状態の切り替え
@@ -260,10 +240,6 @@ window.start = function () {
         mainT = setInterval(mainLoop, 50);
     }
 
-
-    setTimeout(() => {
-        item = new Item('P-1.png', 270, 0);
-    }, 5000);
 };
 
 // キー押下時の処理
@@ -325,28 +301,6 @@ function mainLoop() {
     clock++;
 
     scrollY += 1; // 背景スクロール
-
-    // setInterval(spawnItem(playerImg, 270, 50 += clock, () => {}), 5);
-
-
-    // 「P」の出現管理
-    // if (clock - playerImgSpawnClock >= playerImgSpawnInterval && !playerImgActive) {
-    //     playerImgActive; // Pをアクティブにする
-    //     playerImgY; // Pの初期位置
-    //     playerImgSpawnClock = clock; // 出現タイミングを記録
-    // }
-
-    // if (playerImgActive) {
-    //     playerImgY += 2; // Y座標を2ピクセルずつ移動
-    // }
-
-    // if (playerImgActive &&
-    //     ship.x < 300 && ship.x + 30 > 270 &&  // 横方向の範囲判定
-    //     ship.y < playerImgY + 30 && ship.y + 30 > playerImgY) {  // 縦方向の範囲判定
-    //     playerImgActive = false;  // Pを非アクティブにする
-    //     scoreMultiplierActive = true;  // スコア倍増フラグを有効にする
-    //     scoreMultiplierEndTime = clock + 200;  // 10秒後に効果終了 200フレーム
-    // }
 
     var hit = -1;
     if (beam.y > -30) {
@@ -431,11 +385,6 @@ async function draw() {
         item.draw(ctx);
         item.y += 1;
     }
-
-    // Pの画像を描画.サイズ調整
-    // if (playerImgActive) {
-    //     ctx.drawImage(playerImg, 270, playerImgY, 30, 30); // 幅と高さを30に変更
-    // }
 
     // 点滅終了判定
     if (ship.isBlinking && clock >= ship.blinkEndTime) {
