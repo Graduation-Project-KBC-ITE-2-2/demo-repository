@@ -346,8 +346,8 @@ function mainLoop() {
 
         b.even = !b.even;
 
-        // 爆弾が宇宙船に当たった場合
-        if (b.x - 15 < ship.x && ship.x < b.x + 15 && 530 < b.y && b.y < 550) {
+        // 宇宙船が点滅中でない場合のみダメージを受ける
+        if (!ship.isBlinking && b.x - 15 < ship.x && ship.x < b.x + 15 && 530 < b.y && b.y < 550) {
             // スコアをマイナス200
             score = Math.max(0, score - 200);
 
@@ -359,6 +359,7 @@ function mainLoop() {
             b.y = 600;
         }
     });
+
 
     // 宇宙船の移動処理
     if (ship.moveR) { ship.x = Math.min(ship.x + 5, 570); }
