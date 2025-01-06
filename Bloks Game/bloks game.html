@@ -4,11 +4,54 @@
     <title>Bloks Game</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css" />
-    <script type="module" src="script.js" defer></script>
   </head>
 
   <body>
+    <div id="container">
+      <!-- ゲームエリア -->
+      <div id="game-container">
+        <canvas
+          id="canvas"
+          width="600"
+          height="600"
+          style="display: none"
+        ></canvas>
+      </div>
+
+      <!-- ランキングエリア -->
+      <div id="scoreboard">
+        <h3>ランキング</h3>
+        <div id="scorelist">
+          <!-- ランキングデータがここに動的に表示される -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 統合されたチュートリアルと難易度選択 -->
+    <div id="modal">
+      <div class="modal-content">
+        <h1>チュートリアル</h1>
+        <p>
+          このゲームでは、パドルを操作してボールを弾き、ブロックを全て壊してください。
+        </p>
+        <p>難易度を選択してください：</p>
+        <button class="startButton" onclick="window.startGame('Easy')">
+          Easy
+        </button>
+        <button class="startButton" onclick="window.startGame('Normal')">
+          Normal
+        </button>
+        <button class="startButton" onclick="window.startGame('Hard')">
+          Hard
+        </button>
+      </div>
+    </div>
+
+    <!-- ゲーム再開ボタン -->
+    <button id="retryButton" onclick="window.retryGame()" style="display: none">
+      リトライ
+    </button>
+
     <!-- ヘッダーを上に固定表示する -->
     <div id="header"></div>
 
@@ -35,39 +78,8 @@
         });
     </script>
 
-    <!-- 統合されたチュートリアルと難易度選択 -->
-    <div id="modal">
-      <div class="modal-content">
-        <h1>チュートリアル</h1>
-        <p>
-          このゲームでは、パドルを操作してボールを弾き、ブロックを全て壊してください。
-        </p>
-        <p>難易度を選択してください：</p>
-        <button class="startButton" onclick="window.startGame('Easy')">
-          Easy
-        </button>
-        <button class="startButton" onclick="window.startGame('Normal')">
-          Normal
-        </button>
-        <button class="startButton" onclick="window.startGame('Hard')">
-          Hard
-        </button>
-      </div>
-    </div>
-
-    <canvas id="canvas" width="600" height="600" style="display: none"></canvas>
-    <!-- ゲーム再開ボタン -->
-    <button id="retryButton" onclick="window.retryGame()" style="display: none">
-      リトライ
-    </button>
-    <!-- ゲームの横に表示する要素 -->
-    <div class="parent">
-      <img class="overlay" src="../frame_clover03.jpg" alt="Background Image" />
-      <div class="overlay-text">
-        ランキング<br />
-        <div id="scorelist"></div>
-      </div>
-    </div>
+    <!-- メインスクリプト -->
+    <script type="module" src="script.js" defer></script>
     <!--header読み込み-->
     <script type="module" src="../header.js"></script>
   </body>

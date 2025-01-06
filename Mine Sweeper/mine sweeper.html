@@ -4,69 +4,71 @@
     <title>Mine Sweeper</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css" />
-    <script type="module" src="script.js" defer></script>
   </head>
 
   <body>
-    <!-- Firebase Configの読み込み -->
-    <script type="module" src="../firebaseConfig.js"></script>
-
-    <!-- ログインチェック用スクリプト -->
-    <script type="module">
-      import { auth } from "../firebaseConfig.js";
-      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.x/firebase-auth.js";
-
-      // 認証状態を監視してユーザーがログインしているか確認
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          // ログインしている場合、ゲーム説明を表示
-          document.getElementById("modal").style.display = "block";
-        } else {
-          // ユーザーがログインしていない場合、ログインページにリダイレクト
-          console.error("ログインしていません");
-          window.location.href = "../index.html";
-        }
-      });
-    </script>
-
-    <!-- ゲーム説明のセクション -->
-    <div id="modal">
-      <div class="modal-content">
-        <h1>ゲーム説明</h1>
-        <p>
-          爆弾を避けながらセルをクリックしてください。<br />セルが開いたら、周囲の爆弾の数が表示されます。
-        </p>
-        <p>すべてのセルを開くか、爆弾をクリックするまでゲームは続きます！</p>
-        <button id="startButton" class="common-button">ゲームを開始</button>
-      </div>
-    </div>
-
-    <!-- ゲームとランキングを包む全体コンテナ -->
+    <h1 id="title">Mine Sweeper</h1>
     <div id="container">
-      <!-- ゲームコンテナ -->
-      <div id="game-container">
-        <h1 id="title">Mine Sweeper</h1>
-        <table id="main" border="1"></table>
-        <button id="retryButton" style="display: none" onclick="retryGame()">
-          Retry
-        </button>
-        <span id="timer">Time: 0</span>
+      <!-- タイトルとタイマーを表示 -->
+      <div >
+        
       </div>
+      <!-- ゲームエリア -->
+      <div id="game-container">
+        
+      </div>
+      <table id="main" border="1">
+        
+      </table>
+      <span id="timer">Time: 0</span>
 
-      <!-- ゲームの横に表示するランキング要素 -->
-      <div class="parent">
-        <img
-          class="overlay"
-          src="../frame_clover03.jpg"
-          alt="Background Image"
-        />
-        <div class="overlay-text">
-          ランキング<br />
-          <div id="scorelist"></div>
+      <!-- ランキングエリア -->
+      <div id="scoreboard">
+        <h3>ランキング</h3>
+        <div id="scorelist">
+          <!-- ランキングデータがここに動的に表示される -->
         </div>
       </div>
     </div>
+
+    <!-- チュートリアル（ゲーム説明モーダル） -->
+    <div class="modal hidden" id="tutorial">
+      <div class="modal-content">
+        <h2>チュートリアル</h2>
+        <!-- ゲームの説明テキスト -->
+        <p>爆弾を避けながらセルをクリックしてください。</p>
+        <p>
+          操作方法<br />
+          <span style="font-weight: bold">クリック</span><br />
+        </p>
+        <!-- スタートボタン -->
+        <button id="startButton" class="common-button">
+          スタート<span style="opacity: 0.5"> space</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Firebaseログインチェック用スクリプト -->
+    <script type="module">
+      import { auth, getCurrentUser } from "../firebaseConfig.js";
+
+      // Firebase 認証状態をチェック
+      getCurrentUser()
+        .then((user) => {
+          if (user) {
+            // ログインしている場合、必要な要素を表示
+            document.getElementById("tutorial").style.display = "block";
+            document.getElementById("game-container").style.display = "block";
+          }
+        })
+        .catch((error) => {
+          // ログインしていない場合、ログインページにリダイレクト
+          console.error("ログインしていません:", error);
+          window.location.href = "../index.html"; // ログインページにリダイレクト
+        });
+    </script>
+
+    <script type="module" src="script.js" defer></script>
     <!--header読み込み-->
     <script type="module" src="../header.js"></script>
   </body>

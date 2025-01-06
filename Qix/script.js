@@ -12,6 +12,8 @@ var clearedLevel = 1; // クリアしたステージの番号を保存
 var gameWon = false; // ゲームクリアのフラグ
 var levelScore = 0; // ステージごとのスコア
 var levelTotalArea = 0; // ステージごとの合計エリア
+var timeRemaining = 60; // 初期制限時間（秒）
+var difficultyMultiplier = 1 + (level - 1) * 0.3; // 増加率を0.5から0.3に
 
 function Rect(left, top, right, bottom) {
   this.left = left;
@@ -36,6 +38,8 @@ function Rect(left, top, right, bottom) {
 }
 
 function startGame() {
+  // スクロールを無効化
+  document.body.classList.add("no-scroll");
   console.log("Start button clicked"); // デバッグ用
   document.getElementById("tutorial").style.display = "none"; // チュートリアルを非表示
   gameOver = false; // ゲームオーバーのフラグをリセット
@@ -222,9 +226,11 @@ function Ship() {
         this.dx = this.dy = 0;
         areas.push(r);
         var area = r.width() * r.height();
-        score += area;
-        levelScore += area; // ★ ステージごとのスコアを更新
+        var adjustedScore = Math.sqrt(area) * 0.3; // 面積に基づくスコア計算
+        levelScore += area; // 面積をステージスコアに加算
+        score += adjustedScore; // グローバルスコアに加算
       }
+
       return;
     }
 
@@ -335,6 +341,12 @@ function startLevel(level) {
   levelCleared = false;
   levelScore = 0;
   levelTotalArea = ship.rect.width() * ship.rect.height();
+
+  // 難易度倍率を設定（例: レベル1 = x1, レベル2 = x1.5, レベル3 = x2）
+  difficultyMultiplier = 1 + (level - 1) * 0.5;
+
+  // 制限時間を初期化
+  timeRemaining = 60; // 各ステージごとに60秒
 }
 
 function toggleKey(code, flag) {
@@ -371,21 +383,25 @@ function mainLoop() {
       }
     }
 
+    // 制限時間を減らす
+    timeRemaining -= 0.1; // 0.1秒ごとに減らす
+    if (timeRemaining <= 0) {
+      gameOver = true; // 時間切れでゲームオーバー
+    }
+
     var s = Math.floor((levelScore / levelTotalArea) * 10000);
-    if (s / 100 >= 75) {
+    if (levelScore / levelTotalArea >= 0.75) {
       levelCleared = true;
-      clearedLevel = level; // ★ クリアしたステージを保存
-      // 2秒後に次のステージを開始
+      clearedLevel = level;
       setTimeout(function () {
         level++;
-        if (level > 2) {
-          // 全ステージクリア
+        if (level > 3) {
           gameOver = true;
           gameWon = true;
         } else {
           startLevel(level);
         }
-      }, 2000); // 2秒待機
+      }, 2000);
     }
   }
 
@@ -393,14 +409,13 @@ function mainLoop() {
 }
 
 function draw() {
-  // キャンバスの高さを取得
   var canvasHeight = ctx.canvas.height;
 
-  // 背景塗り潰し
+  // 背景の描画
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, 600, canvasHeight);
 
-  // 矩形の塗りつぶし
+  // エリアの描画
   areas.forEach(function (r) {
     r.draw(ctx);
   });
@@ -410,14 +425,21 @@ function draw() {
     enemy.draw(ctx);
   });
 
-  // 自分の描画
+  // 自機の描画
   ship.draw(ctx);
 
-  // 各種メッセージ
-  ctx.fillStyle = "green";
-  var s = Math.floor((levelScore / levelTotalArea) * 10000);
-  ctx.fillText("Score: " + s / 100 + "%", 400, canvasHeight - 20);
+  // スコア情報の表示
+  var percentComplete = ((levelScore / levelTotalArea) * 100).toFixed(1); // 小数点1桁まで表示
+  ctx.fillStyle = "white";
+  ctx.fillText("Score: " + Math.floor(score), 20, canvasHeight - 60);
+  ctx.fillText(
+    "Time Left: " + timeRemaining.toFixed(1) + "s",
+    20,
+    canvasHeight - 40
+  );
+  ctx.fillText("Area: " + percentComplete + "%", 20, canvasHeight - 20);
 
+  // ゲーム終了時のメッセージ
   if (gameOver) {
     if (gameWon) {
       ctx.fillStyle = "yellow";
@@ -428,7 +450,14 @@ function draw() {
     }
   } else if (levelCleared) {
     ctx.fillStyle = "yellow";
-    // ★ クリアしたステージの番号を表示
     ctx.fillText("STAGE " + clearedLevel + " CLEAR", 180, canvasHeight / 2);
+
+    // ボーナス計算
+    score += Math.floor(timeRemaining * difficultyMultiplier * 0.5);
+    ctx.fillText(
+      "Bonus: +" + Math.floor(timeRemaining * difficultyMultiplier * 1),
+      180,
+      canvasHeight / 2 + 40
+    );
   }
 }

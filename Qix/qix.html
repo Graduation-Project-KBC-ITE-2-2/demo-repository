@@ -4,7 +4,11 @@
     <title>Quicks</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css" />
+    <style>
+      body.no-scroll {
+        overflow: hidden; /* スクロールを無効化 */
+      }
+    </style>
   </head>
 
   <body>
@@ -18,41 +22,31 @@
     <script type="module">
       import { auth, getCurrentUser } from "../firebaseConfig.js";
 
-      // 認証状態をチェック
       getCurrentUser()
         .then((user) => {
           if (user) {
-            // ログインしている場合、ゲームキャンバスを表示
             document.getElementById("tutorial").style.display = "block";
             document.getElementById("canvas").style.display = "block";
           }
         })
         .catch((error) => {
-          // ユーザーがログインしていない場合、ログインページにリダイレクト
           console.error("ログインしていません:", error);
-          window.location.href = "../login.html"; // ログインページにリダイレクト
+          window.location.href = "../login.html";
         });
     </script>
 
     <!-- ゲームコンテナ -->
     <div id="container">
-      <!-- ゲームキャンバス -->
       <canvas
         id="canvas"
         width="600"
         height="700"
         style="display: block; margin: 0 auto"
       ></canvas>
-
-      <!-- 画像 -->
       <img id="ship" src="ship.png" style="display: none" />
-
-      <!-- ランキング表示エリア -->
       <div id="scoreboard">
         <h3>ランキング</h3>
-        <div id="scorelist">
-          <!-- ランキングがここに表示されます -->
-        </div>
+        <div id="scorelist"></div>
       </div>
     </div>
 
@@ -75,9 +69,31 @@
       </div>
     </div>
 
-    <script src="/vite-one/main.js" defer></script>
+    <script>
+      function startGame() {
+        // スクロールを無効化
+        document.body.classList.add("no-scroll");
+
+        // 矢印キーやスペースキーによるスクロールを防止
+        window.addEventListener("keydown", function (e) {
+          const keysToPrevent = [
+            "ArrowUp",
+            "ArrowDown",
+            "ArrowLeft",
+            "ArrowRight",
+            " ",
+          ];
+          if (keysToPrevent.includes(e.key)) {
+            e.preventDefault();
+          }
+        });
+
+        // ゲームロジックを開始
+        console.log("ゲーム開始!");
+      }
+    </script>
+
     <script src="script.js" defer></script>
-    <!--header読み込み-->
     <script type="module" src="../header.js"></script>
   </body>
 </html>

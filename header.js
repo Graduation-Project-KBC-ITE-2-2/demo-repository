@@ -1,5 +1,8 @@
 // header.js
 
+
+import { auth, toggleModalVisibility, guestLogin, NicknameSave,  nickname, loginUser } from "./firebaseConfig.js"; // Firebase設定をインポート
+
 // ヘッダーHTMLをテンプレートリテラルとして定義
 const headerHTML = `
 
@@ -20,6 +23,18 @@ const headerHTML = `
         <li><a href="/Tetris/tetris.html">Tetris</a></li>
         <li id = "ミニゲーム集"><a href="/index.html">Top</a></li>
   </ul>
+      <div class="account-container" id="account-container">
+        
+        <div class="account-name" id="account-name"></div>
+        <div class="dropdown-menu" id="dropdown-menu">
+        <div class="fullnickname" id="fullnickname"></div>
+        <div class="mypage" id="mypage"><a href="/Mypage/mypage.html">マイページ</a></div>
+          <div class="nickname-input">
+            <input type="text" id="nickname" placeholder="ニックネームを入力" />
+            <button id="save-nickname">保存</button>
+          </div>
+        </div>
+      </div>
 </header>
 `;
 
@@ -61,4 +76,49 @@ loadCSS('styles.css');
       
       // ページが読み込まれた後にリンクを更新
       document.addEventListener('DOMContentLoaded', updateLinksWithBaseURL);
+
+window.onload = function () {
+  let nicknameValue ="";
+  auth.onAuthStateChanged(async(user) => {
+    const accountName = document.getElementById("account-name");
+    if(user){
+      if (user.isAnonymous) {
+        accountName.innerText = "ゲスト"; // ゲストユーザーの場合は「ゲスト」と表示
+      } else {
+        const useremail = user.email;
+        nicknameValue = await nickname(user.email);
+        console.log(nicknameValue);
+        const fullnickname = document.getElementById("fullnickname");
+        if(nicknameValue == "NoNickname"){
+          accountName.innerText = useremail.charAt(0);
+          fullnickname.innerText = useremail;
+        }else{
+          accountName.innerText = nicknameValue.charAt(0);
+          fullnickname.innerText = nicknameValue;
+        }
+        document.getElementById('account-name').addEventListener('click', function () {
+          const dropdownMenu = document.getElementById('dropdown-menu');
+          if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
+            dropdownMenu.style.display = 'block';
+          } else {
+            dropdownMenu.style.display = 'none';
+          }
+        });
+        accountName.style.display = "flex";
+        // 保存ボタンをクリックしたときにニックネームを保存して表示する
+        document.getElementById('save-nickname').addEventListener('click', function () {
+          const nickname = document.getElementById('nickname').value;
+          if (nickname) {
+            NicknameSave(user.email, nickname);
+            document.getElementById('dropdown-menu').style.display = 'none'; // メニューを閉じる
+          }
+        });
+      }
+    }else{
+
+    }
+  
+  });
+
+}
       
