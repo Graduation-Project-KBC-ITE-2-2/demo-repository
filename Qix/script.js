@@ -47,6 +47,14 @@ function startGame() {
   init(); // ゲームの初期化を実行
 }
 
+function retryGame() {
+  console.log("Retry button clicked"); // デバッグ用
+  document.getElementById("retry").classList.add("hidden"); // リトライモーダルを非表示
+  gameOver = false; // ゲームオーバーのフラグをリセット
+  score = 0; // スコアをリセット
+  init(); // ゲームの初期化を再実行
+}
+
 function Edge(r, delta) {
   this.r = r;
   this.theta = 0;
@@ -367,6 +375,17 @@ function toggleKey(code, flag) {
 }
 
 function mainLoop() {
+  if (gameOver) {
+    console.log("Game Over detected"); // デバッグログ
+    const retryModal = document.getElementById("retry");
+    if (retryModal && retryModal.classList.contains("hidden")) {
+      retryModal.classList.remove("hidden");
+      console.log("Retry modal displayed"); // デバッグログ
+    }
+    clearInterval(timer); // ゲームループを停止
+    return;
+  }
+
   if (!gameOver && !levelCleared) {
     enemies.forEach(function (enemy) {
       enemy.update();
@@ -435,6 +454,7 @@ function draw() {
 
   // ゲーム終了時のメッセージ
   if (gameOver) {
+    console.log("Game Over triggered");
     ctx.fillStyle = gameWon ? "yellow" : "red";
     ctx.textAlign = "center";
     ctx.font = "24px Arial";

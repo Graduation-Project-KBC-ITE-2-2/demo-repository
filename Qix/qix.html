@@ -1,19 +1,74 @@
 ﻿<!DOCTYPE html>
 <html>
+  <!-- ヘッド部分 -->
   <head>
+    <!--ページのタイトル-->
     <title>Quicks</title>
+    <!-- ページの文字コード -->
     <meta charset="utf-8" />
+    <!-- 外部CSSファイルを読み込むためのリンク  -->
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <style>
-      body.no-scroll {
-        overflow: hidden; /* スクロールを無効化 */
-      }
-    </style>
   </head>
 
   <body>
     <!-- ヘッダーを上に表示する -->
     <div id="header"></div>
+
+    <!-- メインコンテナ（ゲーム画面とランキング表示をまとめる） -->
+    <div id="container">
+      <!-- ゲーム描画用のキャンバス -->
+      <div id="game-container">
+        <canvas id="canvas" width="600" height="700"></canvas>
+        <img id="ship" src="ship.png" style="display: none" />
+      </div>
+      <!-- ランキングエリア -->
+      <div id="scoreboard">
+        <h3>ランキング</h3>
+        <div id="scorelist"></div>
+      </div>
+    </div>
+
+    <!-- チュートリアル（ゲーム説明モーダル） -->
+    <div class="modal hidden" id="tutorial">
+      <div class="modal-content">
+        <h2>ゲームのルール</h2>
+        <!-- ゲームの説明テキスト -->
+        <p>
+          あなたは青い船を操作し、緑の領域を塗りつぶしながらスコアを獲得します。
+        </p>
+        <p>赤い敵に触れるとゲームオーバーです。</p>
+        <p>
+        操作方法<br />
+        <p><span style="font-weight: bold">←↓→</span>　移動<br /></p>
+        </p>
+        <!-- スタートボタン -->
+        <button id="startButton" class="common-button" onclick="startGame()">
+          スタート<span style="opacity: 0.5"> space</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- リトライモーダル -->
+    <div class="modal hidden" id="retry">
+      <div class="modal-content">
+        <h2>ゲームオーバー</h2>
+        <!-- ゲームの説明テキスト -->
+
+        <!-- リトライボタン -->
+        <button id="retryButton" class="common-button" onclick="retryGame()">
+          リトライ<span style="opacity: 0.5"> R</span>
+        </button>
+
+        <!-- 戻るボタン -->
+        <button
+          id="returnButton"
+          class="common-button"
+          onclick="window.location.href='../index.html';"
+        >
+          一覧に戻る
+        </button>
+      </div>
+    </div>
 
     <!-- Firebase Configの読み込み -->
     <script type="module" src="../firebaseConfig.js"></script>
@@ -34,40 +89,6 @@
           window.location.href = "../login.html";
         });
     </script>
-
-    <!-- ゲームコンテナ -->
-    <div id="container">
-      <canvas
-        id="canvas"
-        width="600"
-        height="700"
-        style="display: block; margin: 0 auto"
-      ></canvas>
-      <img id="ship" src="ship.png" style="display: none" />
-      <div id="scoreboard">
-        <h3>ランキング</h3>
-        <div id="scorelist"></div>
-      </div>
-    </div>
-
-    <!-- チュートリアルモーダル -->
-    <div id="tutorial" style="display: none">
-      <div class="modal-content">
-        <h2>ゲームのルール</h2>
-        <p>
-          あなたは青い船を操作し、緑の領域を塗りつぶしながらスコアを獲得します。
-        </p>
-        <p>赤い敵に触れるとゲームオーバーです。</p>
-        <h3>操作方法</h3>
-        <ul>
-          <li>←: 左に移動</li>
-          <li>↑: 上に移動</li>
-          <li>→: 右に移動</li>
-          <li>↓: 下に移動</li>
-        </ul>
-        <button id="startButton" onclick="startGame()">OK</button>
-      </div>
-    </div>
 
     <script>
       function startGame() {
