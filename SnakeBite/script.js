@@ -228,8 +228,16 @@ async function tick() {
       return;
   }
 
-  // 壁との衝突判定を追加
-  if (isHit(walls, x, y) || isHit(snake, x, y)) {
+  // 壁との衝突判定
+  if (isHit(walls, x, y)) {
+    console.log(`Game Over: 壁に衝突しました (${x}, ${y})`);
+    endGame("Game Over");
+    return;
+  }
+
+  // 自分自身との衝突判定
+  if (isHit(snake, x, y)) {
+    console.log(`Game Over: 自分自身に衝突しました (${x}, ${y})`);
     endGame("Game Over");
     return;
   }
@@ -299,8 +307,9 @@ function paint() {
     ctx.fillText("🐍", p.x * S, (p.y + 1) * S);
   });
 
-  ctx.fillStyle = "rgb(256,0,0)";
-  ctx.fillText("Score " + point, S, S * 1);
+  ctx.fillStyle = "rgb(0,256,0)";
+  const padding = 200; // 右端からの余白を調整（余白をSの2倍に設定）
+  ctx.fillText("Score " + point, canvas.width - padding, S * 1.8);
 }
 
 function keydown(event) {
