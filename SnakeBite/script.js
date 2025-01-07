@@ -59,6 +59,13 @@ var stageSettings = {
 var backgroundPattern = []; // 背景パターンを格納する配列
 
 function initCanvas() {
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  // キャンバスサイズを調整
+  canvasWidth = Math.min(800, viewportWidth * 0.9); // 幅の調整
+  canvasHeight = Math.min(600, viewportHeight * 0.8) - 20; // 高さに余白を追加
+
   canvas = document.getElementById("field");
   if (canvas) {
     canvas.width = canvasWidth;
@@ -66,52 +73,22 @@ function initCanvas() {
 
     ctx = canvas.getContext("2d");
 
-    // ステージ設定の適用
-    var settings = stageSettings[currentStage];
+    const settings = stageSettings[currentStage];
     numCellsX = settings.numCellsX;
     numCellsY = settings.numCellsY;
 
-    // ブロックサイズの均一化: キャンバスに合わせた一貫したサイズを計算
-    S = Math.floor(Math.min(canvasWidth / numCellsX, canvasHeight / numCellsY));
+    S = Math.min(
+      Math.floor(canvasWidth / numCellsX),
+      Math.floor((canvasHeight - 10) / numCellsY)
+    );
 
     W = numCellsX;
     H = numCellsY;
 
-    // フォントサイズを再設定
     ctx.font = S * 0.8 + "px sans-serif";
 
-    // 壁の初期化
-    walls = [];
-    for (var x = 1; x < W - 1; x++) {
-      walls.push(new Point(x, 1)); // 上辺
-      walls.push(new Point(x, H - 2)); // 下辺
-    }
-    for (var y = 2; y < H - 2; y++) {
-      walls.push(new Point(1, y)); // 左辺
-      walls.push(new Point(W - 2, y)); // 右辺
-    }
-
-    // 背景パターンを生成
-    backgroundPattern = [];
-    for (let y = 0; y < numCellsY; y++) {
-      const row = [];
-      for (let x = 0; x < numCellsX; x++) {
-        row.push(Math.random() < 0.5 ? "grass" : "dirt"); // ランダムで草または土
-      }
-      backgroundPattern.push(row);
-    }
-
-    // 蛇と餌をリセット
-    snake = [];
-    foods = [];
-    foodsEaten = 0;
-    totalFoods = settings.totalFoods;
-
-    snake.push(new Point(Math.floor(W / 2), Math.floor(H / 2)));
-
-    for (var i = 0; i < totalFoods; i++) {
-      addFood();
-    }
+    resetWalls();
+    resetSnakeAndFoods();
 
     window.onkeydown = keydown;
     paint();
@@ -122,6 +99,43 @@ function initCanvas() {
     console.error("ゲームのキャンバスが見つかりませんでした。");
   }
 }
+
+function resetWalls() {
+  walls = [];
+  for (let x = 1; x < W - 1; x++) {
+    walls.push(new Point(x, 1)); // 上辺
+    walls.push(new Point(x, H - 2)); // 下辺
+  }
+  for (let y = 2; y < H - 2; y++) {
+    walls.push(new Point(1, y)); // 左辺
+    walls.push(new Point(W - 2, y)); // 右辺
+  }
+}
+
+function resetSnakeAndFoods() {
+  // 背景パターンの初期化
+  backgroundPattern = Array.from({ length: numCellsY }, () =>
+    Array.from({ length: numCellsX }, () =>
+      Math.random() < 0.5 ? "grass" : "dirt"
+    )
+  );
+
+  // 蛇と餌のリセット
+  snake = [new Point(Math.floor(W / 2), Math.floor(H / 2))];
+  foods = [];
+  foodsEaten = 0;
+  totalFoods = stageSettings[currentStage].totalFoods;
+
+  for (let i = 0; i < totalFoods; i++) {
+    addFood();
+  }
+}
+
+window.addEventListener("resize", () => {
+  if (gameStarted) {
+    initCanvas(); // ウィンドウサイズ変更に対応
+  }
+});
 
 // スタートボタンが押されたときにゲームを開始する関数
 window.startGame = function () {
@@ -264,9 +278,13 @@ async function tick() {
 }
 
 function paint() {
-  // キャンバス全体に背景色を塗る
-  ctx.fillStyle = "rgb(51, 51, 51)"; // 背景色を黒に設定
-  ctx.fillRect(0, 0, canvas.width, canvas.height); // 背景全体を塗りつぶす
+  // キャンバスサイズを取得
+  const canvasWidth = ctx.canvas.width;
+  const canvasHeight = ctx.canvas.height;
+
+  // 背景を塗りつぶす
+  ctx.fillStyle = "rgb(51, 51, 51)"; // 背景色をグレーに設定
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   // 背景の固定描画
   if (grassTexture.complete && dirtTexture.complete) {
