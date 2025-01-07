@@ -409,55 +409,155 @@ function mainLoop() {
 }
 
 function draw() {
-  var canvasHeight = ctx.canvas.height;
+  const canvasWidth = ctx.canvas.width;
+  const canvasHeight = ctx.canvas.height;
+  const statusBarHeight = 100; // ステータスバーの高さ
 
   // 背景の描画
   ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, 600, canvasHeight);
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
   // エリアの描画
-  areas.forEach(function (r) {
-    r.draw(ctx);
-  });
+  areas.forEach((r) => r.draw(ctx));
 
   // 敵の描画
-  enemies.forEach(function (enemy) {
-    enemy.draw(ctx);
-  });
+  enemies.forEach((enemy) => enemy.draw(ctx));
 
   // 自機の描画
   ship.draw(ctx);
 
-  // スコア情報の表示
-  var percentComplete = ((levelScore / levelTotalArea) * 100).toFixed(1); // 小数点1桁まで表示
-  ctx.fillStyle = "white";
-  ctx.fillText("Score: " + Math.floor(score), 20, canvasHeight - 60);
-  ctx.fillText(
-    "Time Left: " + timeRemaining.toFixed(1) + "s",
-    20,
-    canvasHeight - 40
-  );
-  ctx.fillText("Area: " + percentComplete + "%", 20, canvasHeight - 20);
+  // ステータスバーの背景
+  ctx.fillStyle = "rgba(30, 30, 30, 0.8)";
+  ctx.fillRect(0, canvasHeight - statusBarHeight, canvasWidth, statusBarHeight);
+
+  // ステータスバーの要素描画
+  drawStatusBar(canvasWidth, canvasHeight, statusBarHeight);
 
   // ゲーム終了時のメッセージ
   if (gameOver) {
-    if (gameWon) {
-      ctx.fillStyle = "yellow";
-      ctx.fillText("YOU WIN!", 220, canvasHeight / 2);
-    } else {
-      ctx.fillStyle = "red";
-      ctx.fillText("GAME OVER", 220, canvasHeight / 2);
-    }
+    ctx.fillStyle = gameWon ? "yellow" : "red";
+    ctx.textAlign = "center";
+    ctx.font = "24px Arial";
+    ctx.fillText(
+      gameWon ? "YOU WIN!" : "GAME OVER",
+      canvasWidth / 2,
+      canvasHeight / 2
+    );
   } else if (levelCleared) {
     ctx.fillStyle = "yellow";
-    ctx.fillText("STAGE " + clearedLevel + " CLEAR", 180, canvasHeight / 2);
-
-    // ボーナス計算
-    score += Math.floor(timeRemaining * difficultyMultiplier * 0.5);
+    ctx.textAlign = "center";
+    ctx.font = "24px Arial";
     ctx.fillText(
-      "Bonus: +" + Math.floor(timeRemaining * difficultyMultiplier * 1),
-      180,
+      `STAGE ${clearedLevel} CLEAR`,
+      canvasWidth / 2,
+      canvasHeight / 2
+    );
+    ctx.fillText(
+      `Bonus: +${Math.floor(timeRemaining * difficultyMultiplier)}`,
+      canvasWidth / 2,
       canvasHeight / 2 + 40
     );
   }
+}
+
+function drawStatusBar(canvasWidth, canvasHeight, statusBarHeight) {
+  const barPadding = 20; // 各要素の余白
+  const barHeight = 20; // 進捗バーの高さ
+
+  // タイマー設定
+  const timerRadius = 20; // タイマー円の半径
+  const timerDiameter = timerRadius * 2;
+  const timerPadding = 20; // タイマーと進捗バーの間のスペース
+
+  // 進捗バーの幅を計算
+  const barWidth = canvasWidth - timerDiameter - timerPadding - barPadding * 2;
+  const barX = barPadding; // 進捗バーのX座標
+  const statusBarY = canvasHeight - statusBarHeight + barPadding; // Y位置
+
+  // タイマー位置
+  const timerX = barX + barWidth + timerPadding + timerRadius; // タイマーの中心X
+  const timerY = statusBarY + barHeight / 2; // タイマーの中心Y
+
+  // 進捗バーの描画
+  const percentComplete = levelScore / levelTotalArea; // 塗りつぶし率
+  const progressWidth = barWidth * percentComplete; // 塗りつぶしバーの幅
+
+  // 背景バー（灰色）
+  ctx.fillStyle = "gray";
+  ctx.fillRect(barX, statusBarY, barWidth, barHeight);
+
+  // 塗りつぶしバー（緑色）
+  ctx.fillStyle = "green";
+  ctx.fillRect(barX, statusBarY, progressWidth, barHeight);
+
+  // 進捗率テキスト（進捗バーの中に表示）
+  const progressText = `${(percentComplete * 100).toFixed(1)}%`;
+  ctx.fillStyle = "white";
+  ctx.font = "16px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(
+    "Area：" + progressText,
+    barX + barWidth / 2, // バーの中央
+    statusBarY + barHeight / 2 // バーの縦中央
+  );
+
+  // 75%目標ライン（赤線）
+  const goalX = barX + barWidth * 0.75;
+  ctx.strokeStyle = "red";
+  ctx.beginPath();
+  ctx.moveTo(goalX, statusBarY);
+  ctx.lineTo(goalX, statusBarY + barHeight);
+  ctx.stroke();
+
+  // タイマーの描画
+  drawTimer(timerX, timerY, timerRadius);
+
+  // スコア（左側）
+  ctx.fillStyle = "white";
+  ctx.font = "20px 'Atari'";
+  ctx.textAlign = "right";
+  ctx.fillText(
+    `Score: ${Math.floor(score)}`,
+    canvasWidth - barPadding, // 画面右端
+    statusBarY + barHeight + 30
+  );
+
+  // ステージ（スコアの左側）
+  ctx.fillStyle = "white";
+  ctx.font = "20px 'Atari'";
+  ctx.textAlign = "left";
+  ctx.fillText(
+    `Stage: ${level}`, // ステージの表示
+    barPadding, // 左端に余白を持たせて配置
+    statusBarY + barHeight + 30
+  );
+}
+
+function drawTimer(centerX, centerY, radius) {
+  // タイマー進捗の割合を計算
+  const progress = timeRemaining / 60; // 初期値60秒
+  const startAngle = -Math.PI / 2; // 円の上部から開始
+  const endAngle = startAngle + progress * 2 * Math.PI;
+
+  // 円の背景（灰色）
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  ctx.fillStyle = "gray";
+  ctx.fill();
+
+  // タイマーの進捗（緑色のアーク）
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+  ctx.lineTo(centerX, centerY); // 中心に戻る
+  ctx.closePath();
+  ctx.fillStyle = "green";
+  ctx.fill();
+
+  // 外周（白色の円枠）
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.stroke();
 }
