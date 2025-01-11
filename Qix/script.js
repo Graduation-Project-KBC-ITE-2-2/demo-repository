@@ -12,6 +12,8 @@ var clearedLevel = 1; // クリアしたステージの番号を保存
 var gameWon = false; // ゲームクリアのフラグ
 var levelScore = 0; // ステージごとのスコア
 var levelTotalArea = 0; // ステージごとの合計エリア
+var timeRemaining = 60; // 初期制限時間（秒）
+var difficultyMultiplier = 1 + (level - 1) * 0.3; // 増加率を0.5から0.3に
 
 function Rect(left, top, right, bottom) {
   this.left = left;
@@ -36,11 +38,21 @@ function Rect(left, top, right, bottom) {
 }
 
 function startGame() {
+  // スクロールを無効化
+  document.body.classList.add("no-scroll");
   console.log("Start button clicked"); // デバッグ用
   document.getElementById("tutorial").style.display = "none"; // チュートリアルを非表示
   gameOver = false; // ゲームオーバーのフラグをリセット
   score = 0; // スコアをリセット
   init(); // ゲームの初期化を実行
+}
+
+function retryGame() {
+  console.log("Retry button clicked"); // デバッグ用
+  document.getElementById("retry").classList.add("hidden"); // リトライモーダルを非表示
+  gameOver = false; // ゲームオーバーのフラグをリセット
+  score = 0; // スコアをリセット
+  init(); // ゲームの初期化を再実行
 }
 
 function Edge(r, delta) {
@@ -222,9 +234,11 @@ function Ship() {
         this.dx = this.dy = 0;
         areas.push(r);
         var area = r.width() * r.height();
-        score += area;
-        levelScore += area; // ★ ステージごとのスコアを更新
+        var adjustedScore = Math.sqrt(area) * 0.3; // 面積に基づくスコア計算
+        levelScore += area; // 面積をステージスコアに加算
+        score += adjustedScore; // グローバルスコアに加算
       }
+
       return;
     }
 
@@ -335,6 +349,12 @@ function startLevel(level) {
   levelCleared = false;
   levelScore = 0;
   levelTotalArea = ship.rect.width() * ship.rect.height();
+
+  // 難易度倍率を設定（例: レベル1 = x1, レベル2 = x1.5, レベル3 = x2）
+  difficultyMultiplier = 1 + (level - 1) * 0.5;
+
+  // 制限時間を初期化
+  timeRemaining = 60; // 各ステージごとに60秒
 }
 
 function toggleKey(code, flag) {
@@ -355,6 +375,17 @@ function toggleKey(code, flag) {
 }
 
 function mainLoop() {
+  if (gameOver) {
+    console.log("Game Over detected"); // デバッグログ
+    const retryModal = document.getElementById("retry");
+    if (retryModal && retryModal.classList.contains("hidden")) {
+      retryModal.classList.remove("hidden");
+      console.log("Retry modal displayed"); // デバッグログ
+    }
+    clearInterval(timer); // ゲームループを停止
+    return;
+  }
+
   if (!gameOver && !levelCleared) {
     enemies.forEach(function (enemy) {
       enemy.update();
@@ -371,21 +402,25 @@ function mainLoop() {
       }
     }
 
+    // 制限時間を減らす
+    timeRemaining -= 0.1; // 0.1秒ごとに減らす
+    if (timeRemaining <= 0) {
+      gameOver = true; // 時間切れでゲームオーバー
+    }
+
     var s = Math.floor((levelScore / levelTotalArea) * 10000);
-    if (s / 100 >= 75) {
+    if (levelScore / levelTotalArea >= 0.75) {
       levelCleared = true;
-      clearedLevel = level; // ★ クリアしたステージを保存
-      // 2秒後に次のステージを開始
+      clearedLevel = level;
       setTimeout(function () {
         level++;
-        if (level > 2) {
-          // 全ステージクリア
+        if (level > 3) {
           gameOver = true;
           gameWon = true;
         } else {
           startLevel(level);
         }
-      }, 2000); // 2秒待機
+      }, 2000);
     }
   }
 
@@ -393,42 +428,156 @@ function mainLoop() {
 }
 
 function draw() {
-  // キャンバスの高さを取得
-  var canvasHeight = ctx.canvas.height;
+  const canvasWidth = ctx.canvas.width;
+  const canvasHeight = ctx.canvas.height;
+  const statusBarHeight = 100; // ステータスバーの高さ
 
-  // 背景塗り潰し
+  // 背景の描画
   ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, 600, canvasHeight);
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  // 矩形の塗りつぶし
-  areas.forEach(function (r) {
-    r.draw(ctx);
-  });
+  // エリアの描画
+  areas.forEach((r) => r.draw(ctx));
 
   // 敵の描画
-  enemies.forEach(function (enemy) {
-    enemy.draw(ctx);
-  });
+  enemies.forEach((enemy) => enemy.draw(ctx));
 
-  // 自分の描画
+  // 自機の描画
   ship.draw(ctx);
 
-  // 各種メッセージ
-  ctx.fillStyle = "green";
-  var s = Math.floor((levelScore / levelTotalArea) * 10000);
-  ctx.fillText("Score: " + s / 100 + "%", 400, canvasHeight - 20);
+  // ステータスバーの背景
+  ctx.fillStyle = "rgba(30, 30, 30, 0.8)";
+  ctx.fillRect(0, canvasHeight - statusBarHeight, canvasWidth, statusBarHeight);
 
+  // ステータスバーの要素描画
+  drawStatusBar(canvasWidth, canvasHeight, statusBarHeight);
+
+  // ゲーム終了時のメッセージ
   if (gameOver) {
-    if (gameWon) {
-      ctx.fillStyle = "yellow";
-      ctx.fillText("YOU WIN!", 220, canvasHeight / 2);
-    } else {
-      ctx.fillStyle = "red";
-      ctx.fillText("GAME OVER", 220, canvasHeight / 2);
-    }
+    console.log("Game Over triggered");
+    ctx.fillStyle = gameWon ? "yellow" : "red";
+    ctx.textAlign = "center";
+    ctx.font = "24px Arial";
+    ctx.fillText(
+      gameWon ? "YOU WIN!" : "GAME OVER",
+      canvasWidth / 2,
+      canvasHeight / 2
+    );
   } else if (levelCleared) {
     ctx.fillStyle = "yellow";
-    // ★ クリアしたステージの番号を表示
-    ctx.fillText("STAGE " + clearedLevel + " CLEAR", 180, canvasHeight / 2);
+    ctx.textAlign = "center";
+    ctx.font = "24px Arial";
+    ctx.fillText(
+      `STAGE ${clearedLevel} CLEAR`,
+      canvasWidth / 2,
+      canvasHeight / 2
+    );
+    ctx.fillText(
+      `Bonus: +${Math.floor(timeRemaining * difficultyMultiplier)}`,
+      canvasWidth / 2,
+      canvasHeight / 2 + 40
+    );
   }
+}
+
+function drawStatusBar(canvasWidth, canvasHeight, statusBarHeight) {
+  const barPadding = 20; // 各要素の余白
+  const barHeight = 20; // 進捗バーの高さ
+
+  // タイマー設定
+  const timerRadius = 20; // タイマー円の半径
+  const timerDiameter = timerRadius * 2;
+  const timerPadding = 20; // タイマーと進捗バーの間のスペース
+
+  // 進捗バーの幅を計算
+  const barWidth = canvasWidth - timerDiameter - timerPadding - barPadding * 2;
+  const barX = barPadding; // 進捗バーのX座標
+  const statusBarY = canvasHeight - statusBarHeight + barPadding; // Y位置
+
+  // タイマー位置
+  const timerX = barX + barWidth + timerPadding + timerRadius; // タイマーの中心X
+  const timerY = statusBarY + barHeight / 2; // タイマーの中心Y
+
+  // 進捗バーの描画
+  const percentComplete = levelScore / levelTotalArea; // 塗りつぶし率
+  const progressWidth = barWidth * percentComplete; // 塗りつぶしバーの幅
+
+  // 背景バー（灰色）
+  ctx.fillStyle = "gray";
+  ctx.fillRect(barX, statusBarY, barWidth, barHeight);
+
+  // 塗りつぶしバー（緑色）
+  ctx.fillStyle = "green";
+  ctx.fillRect(barX, statusBarY, progressWidth, barHeight);
+
+  // 進捗率テキスト（進捗バーの中に表示）
+  const progressText = `${(percentComplete * 100).toFixed(1)}%`;
+  ctx.fillStyle = "white";
+  ctx.font = "16px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(
+    "Area：" + progressText,
+    barX + barWidth / 2, // バーの中央
+    statusBarY + barHeight / 2 // バーの縦中央
+  );
+
+  // 75%目標ライン（赤線）
+  const goalX = barX + barWidth * 0.75;
+  ctx.strokeStyle = "red";
+  ctx.beginPath();
+  ctx.moveTo(goalX, statusBarY);
+  ctx.lineTo(goalX, statusBarY + barHeight);
+  ctx.stroke();
+
+  // タイマーの描画
+  drawTimer(timerX, timerY, timerRadius);
+
+  // スコア（左側）
+  ctx.fillStyle = "white";
+  ctx.font = "20px 'Atari'";
+  ctx.textAlign = "right";
+  ctx.fillText(
+    `Score: ${Math.floor(score)}`,
+    canvasWidth - barPadding, // 画面右端
+    statusBarY + barHeight + 30
+  );
+
+  // ステージ（スコアの左側）
+  ctx.fillStyle = "white";
+  ctx.font = "20px 'Atari'";
+  ctx.textAlign = "left";
+  ctx.fillText(
+    `Stage: ${level}`, // ステージの表示
+    barPadding, // 左端に余白を持たせて配置
+    statusBarY + barHeight + 30
+  );
+}
+
+function drawTimer(centerX, centerY, radius) {
+  // タイマー進捗の割合を計算
+  const progress = timeRemaining / 60; // 初期値60秒
+  const startAngle = -Math.PI / 2; // 円の上部から開始
+  const endAngle = startAngle + progress * 2 * Math.PI;
+
+  // 円の背景（灰色）
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  ctx.fillStyle = "gray";
+  ctx.fill();
+
+  // タイマーの進捗（緑色のアーク）
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+  ctx.lineTo(centerX, centerY); // 中心に戻る
+  ctx.closePath();
+  ctx.fillStyle = "green";
+  ctx.fill();
+
+  // 外周（白色の円枠）
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.stroke();
 }
