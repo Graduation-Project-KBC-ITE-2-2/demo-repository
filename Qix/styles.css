@@ -4,7 +4,7 @@
 */
 
 header {
-  position: fixed; /* ページ最上部に固定 */
+
   /*top: 0;*/
   /*width: 100%;*/
   z-index: 9999; /* モーダル(z-index:10)より大きな値を設定 */
@@ -47,12 +47,15 @@ header {
   padding: 0; /* ナビゲーションリスト内の余白を削除 */
   margin: 0; /* ナビゲーションリスト外の余白を削除 */
   display: flex; /* リスト項目を横並びに */
-  justify-content: center; /* リスト項目を中央に配置 */
+  justify-content: space-around; /* リスト項目を中央に配置 */
+  align-items: center;
+  width: 100%;
+  height: 40px;
 }
 
-.header li {
-  margin: 0 20px; /* 各リスト項目間にスペースを追加 */
-}
+/* .header li {
+  margin: 0 20px; 
+} */
 
 .header a {
   color: white; /* リンクテキストを白色に設定 */
@@ -131,10 +134,10 @@ canvas {
   justify-content: space-between;
   max-width: 1200px;
   margin: 0 auto; /* 中央に配置 */
-  padding: 20px 0;
+  padding: 10px 0;
   gap: 20px;
   box-sizing: border-box;
-  height: 100%;
+  height: 90%;
 }
 
 /* 
