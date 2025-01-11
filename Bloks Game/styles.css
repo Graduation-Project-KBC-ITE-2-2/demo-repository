@@ -12,39 +12,11 @@ body {
   height: auto; /* 高さをコンテンツに合わせる */
 }
 
-/* 
-    ヘッダーの設定 
-    ページ上部のナビゲーションバーのスタイル
-    */
-header {
-  padding: 0; /* ヘッダー内の余白を削除 */
-}
 
-.header {
-  list-style: none; /* ナビゲーションリストのマーカーを非表示 */
-  padding: 0; /* ナビゲーションリスト内の余白を削除 */
-  margin: 0; /* ナビゲーションリスト外の余白を削除 */
-  display: flex; /* リスト項目を横並びに */
-  justify-content: center; /* リスト項目を中央に配置 */
-}
 
-.header li {
-  margin: 0 20px; /* 各リスト項目間にスペースを追加 */
-}
 
-.header a {
-  color: white; /* リンクテキストを白色に設定 */
-  text-decoration: none; /* 下線を非表示 */
-  font-weight: bold; /* テキストを太字に設定 */
-  font-size: 15px; /* フォントサイズを調整 */
-  padding: 10px 15px; /* リンク周囲に余白を追加 */
-  border-radius: 5px; /* リンクを角丸にする */
-  transition: background-color 0.3s ease; /* 背景色の変化をスムーズに */
-}
 
-.header a:hover {
-  background-color: #555; /* リンクをホバー時に暗めの背景色に変更 */
-}
+
 
 /* 
     ゲームエリアの設定 
