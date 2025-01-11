@@ -528,3 +528,41 @@ export const guestLogin = async () => {
         throw error;
     }
 };
+
+export const Numberofviews = async (col) =>{
+    await addDoc(collection(db,"Numberofviews"),{
+        title: col,
+        Numberofviews: k
+    })
+}
+
+export function initializeContactFormHandler(formElement, statusMessageElement) {
+    const db = getFirestore();
+  
+    formElement.addEventListener("submit", async (e) => {
+      e.preventDefault();
+  
+      const name = formElement.querySelector("#name").value;
+      const email = formElement.querySelector("#email").value;
+      const message = formElement.querySelector("#message").value;
+  
+      try {
+        await addDoc(collection(db, "contacts"), {
+          name,
+          email,
+          message,
+          timestamp: new Date(),
+        });
+  
+        statusMessageElement.textContent = "お問い合わせ内容が送信されました！";
+        statusMessageElement.style.color = "green";
+  
+        // フォームをリセット
+        formElement.reset();
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        statusMessageElement.textContent = "送信中にエラーが発生しました。";
+        statusMessageElement.style.color = "red";
+      }
+    });
+  }

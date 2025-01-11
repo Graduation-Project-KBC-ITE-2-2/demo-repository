@@ -34,7 +34,7 @@ document.querySelector('#footer').innerHTML = `
           <a href="/privacy-policy.html">プライバシーポリシー</a>
           <a href="/terms-of-service.html">利用規約</a>
           <a href="/Production/production.html">製作</a>
-          <a href="/contact.html">お問い合わせ</a>
+          <a href="/Inquiry/inquiry.html">お問い合わせ</a>
         </nav>
       </div>
       `;
