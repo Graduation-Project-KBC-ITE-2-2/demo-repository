@@ -1,3 +1,5 @@
+import {getUserEmail,saveScoreAndEmail, displayDataInHTMLRealtime } from "../firebaseConfig.js";
+
 "use strict";
 var timer = NaN,
   areas = [],
@@ -14,6 +16,7 @@ var levelScore = 0; // ステージごとのスコア
 var levelTotalArea = 0; // ステージごとの合計エリア
 var timeRemaining = 60; // 初期制限時間（秒）
 var difficultyMultiplier = 1 + (level - 1) * 0.3; // 増加率を0.5から0.3に
+const title = document.title;
 
 function Rect(left, top, right, bottom) {
   this.left = left;
@@ -37,7 +40,7 @@ function Rect(left, top, right, bottom) {
   };
 }
 
-function startGame() {
+window.startGame = function () {
   // スクロールを無効化
   document.body.classList.add("no-scroll");
   console.log("Start button clicked"); // デバッグ用
@@ -47,7 +50,7 @@ function startGame() {
   init(); // ゲームの初期化を実行
 }
 
-function retryGame() {
+window.retryGame = function () {
   console.log("Retry button clicked"); // デバッグ用
   document.getElementById("retry").classList.add("hidden"); // リトライモーダルを非表示
   gameOver = false; // ゲームオーバーのフラグをリセット
@@ -427,10 +430,12 @@ function mainLoop() {
   draw();
 }
 
-function draw() {
+async function  draw() {
   const canvasWidth = ctx.canvas.width;
   const canvasHeight = ctx.canvas.height;
   const statusBarHeight = 100; // ステータスバーの高さ
+  const userEmail = await getUserEmail();
+  score = Math.floor(score);
 
   // 背景の描画
   ctx.fillStyle = "black";
@@ -463,6 +468,7 @@ function draw() {
       canvasWidth / 2,
       canvasHeight / 2
     );
+    await saveScoreAndEmail(title, score, userEmail);
   } else if (levelCleared) {
     ctx.fillStyle = "yellow";
     ctx.textAlign = "center";
@@ -477,6 +483,7 @@ function draw() {
       canvasWidth / 2,
       canvasHeight / 2 + 40
     );
+    await saveScoreAndEmail(title, score, userEmail);
   }
 }
 
@@ -581,3 +588,5 @@ function drawTimer(centerX, centerY, radius) {
   ctx.lineWidth = 2;
   ctx.stroke();
 }
+
+displayDataInHTMLRealtime(title);
