@@ -30,7 +30,7 @@ const headerHTML = `
         <div class="account-name" id="account-name"></div>
         <div class="dropdown-menu" id="dropdown-menu">
         <div class="fullnickname" id="fullnickname"></div>
-        <div class="mypage" id="mypage"><a href="/Mypage/mypage.html">マイページ</a></div>
+        <div id="mypage"><a class="mypage" href="/Mypage/mypage.html">マイページ</a></div>
           <div class="nickname-input">
             <input type="text" id="nickname" placeholder="ニックネームを入力" />
             <button id="save-nickname">保存</button>

@@ -28,3 +28,7 @@ header {
   .header a:hover {
     background-color: #555; /* リンクをホバー時に暗めの背景色に変更 */
   }
+
+  .header a.mypage {
+    color: red; /* マイページリンクの文字色を赤にする */
+  }
