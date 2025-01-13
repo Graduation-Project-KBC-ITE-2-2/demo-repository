@@ -45,34 +45,13 @@ window.onload = function () {
           }
         });
       }
+
     }else{
 
     }
   
   });
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      // document.getElementById("modal").style.display = "none";
 
-      // ログアウトボタンに変更
-      loginButton.innerText = "ログアウト";
-      loginButton.onclick = () => {
-        auth
-          .signOut()
-          .then(() => {
-            console.log("ユーザーはログアウトしました。");
-            location.reload();
-          })
-          .catch((error) => {
-            console.error("ログアウトエラー:", error);
-          });
-      };
-      signupButton.style.display = "none";
-    }else{
-      createModal();
-
-    }
-  });
 
 
 
