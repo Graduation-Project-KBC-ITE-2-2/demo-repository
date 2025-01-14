@@ -1,77 +1,158 @@
 body {
-  margin: 0;
-  padding: 0;
-  background-color: #333;
+  margin: 0; /* ページ全体の余白を削除 */
+  padding: 0; /* ページ全体のパディングを削除 */
+  background-color: #333; /* 背景を暗めのグレーに設定 */
+  position: relative; /* 要素の位置調整を可能にする */
+  overflow: hidden; /* スクロールバーを非表示に */
+  height: 100vh;
 }
 
-
-
-#tutorial {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 40px; /* 上下左右の余白を追加 */
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  text-align: center;
-  z-index: 1000;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  border-radius: 10px;
-}
-
-.modal-content {
-  background-color: #333;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 300px;
-  text-align: center;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-#startButton {
-  background-color: white;
-  color: black;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 18px;
-  transition: background-color 0.3s ease;
-}
-
-#startButton:hover {
-  background-color: #ccc;
-}
-
-#container {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  margin: 30px auto;
-  max-width: 1200px; /* コンテナの最大幅を設定 */
-}
-
+/* 
+ゲームエリアの設定 
+ゲーム画面となるキャンバス要素のデザイン
+*/
 canvas {
+  width: 100%; /* 必要なら固定値に変更: 800px */
+  height: 100%; /* 必要なら固定値に変更: 600px */
   display: block;
   background-color: black;
-  cursor: url("scope.png") 16 16, auto; /* カーソルのホットスポットを設定 */
+  /*image-rendering: pixelated; /* ピクセル表示を優先 */
 }
 
+#gameArea {
+  flex-grow: 2; /* ゲームエリアを広めに確保 */
+  margin-right: 20px; /* ランキングとの間に余白を追加 */
+}
+
+#field {
+  position: relative;
+}
+
+/* 
+ランキングエリアの設定 
+スコア表示やタイトルのスタイル
+*/
 #scoreboard {
-  margin-left: 20px; /* キャンバスとランキングの間の余白を設定 */
-  color: white;
-  font-size: 16px;
+  width: 100%;
+  max-width: 300px;
   background-color: rgba(0, 0, 0, 0.7);
-  padding: 20px;
+  padding: 10px;
+  color: white;
+  text-align: center;
   border-radius: 10px;
-  max-width: 200px;
 }
 
 #scoreboard h3 {
-  color: white;
-  text-align: center;
-  font-size: 20px;
-  margin-bottom: 10px;
+  color: white; /* タイトルを白色に設定 */
+  text-align: center; /* タイトルを中央揃えに */
+  font-size: 20px; /* タイトルのフォントサイズを大きめに */
+  margin-bottom: 10px; /* タイトルとランキングリストの間にスペースを追加 */
+  font-weight: bold; /* タイトルを太字に設定 */
+}
+
+#scorelist {
+  list-style: none; /* リストマーカーを非表示 */
+  padding: 0; /* リスト内の余白を削除 */
+  margin: 0; /* リスト外の余白を削除 */
+  font-family: Arial, sans-serif; /* フォントを設定 */
+}
+
+#scorelist li {
+  margin: 5px 0; /* 各スコア項目間にスペースを追加 */
+  padding: 10px; /* 内側に余白を追加して見やすく */
+  background-color: rgba(255, 255, 255, 0.1); /* 背景を少し明るく設定 */
+  border-radius: 5px; /* 項目を角丸にする */
+  text-align: left; /* テキストを左揃えに */
+}
+
+/* 全体レイアウト */
+#container {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto; /* 中央に配置 */
+  padding: 20px 0;
+  gap: 20px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+/* 
+モーダル関連の設定 
+チュートリアルやポップアップの表示に使用
+*/
+.modal {
+  position: fixed; /* ビューポート全体に固定表示 */
+  z-index: 10; /* モーダルを前面に表示 */
+  left: 0;
+  top: 0;
+  width: 100%; /* 横幅を画面全体に設定 */
+  height: 100%; /* 高さを画面全体に設定 */
+  background-color: rgba(0, 0, 0, 0.8); /* 背景を半透明の黒に設定 */
+  color: white; /* テキストを白色に設定 */
+  display: flex; /* フレックスボックスで中央揃えに */
+  align-items: center; /* 縦方向で中央に揃える */
+  justify-content: center; /* 横方向で中央に揃える */
+}
+
+.modal-content {
+  background-color: #333; /* モーダルの背景を暗めのグレーに設定 */
+  padding: 20px; /* 内側に余白を追加 */
+  border: 1px solid #888; /* 外枠をグレーに設定 */
+  width: 300px; /* 幅を指定 */
+  text-align: center; /* テキストを中央揃えに */
+  border-radius: 10px; /* ボックスを角丸に */
+  position: absolute; /* 絶対位置にする */
+  top: 50%; /* 縦中央に配置 */
+  left: 50%; /* 横中央に配置 */
+  transform: translate(-50%, -50%); /* 中央揃えの位置調整 */
+}
+
+/* 
+ボタン関連の設定 
+スタートボタンのスタイル
+*/
+.button-group {
+  display: flex; /* 子要素を横並びに配置 */
+  justify-content: center; /* ボタンを中央揃え */
+  gap: 10px; /* ボタン間のスペースを調整 */
+  margin-top: 20px; /* 必要に応じてモーダル内の上下間隔を調整 */
+}
+
+.common-button {
+  padding: 10px 20px; /* ボタンの余白 */
+  font-size: 16px; /* ボタンのフォントサイズ */
+  cursor: pointer;
+  border: none;
+  background-color: #007bff; /* ボタンの背景色 */
+  color: white; /* ボタンの文字色 */
+  border-radius: 5px; /* ボタンの角を丸く */
+}
+
+.common-button:hover {
+  background-color: #0056b3; /* ホバー時の背景色 */
+}
+/* 
+  非表示クラス 
+  要素を非表示にするためのクラス
+  */
+.hidden {
+  display: none; /* 要素を非表示に設定 */
+}
+
+/* ゲームコンテナのレスポンシブ設定 */
+#game-container {
+  width: 100%;
+  max-width: 800px; /* 最大幅を指定 */
+  aspect-ratio: 4 / 3; /* アスペクト比を固定 */
+  height: 100%;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* カーソル画像を適用 */
+#game-container {
+  cursor: url("scope.png") 16 16, auto; /* カーソルの中心点を画像中央に設定 */
 }

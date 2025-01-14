@@ -6,6 +6,10 @@ import {
 
 ("use strict");
 
+// ファイル先頭あたりで
+const EXPLOSION_RADIUS = 25;
+const EXPLOSION_DURATION = 40;
+
 // ゲームの状態を管理する変数
 const gameState = {
   houses: [],
@@ -23,6 +27,7 @@ const gameState = {
   barrierActive: true, // バリアが有効かどうか
   barrierCooldown: 300, // 再生成までのフレーム数
   barrierCooldownCounter: 0, // クールダウンのカウント
+  // 爆発の共通設定（例）
   backgroundImage: null, // 背景画像を追加
 };
 
@@ -79,11 +84,13 @@ Missile.prototype.update = function () {
         gameState.barrierCooldownCounter = gameState.barrierCooldown; // クールダウン開始
 
         explodeSound();
-        this.exploded = true;
-        this.r = 25;
 
-        // 爆発エフェクトを追加
-        gameState.explosions.push(new Explosion(this.x, this.y, 25, 30));
+        // ミサイルが爆発するときの処理
+        this.exploded = true;
+        this.r = EXPLOSION_RADIUS; // 爆発半径を設定
+        +gameState.explosions.push(
+          new Explosion(this.x, this.y, EXPLOSION_RADIUS, EXPLOSION_DURATION)
+        );
         return; // 処理を終了
       }
     }
@@ -103,10 +110,10 @@ Missile.prototype.update = function () {
 
       explodeSound();
       this.exploded = true;
-      this.r = 25;
-
-      // 爆発エフェクトを追加
-      gameState.explosions.push(new Explosion(this.x, this.y, 25, 30));
+      this.r = EXPLOSION_RADIUS;
+      gameState.explosions.push(
+        new Explosion(this.x, this.y, EXPLOSION_RADIUS, EXPLOSION_DURATION)
+      );
     }
   }
 };
@@ -125,7 +132,7 @@ function Explosion(x, y, radius, duration) {
   this.x = x;
   this.y = y;
   this.radius = radius;
-  this.maxRadius = radius + 10; // 拡大範囲を小さく調整
+  this.maxRadius = radius + 50; // 拡大範囲
   this.duration = duration;
 }
 
@@ -139,7 +146,7 @@ Explosion.prototype.update = function () {
 Explosion.prototype.draw = function (ctx) {
   if (this.radius > 0) {
     ctx.fillStyle = "rgba(0,255,0,0.5)";
-    circle(ctx, this.x, this.y, this.radius);
+    circle(ctx, this.x, this.y, this.radius); // 正しい座標を使用
   }
 };
 
@@ -203,7 +210,7 @@ function line(ctx, x0, y0, x1, y1) {
 function circle(ctx, x, y, r) {
   if (r <= 0) return;
   ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2, true);
+  ctx.arc(x, y, r, 0, Math.PI * 2, true); // 正確な中心と半径で円を描画
   ctx.fill();
 }
 
@@ -354,9 +361,9 @@ function mainLoop() {
         gameState.score += 100;
         explodeSound();
 
-        // 爆発エフェクトを追加
+        // レーザーの着弾・ミサイルに当たったとき
         gameState.explosions.push(
-          new Explosion(missile.x, missile.y, 25, 60) // durationを60に変更
+          new Explosion(this.x, this.y, EXPLOSION_RADIUS, EXPLOSION_DURATION)
         );
       }
     });
@@ -390,33 +397,34 @@ function mainLoop() {
 function mousedown(e) {
   const canvas = document.getElementById("canvas");
   if (!canvas) return;
+
+  // キャンバスの境界情報を取得
   const rect = canvas.getBoundingClientRect();
 
-  // キャンバス内の正確なマウスクリック位置を計算
-  const mouseX = e.clientX - rect.left;
-  const mouseY = e.clientY - rect.top;
+  // デバイスピクセル密度を考慮したスケーリング
+  const scaleX = canvas.width / rect.width; // 論理幅と表示幅の比率
+  const scaleY = canvas.height / rect.height; // 論理高さと表示高さの比率
+
+  // マウスのクリック位置をキャンバス内座標に変換
+  const mouseX = (e.clientX - rect.left) * scaleX;
+  const mouseY = (e.clientY - rect.top) * scaleY;
 
   // エネルギー消費量
-  const energyCost = 15; // 必要に応じて調整
+  const energyCost = 15;
 
-  // エネルギーが足りない場合は攻撃をキャンセル
   if (gameState.energy < energyCost) {
     console.log("エネルギーが足りません！");
     return;
   }
 
-  // エネルギーを消費
   gameState.energy -= energyCost;
-
-  // デバッグ用ログ（必要に応じてコメントアウト）
-  // console.log(`Mouse Clicked at: (${mouseX}, ${mouseY})`);
 
   // 新しいレーザーを生成して配列に追加
   const newLaser = new Laser(mouseX, mouseY);
   gameState.lasers.push(newLaser);
 
   // 爆発エフェクトを追加
-  gameState.explosions.push(new Explosion(mouseX, mouseY, 25, 60)); // durationを60に変更
+  gameState.explosions.push(new Explosion(mouseX, mouseY, 25, 60));
 
   // クリック位置でのみミサイルとの当たり判定を行う
   gameState.missiles.forEach((missile) => {
@@ -427,17 +435,12 @@ function mousedown(e) {
     );
 
     if (distance <= 10) {
-      // ミサイルの当たり判定半径を調整
       missile.exploded = true;
       missile.r = 25;
       gameState.score += 100;
       explodeSound();
 
-      // 爆発エフェクトを追加
-      gameState.explosions.push(new Explosion(missile.x, missile.y, 25, 60)); // durationを60に変更
-
-      // デバッグ用ログ（必要に応じてコメントアウト）
-      // console.log(`Missile at (${missile.x}, ${missile.y}) exploded.`);
+      gameState.explosions.push(new Explosion(missile.x, missile.y, 25, 60));
     }
   });
 }
@@ -573,15 +576,33 @@ async function draw() {
     ctx.fillStyle = "rgb(255,0,0)";
     ctx.font = "20pt Arial"; // フォントサイズを再設定
     ctx.fillText("GAME OVER", 320, 150);
+    showRetryModal(); // ゲームオーバーモーダルを表示
     const title = document.title;
     const userEmail = await getUserEmail();
     await saveScoreAndEmail(title, gameState.score, userEmail);
   }
 }
+// リトライモーダルを表示する関数
+function showRetryModal() {
+  const retryModal = document.getElementById("retry");
+  if (retryModal) {
+    retryModal.classList.remove("hidden"); // モーダルを表示
+  }
+}
+
+// リトライボタンの処理
+function retryGame() {
+  const retryModal = document.getElementById("retry");
+  if (retryModal) {
+    retryModal.classList.add("hidden"); // モーダルを非表示
+  }
+  start(); // ゲームを再スタート
+}
 
 // **関数を window オブジェクトに割り当ててグローバルにする**
 window.init = init;
 window.start = start;
+window.retryGame = retryGame;
 
 // ゲームデータをリアルタイムで表示
 const title = document.title;

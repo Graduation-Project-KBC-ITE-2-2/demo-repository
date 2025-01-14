@@ -1,13 +1,73 @@
 ﻿<!DOCTYPE html>
 <html>
+  <!-- ヘッド部分 -->
   <head>
+    <!--ページのタイトル-->
     <title>Missile Command</title>
+    <!-- ページの文字コード -->
     <meta charset="utf-8" />
+    <!-- 外部CSSファイルを読み込むためのリンク  -->
     <link rel="stylesheet" type="text/css" href="styles.css" />
   </head>
-
   <body>
-    <div id="header"></div>
+    <header id="header"></header>
+    <div id="container">
+      <!-- ゲーム描画用のキャンバス -->
+      <div id="game-container">
+        <canvas id="canvas" width="800" height="600"></canvas>
+      </div>
+
+      <!-- 家の画像（隠し画像として事前ロード） -->
+      <img id="strip" src="strip.png" style="display: none" />
+      <img id="scope" src="scope.png" style="display: none" />
+      <!-- scope.png を再追加 -->
+      <audio id="explode" src="bomb.mp3"></audio>
+
+      <!-- ランキングエリア -->
+      <div id="scoreboard">
+        <h3>ランキング</h3>
+        <div id="scorelist">
+          <!-- ランキングデータがここに動的に表示される -->
+        </div>
+      </div>
+    </div>
+
+    <!-- チュートリアルモーダル -->
+    <div class="modal hidden" id="tutorial">
+      <div class="modal-content">
+        <h2>ゲーム説明</h2>
+        <p>
+          マウスで照準を合わせ、クリックしてミサイルを発射します。<br />
+          エイリアンのミサイルを撃ち落として家を守りましょう！
+        </p>
+        <!-- スタートボタン -->
+        <button id="startButton" class="common-button" onclick="start()">
+          スタート<span style="opacity: 0.5"> space</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- リトライモーダル -->
+    <div class="modal hidden" id="retry">
+      <div class="modal-content">
+        <h2>ゲームオーバー</h2>
+        <!-- ゲームの説明テキスト -->
+
+        <!-- リトライボタン -->
+        <button id="retryButton" class="common-button" onclick="retryGame()">
+          リトライ<span style="opacity: 0.5"> R</span>
+        </button>
+
+        <!-- 戻るボタン -->
+        <button
+          id="returnButton"
+          class="common-button"
+          onclick="window.location.href='../index.html';"
+        >
+          一覧に戻る
+        </button>
+      </div>
+    </div>
 
     <!-- Firebase Configの読み込み -->
     <script type="module" src="../firebaseConfig.js"></script>
@@ -29,46 +89,7 @@
         });
     </script>
 
-    <!-- ゲームコンテナ -->
-    <div id="container">
-      <!-- ゲームキャンバス -->
-      <canvas
-        id="canvas"
-        width="800"
-        height="600"
-        style="display: none"
-      ></canvas>
-
-      <!-- 家の画像（隠し画像として事前ロード） -->
-      <img id="strip" src="strip.png" style="display: none" />
-      <img id="scope" src="scope.png" style="display: none" />
-      <!-- scope.png を再追加 -->
-      <audio id="explode" src="bomb.mp3"></audio>
-
-      <!-- ランキング表示エリア -->
-      <div id="scoreboard">
-        <h3>ランキング</h3>
-        <div id="scorelist">
-          <!-- ランキングがここに表示されます -->
-        </div>
-      </div>
-    </div>
-
-    <!-- チュートリアルモーダル -->
-    <div id="tutorial" style="display: none">
-      <div class="modal-content">
-        <h1>ゲーム説明</h1>
-        <p>
-          マウスで照準を合わせ、クリックしてミサイルを発射します。<br />
-          エイリアンのミサイルを撃ち落として家を守りましょう！
-        </p>
-        <button id="startButton" onclick="start();">スタート</button>
-      </div>
-    </div>
-
-    <script type="module" src="/demo-repository/main.js" defer></script>
     <script type="module" src="script.js" defer></script>
-    <!--header読み込み-->
     <script type="module" src="../header.js"></script>
   </body>
 </html>
