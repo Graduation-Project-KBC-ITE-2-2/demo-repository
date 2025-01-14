@@ -1,6 +1,10 @@
-import {getUserEmail,saveScoreAndEmail, displayDataInHTMLRealtime } from "../firebaseConfig.js";
+import {
+  getUserEmail,
+  saveScoreAndEmail,
+  displayDataInHTMLRealtime,
+} from "../firebaseConfig.js";
 
-"use strict";
+("use strict");
 var timer = NaN,
   areas = [],
   score = 0,
@@ -48,7 +52,7 @@ window.startGame = function () {
   gameOver = false; // ゲームオーバーのフラグをリセット
   score = 0; // スコアをリセット
   init(); // ゲームの初期化を実行
-}
+};
 
 window.retryGame = function () {
   console.log("Retry button clicked"); // デバッグ用
@@ -56,7 +60,7 @@ window.retryGame = function () {
   gameOver = false; // ゲームオーバーのフラグをリセット
   score = 0; // スコアをリセット
   init(); // ゲームの初期化を再実行
-}
+};
 
 function Edge(r, delta) {
   this.r = r;
@@ -430,7 +434,7 @@ function mainLoop() {
   draw();
 }
 
-async function  draw() {
+async function draw() {
   const canvasWidth = ctx.canvas.width;
   const canvasHeight = ctx.canvas.height;
   const statusBarHeight = 100; // ステータスバーの高さ
@@ -483,7 +487,6 @@ async function  draw() {
       canvasWidth / 2,
       canvasHeight / 2 + 40
     );
-    await saveScoreAndEmail(title, score, userEmail);
   }
 }
 
