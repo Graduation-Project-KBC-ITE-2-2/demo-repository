@@ -18,8 +18,11 @@ const gameState = {
   ctx: null,
   waveNumber: 1,
   waveInProgress: false,
-  energy: 100,
+  energy: 100, // バリアのエネルギーとして使用
   maxEnergy: 100,
+  barrierActive: true, // バリアが有効かどうか
+  barrierCooldown: 300, // 再生成までのフレーム数
+  barrierCooldownCounter: 0, // クールダウンのカウント
   backgroundImage: null, // 背景画像を追加
 };
 
@@ -61,6 +64,29 @@ Missile.prototype.update = function () {
   } else {
     this.x = ((this.eX - this.sX) * c) / this.maxCount + this.sX;
     this.y = (600 * c) / this.maxCount;
+
+    // バリアとの衝突判定
+    if (gameState.barrierActive) {
+      const barrierY = gameState.houses[0].y - 60; // バリアのY座標
+      if (this.y >= barrierY) {
+        // バリアに衝突
+        gameState.energy -= 30; // エネルギーを消費
+        if (gameState.energy < 0) {
+          gameState.energy = 0; // エネルギーは最低0にする
+        }
+
+        gameState.barrierActive = false; // バリアを無効化
+        gameState.barrierCooldownCounter = gameState.barrierCooldown; // クールダウン開始
+
+        explodeSound();
+        this.exploded = true;
+        this.r = 25;
+
+        // 爆発エフェクトを追加
+        gameState.explosions.push(new Explosion(this.x, this.y, 25, 30));
+        return; // 処理を終了
+      }
+    }
 
     // 地面に衝突時
     if (c > this.maxCount) {
@@ -343,6 +369,14 @@ function mainLoop() {
     gameState.energy = gameState.maxEnergy;
   }
 
+  // バリアの再生成ロジック
+  if (!gameState.barrierActive && gameState.barrierCooldownCounter > 0) {
+    gameState.barrierCooldownCounter--;
+    if (gameState.barrierCooldownCounter === 0 && gameState.energy > 0) {
+      gameState.barrierActive = true; // バリアを再有効化
+    }
+  }
+
   // ウェーブ終了後、次のウェーブを開始
   if (gameState.missiles.length === 0 && !gameState.waveInProgress) {
     gameState.waveInProgress = true;
@@ -363,7 +397,7 @@ function mousedown(e) {
   const mouseY = e.clientY - rect.top;
 
   // エネルギー消費量
-  const energyCost = 10; // 必要に応じて調整
+  const energyCost = 15; // 必要に応じて調整
 
   // エネルギーが足りない場合は攻撃をキャンセル
   if (gameState.energy < energyCost) {
@@ -482,6 +516,24 @@ async function draw() {
       missile.draw(ctx);
     }
   });
+
+  // バリアの描画
+  if (gameState.barrierActive && gameState.energy > 0) {
+    const ctx = gameState.ctx;
+
+    ctx.strokeStyle = "cyan"; // バリアの色
+    ctx.lineWidth = 3; // バリアの太さ
+    ctx.beginPath();
+
+    // バリアのY座標
+    const barrierY = gameState.houses[0].y - 60; // ビルの上に少し離れた高さ
+
+    // バリアの左端から右端まで描画
+    ctx.moveTo(0, barrierY); // 左端（X = 0）
+    ctx.lineTo(ctx.canvas.width, barrierY); // 右端（X = 画面幅）
+
+    ctx.stroke();
+  }
 
   // スコアの描画
   ctx.fillStyle = "rgb(0,255,0)";
