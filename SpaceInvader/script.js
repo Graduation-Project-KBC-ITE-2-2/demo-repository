@@ -261,10 +261,10 @@ window.start = function () {
     }
 
 
-    // 3秒ごとに「P」を生成
+    // 20秒ごとに「P」を生成
     setInterval(() => {
         item = new Item('P-1.png', Math.random() * 500, 0); // ランダムなX座標
-    }, 30000);
+    }, 20000);
 
 };
 
@@ -322,7 +322,6 @@ function gameOver() {
     draw();
 }
 
-// メインループ: ゲーム全体の処理を更新
 // メインループ: ゲーム全体の処理を更新
 function mainLoop() {
     clock++;
