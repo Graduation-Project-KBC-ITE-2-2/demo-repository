@@ -1,7 +1,7 @@
 import { getUserEmail, nickname, getUserScoresByEmail, getUsertotleScoresByEmail, getScoreRank } from "../firebaseConfig.js";
 
 window.addEventListener("load", async function () {
-    const collections = ['Asteroid', 'Bloks Game', 'Mine Sweeper', 'Cave', 'Missile Command', 'Qix', 'SpaceInvader', 'Memorizer', 'SnakeBite', 'Tetris','user_name'];
+    const collections = ['Asteroid', 'Bloks Game', 'Mine Sweeper', 'Cave', 'Missile Command', 'Quicks', 'SpaceInvader', 'Memorizer', 'SnakeBite', 'Tetris','user_name'];
     const loading = document.getElementById("loading");
     const gameList = document.getElementById('game-list');
     const scorelist = document.getElementById('scorelist');

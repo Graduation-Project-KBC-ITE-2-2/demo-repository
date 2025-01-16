@@ -1,29 +1,4 @@
-/* 
-全体の基本設定 
-背景色やスクロールの非表示設定など、全ページに影響を与えるスタイルを記述
-*/
 
-header {
-  position: fixed; /* ページ最上部に固定 */
-  /*top: 0;*/
-  /*width: 100%;*/
-  z-index: 9999; /* モーダル(z-index:10)より大きな値を設定 */
-  /*padding: 10px;*/
-}
-
-/* ヘッダー内のリストも見やすいように余白を調整 
-.header {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-}
-*/
-/*
-.header li {
-  margin: 0 20px;
-}
-*/
 
 body {
   margin: 0; /* ページ全体の余白を削除 */
@@ -34,39 +9,8 @@ body {
   height: 100vh;
 }
 
-/* 
-ヘッダーの設定 
-ページ上部のナビゲーションバーのスタイル
-*/
-header {
-  padding: 0; /* ヘッダー内の余白を削除 */
-}
 
-.header {
-  list-style: none; /* ナビゲーションリストのマーカーを非表示 */
-  padding: 0; /* ナビゲーションリスト内の余白を削除 */
-  margin: 0; /* ナビゲーションリスト外の余白を削除 */
-  display: flex; /* リスト項目を横並びに */
-  justify-content: center; /* リスト項目を中央に配置 */
-}
 
-.header li {
-  margin: 0 20px; /* 各リスト項目間にスペースを追加 */
-}
-
-.header a {
-  color: white; /* リンクテキストを白色に設定 */
-  text-decoration: none; /* 下線を非表示 */
-  font-weight: bold; /* テキストを太字に設定 */
-  font-size: 15px; /* フォントサイズを調整 */
-  padding: 10px 15px; /* リンク周囲に余白を追加 */
-  border-radius: 5px; /* リンクを角丸にする */
-  transition: background-color 0.3s ease; /* 背景色の変化をスムーズに */
-}
-
-.header a:hover {
-  background-color: #555; /* リンクをホバー時に暗めの背景色に変更 */
-}
 
 /* 
 ゲームエリアの設定 
@@ -172,22 +116,26 @@ canvas {
 ボタン関連の設定 
 スタートボタンのスタイル
 */
+.button-group {
+  display: flex; /* 子要素を横並びに配置 */
+  justify-content: center; /* ボタンを中央揃え */
+  gap: 10px; /* ボタン間のスペースを調整 */
+  margin-top: 20px; /* 必要に応じてモーダル内の上下間隔を調整 */
+}
+
 .common-button {
-  background-color: white; /* ボタンの背景色を白に設定 */
-  color: black; /* ボタンのテキストを黒に設定 */
-  padding: 10px 20px; /* ボタンの内側に余白を追加 */
-  border: none; /* ボーダーを削除 */
-  border-radius: 5px; /* ボタンを角丸に */
-  cursor: pointer; /* ホバー時にカーソルを変更 */
-  font-size: 18px; /* ボタンテキストのフォントサイズを設定 */
-  transition: background-color 0.3s ease; /* 背景色の変化をスムーズに */
-  margin-right: 10px; /* ボタンに適度な余白を設定 */
+  padding: 10px 20px; /* ボタンの余白 */
+  font-size: 16px; /* ボタンのフォントサイズ */
+  cursor: pointer;
+  border: none;
+  background-color: #007bff; /* ボタンの背景色 */
+  color: white; /* ボタンの文字色 */
+  border-radius: 5px; /* ボタンの角を丸く */
 }
 
-#startButton:hover {
-  background-color: #ccc; /* ホバー時に背景を灰色に変更 */
+.common-button:hover {
+  background-color: #0056b3; /* ホバー時の背景色 */
 }
-
 /* 
   非表示クラス 
   要素を非表示にするためのクラス

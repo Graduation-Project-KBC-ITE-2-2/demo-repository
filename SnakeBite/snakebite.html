@@ -10,7 +10,7 @@
     <div id="container">
       <!-- ゲームエリア -->
       <div id="game-container">
-        <canvas id="field" width="800" height="600"></canvas>
+        <canvas id="field" width="500" height="500"></canvas>
       </div>
 
       <!-- ランキングエリア -->
@@ -27,9 +27,9 @@
       <div class="modal-content">
         <h2>チュートリアル</h2>
         <!-- ゲームの説明テキスト -->
-        <p>
-          このゲームでは、蛇を操作して餌を食べ、成長させます。矢印キーで移動してください。
-        </p>
+        <p>蛇を操作して餌を食べ、成長させます。矢印キーで移動してください。</p>
+        <p>壁に衝突するか、自分自身に衝突するとゲームオーバーです。</p>
+        <p>できるだけ長く生き延びましょう。</p>
         <p>
           操作方法<br />
           <span style="font-weight: bold">←↓→</span>　移動<br />
@@ -45,7 +45,7 @@
     <div class="modal hidden" id="retry">
       <div class="modal-content">
         <h2>ゲームオーバー</h2>
-        <!-- ボタンをまとめるラッパ要素を作成 -->
+        <!-- ボタンをラップする要素 -->
         <div class="button-group">
           <!-- リトライボタン -->
           <button id="retryButton" class="common-button">
@@ -62,7 +62,7 @@
         </div>
       </div>
     </div>
-
+    <!-- Firebaseログインチェック用スクリプト -->
     <script type="module">
       import { auth, getCurrentUser } from "../firebaseConfig.js";
 

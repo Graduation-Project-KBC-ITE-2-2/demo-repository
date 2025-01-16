@@ -27,14 +27,16 @@ git pull origin main-->
         <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     
         <!-- メインJavaScriptファイルの読み込み -->
-        <script type="module" src="index.js" defer></script>
+        
         <script type="module" src="./login&logout/login.js"></script>
+        <script type="module" src="index.js" defer></script>
         <script type="module" src="main.js"></script>
+        <script type="module" src="header.js"></script>
 
     </head>
   <body>
 
-    <header>
+    <!-- <header>
       <ul class="header">
         <li><a href="Asteroid/asteroid.html">Asteroid</a></li>
         <li><a href="/Bloks Game/bloks game.html">Blocks</a></li>
@@ -49,17 +51,7 @@ git pull origin main-->
         <li><a href="/typing/typing.html">Tyoing</a></li>
         <li id = "ミニゲーム集"><a href="/index.html">Top</a></li>
       </ul>
-      <!-- <div class="account-container">
-          
-          <div class="dropdown-menu" id="dropdown-menu">
-            <div class="account-name" id="account-name">
-              <div class="nickname-input">
-                  <input type="text" id="nickname" placeholder="ニックネームを入力" />
-                  <button id="save-nickname">保存</button>
-              </div>
-          </div>
-        </div> 
-      </div> -->
+
 
       <div class="account-container" id="account-container">
         
@@ -74,7 +66,7 @@ git pull origin main-->
         </div>
       </div>
       
-    </header>
+    </header> -->
 
     <h1 class="slide-in">ミニゲーム集へようこそ！</h1>
 
@@ -165,7 +157,7 @@ git pull origin main-->
         </div>
     </div> -->
     <div class="auth-buttons">
-        <button id="loginButton" class="common-button">ログイン<span style="opacity: 0.5;"> space</span></button>
+        <button id="loginButton" class="common-button">ログアウト<span style="opacity: 0.5;"> space</span></button>
         <!-- <button id="signup-button" class="auth-button">新規登録</button> -->
     </div>
     <div id="footer"></div>

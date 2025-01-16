@@ -1,9 +1,20 @@
 import { loginUser, auth, guestLogin } from '../firebaseConfig.js';
 
 // ログインボタンのクリックイベントを設定
+const loginButton = document.getElementById("loginButton");
 auth.onAuthStateChanged(async(user) => {
     if (user){
-
+      loginButton.onclick = () => {
+        auth
+          .signOut()
+          .then(() => {
+            console.log("ユーザーはログアウトしました。");
+            location.reload();
+          })
+          .catch((error) => {
+            console.error("ログアウトエラー:", error);
+          });
+      };
     }else{
         createModal();
     }
