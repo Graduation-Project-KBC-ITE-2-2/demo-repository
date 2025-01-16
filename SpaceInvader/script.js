@@ -16,6 +16,13 @@ backgroundImg.src = 'cosmos-1853491_1920.jpg'; // 背景画像のパス
 
 var scrollY = 0; // 背景のY座標を管理する変数
 
+var powerItemImgY = -10; // PowerItem画像の初期位置（画面外からスタート）
+
+var powerItemImgActive = true; // 「PowerItem」がアクティブかどうかのフラグ
+
+var powerItemImgSpawnInterval = 1800; // 30秒（1800フレーム：1フレーム50ms）
+var powerItemImgSpawnClock = powerItemImgSpawnInterval; // 「PowerItem」の出現を管理するタイマー
+
 var scoreMultiplierActive = false; // スコア倍増のフラグ
 var scoreMultiplierEndTime = 0;   // スコア倍増終了時間
 
@@ -60,6 +67,17 @@ function Ship() {
     this.isBlinking = false; // 点滅中フラグ
     this.blinkEndTime = 0; // 点滅終了時間
     this.isEven = function () { return true; }
+}
+
+// 'P-1.png'
+function Item(image, drawX, drawY) {
+    this.image = new Image();
+    this.image.src = image;
+    this.x = drawX;
+    this.y = drawY;
+    this.offset = 100;
+    this.sizeX = 30;
+    this.sizeY = 30;
 }
 
 function startTimer() {
@@ -137,6 +155,8 @@ var itemBitmap = {
 
 // 各クラスに描画の機能を継承
 Ship.prototype = Beam.prototype = Alien.prototype = Bomb.prototype = baseBitmap;
+
+Item.prototype = itemBitmap;
 
 // エイリアンの移動や状態管理のプロパティ
 Alien.isEven = false; // 描画状態の切り替え
@@ -240,6 +260,12 @@ window.start = function () {
         mainT = setInterval(mainLoop, 50);
     }
 
+
+    // 3秒ごとに「P」を生成
+    setInterval(() => {
+        item = new Item('P-1.png', Math.random() * 500, 0); // ランダムなX座標
+    }, 30000);
+
 };
 
 // キー押下時の処理
@@ -297,15 +323,19 @@ function gameOver() {
 }
 
 // メインループ: ゲーム全体の処理を更新
+// メインループ: ゲーム全体の処理を更新
 function mainLoop() {
     clock++;
 
     scrollY += 1; // 背景スクロール
 
     var hit = -1;
+
+    // ビームとエイリアンの当たり判定
     if (beam.y > -30) {
         beam.y -= 15;
         beam.even = !beam.even;
+
         aliens.forEach(function (e, i) {
             if (e.x - 15 < beam.x && beam.x < e.x + 15 &&
                 e.y - 10 < beam.y && beam.y < e.y + 20) {
@@ -321,6 +351,21 @@ function mainLoop() {
                 return;  // 一度当たったエイリアンは処理しない
             }
         });
+
+        // ビームと P の当たり判定
+        if (
+            item && // アイテムが存在する
+            item.x - 15 < beam.x && beam.x < item.x + 15 &&
+            item.y - 10 < beam.y && beam.y < item.y + 20
+        ) {
+            // ビームが P に当たった場合の処理
+            beam.y = -100; // ビームを非表示
+            item = null; // P を削除
+
+            // スコア加算（ 1000 点）
+            score += 1000;
+            console.log('P hit! Score increased by 1000.');
+        }
     }
 
     // ヒットしたエイリアンを削除
@@ -346,8 +391,8 @@ function mainLoop() {
 
         b.even = !b.even;
 
-        // 宇宙船が点滅中でない場合のみダメージを受ける
-        if (!ship.isBlinking && b.x - 15 < ship.x && ship.x < b.x + 15 && 530 < b.y && b.y < 550) {
+        // 爆弾が宇宙船に当たった場合
+        if (b.x - 15 < ship.x && ship.x < b.x + 15 && 530 < b.y && b.y < 550) {
             // スコアをマイナス200
             score = Math.max(0, score - 200);
 
@@ -360,13 +405,13 @@ function mainLoop() {
         }
     });
 
-
     // 宇宙船の移動処理
     if (ship.moveR) { ship.x = Math.min(ship.x + 5, 570); }
     if (ship.moveL) { ship.x = Math.max(ship.x - 5, 0); }
 
     draw();
 }
+
 
 // 描画処理
 async function draw() {
@@ -386,6 +431,11 @@ async function draw() {
         item.draw(ctx);
         item.y += 1;
     }
+
+    // Pの画像を描画.サイズ調整
+    // if (playerImgActive) {
+    //     ctx.drawImage(playerImg, 270, playerImgY, 30, 30); // 幅と高さを30に変更
+    // }
 
     // 点滅終了判定
     if (ship.isBlinking && clock >= ship.blinkEndTime) {
