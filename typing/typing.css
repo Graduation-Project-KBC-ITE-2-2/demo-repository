@@ -26,6 +26,7 @@ h1 {
   margin: 1em;
   border-bottom: 1rem solid rgb(118, 59, 255);
   font-size: 30px;
+  user-select: none;
 }
 
 #input {
@@ -36,10 +37,6 @@ h1 {
 #score, #time {
   font-size: 1.5em;
   margin-top: 1em;
-}
-
-#word {
-  user-select: none;
 }
 
 /* モーダル全体のスタイル */
