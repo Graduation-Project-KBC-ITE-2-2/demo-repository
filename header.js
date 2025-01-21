@@ -22,6 +22,7 @@ const headerHTML = `
         <li><a href="/SnakeBite/snakebite.html">SnakeBite</a></li>
         <li><a href="/Tetris/tetris.html">Tetris</a></li>
         <li><a href="/typing/typing.html">Typing</a></li>
+        <li><a href="/suica/suica.html">suica</a></li>
         <li id = "ミニゲーム集"><a href="/index.html">Top</a></li>
 
   </ul>
