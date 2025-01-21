@@ -1,80 +1,99 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
+  <!-- ヘッド部分 -->
+  <head>
+    <!--ページのタイトル-->
     <title>SpaceInvader</title>
-    <link rel="stylesheet" type="text/css" href="styles.css"> 
-    <link rel="stylesheet" type="text/css" href="../scoreboard.css"> 
-</head>
-<header>
-    <ul class="header">
-        <li><a href="/Asteroid/asteroid.htm">Asteroid</a></li>
-        <li><a href="/Blocks/blocks.htm">Blocks</a></li>
-        <li><a href="/Cave/cave.html">Cave</a></li>
-        <li><a href="/MineSweeper/minesweeper.html">MineSweeper</a></li>
-        <li><a href="/Memorizer/memorizer.html">Memorizer</a></li>
-        <li><a href="/MissileCommand/missilecommand.htm">MissileCommand</a></li>
-        <li><a href="/Qix/Qix.htm">Qix</a></li>
-        <li><a href="/SnakeBite/SnakeBite.html">SnakeBite</a></li>
-        <li><a href="/Tetris/Tetris.htm">Tetris</a></li>
-        <li><a href="/index.html">Top</a></li>
-    </ul>
-</header>
+    <!-- ページの文字コード -->
+    <meta charset="utf-8" />
+    <!-- 外部CSSファイルを読み込むためのリンク  -->
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
 
-<body onload="window.init();">
+  <body onload="window.init();">
+    <!-- ゲームコンテナ -->
+    <div id="container">
+      <!-- ゲームキャンバス -->
+      <canvas
+        id="canvas"
+        width="600"
+        height="600"
+        style="display: block; margin: 0 auto"
+      ></canvas>
+
+      <!-- 画像 -->
+      <img id="strip" src="strip.png" style="display: none" />
+
+      <!-- ランキング表示エリア -->
+      <div id="scoreboard">
+        <h3>ランキング</h3>
+        <div id="scorelist">
+          <!-- ランキングデータがここに動的に表示される -->
+        </div>
+      </div>
+    </div>
+
+    <!-- チュートリアルモーダル -->
+    <div class="modal hidden" id="tutorial">
+      <div class="modal-content">
+        <h2>ゲーム説明</h2>
+        <p>
+          矢印キーで船を左右に移動させ、スペースキーで弾を発射します。<br />
+          エイリアンを撃ち落としてスコアを稼ぎましょう！
+        </p>
+        <!-- スタートボタン -->
+        <button id="startButton" class="common-button" onclick="start()">
+          スタート<span style="opacity: 0.5"> space</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- リトライモーダル -->
+    <div class="modal hidden" id="retry">
+      <div class="modal-content">
+        <h2>ゲームオーバー</h2>
+        <!-- ゲームの説明テキスト -->
+
+        <!-- リトライボタン -->
+        <button id="retryButton" class="common-button" onclick="retryGame()">
+          リトライ<span style="opacity: 0.5"> R</span>
+        </button>
+
+        <!-- 戻るボタン -->
+        <button
+          id="returnButton"
+          class="common-button"
+          onclick="window.location.href='../index.html';"
+        >
+          一覧に戻る
+        </button>
+      </div>
+    </div>
 
     <!-- Firebase Configの読み込み -->
     <script type="module" src="../firebaseConfig.js"></script>
 
-    <!-- ログインチェック用スクリプト -->
     <script type="module">
-        import { auth, getCurrentUser } from '../firebaseConfig.js';
+      import { auth, getCurrentUser } from "../firebaseConfig.js";
 
-        // 認証状態をチェック
-        getCurrentUser().then(user => {
-            if (user) {
-                // ログインしている場合、ゲーム画面を表示
-                document.getElementById("tutorial").style.display = "block";
-                document.getElementById("canvas").style.display = "block";
-            }
-        }).catch(error => {
-            // ユーザーがログインしていない場合、ログインページにリダイレクト
-            console.error('ログインしていません:', error);
-            window.location.href = "../login.html"; // ログインページにリダイレクト
+      getCurrentUser()
+        .then((user) => {
+          if (user) {
+            // ログインしている場合、ゲーム画面を表示
+            document.getElementById("tutorial").style.display = "block";
+            document.getElementById("canvas").style.display = "block";
+            window.init(); // ページロード時に init を呼び出す
+          }
+        })
+
+        .catch((error) => {
+          // ユーザーがログインしていない場合、ログインページにリダイレクト
+          console.error("ログインしていません:", error);
+          window.location.href = "../login.html";
         });
     </script>
 
-    <!-- ゲームコンテナ -->
-    <div id="container">
-        <!-- ゲームキャンバス -->
-        <canvas id="canvas" width="600" height="600" style="display: block; margin: 0 auto;"></canvas>
-        
-        <!-- 画像 -->
-        <img id="strip" src="strip.png" style="display:none;" />
-
-
-        <!-- ランキング表示エリア -->
-        <div id="scoreboard">
-            <h3>ランキング</h3>
-            <div id="scorelist">
-                <!-- ランキングがここに表示されます -->
-            </div>
-        </div>
-    </div>
-
-
-    <!-- チュートリアルモーダル -->
-    <div id="tutorial" style="display: none;">
-        <div class="modal-content">
-            <h1>ゲーム説明</h1>
-            <p>矢印キーで船を左右に移動させ、スペースキーで弾を発射します。<br>
-            エイリアンを撃ち落としてスコアを稼ぎましょう！</p>
-            <button id="startButton" onclick="window.start();">スタート</button>
-        </div>
-    </div>
-
-
-    <script src="script.js" defer></script> <!-- 修正前 -->
-<script type="module" src="script.js" defer></script> <!-- 修正後 -->
-</body>
+    <script type="module" src="script.js" defer></script>
+    <script type="module" src="../header.js"></script>
+  </body>
 </html>
