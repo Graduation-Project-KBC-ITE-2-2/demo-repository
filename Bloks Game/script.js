@@ -214,7 +214,7 @@ window.startGame = function (selectedDifficulty) {
   difficulty = selectedDifficulty; // 選択された難易度を保存
 
   // チュートリアルモーダルを非表示にする
-  document.getElementById("modal").style.display = "none";
+  document.getElementById("tutorial").style.display = "none";
 
   // 初期化（paddle, ballなどのオブジェクトを初期化）
   init();
@@ -290,12 +290,15 @@ async function mainLoop() {
     } else {
       clearInterval(timer); // ゲーム終了時にタイマーをクリア
       timer = NaN; // タイマーをリセット
+
       const title = document.title; // ゲームのタイトルを取得
       const userEmail = await getUserEmail(); // ユーザーのメールを取得
       await saveScoreAndEmail(title, score, userEmail); // スコアとメールを保存
       // alert("ゲームオーバー！再挑戦してください。"); // ゲームオーバーのアラート
-      // リトライボタンを表示
-      document.getElementById("retryButton").style.display = "block"; // ここを変更
+
+      // リトライウィンドウを表示する
+      const retryModal = document.getElementById("retry");
+      retryModal.classList.remove("hidden"); // hiddenクラスを削除して表示
       return;
     }
   }
@@ -362,16 +365,21 @@ function draw() {
 }
 
 window.retryGame = function () {
-  document.getElementById("retryButton").style.display = "none"; // リトライボタンを非表示にする
+  // リトライモーダルを取得
+  const retryModal = document.getElementById("retry"); // ここでretryModalを定義
+  retryModal.classList.add("hidden"); // hiddenクラスを追加してモーダルを非表示にする
+
+  // ゲームのリセット処理
   if (timer) {
     clearInterval(timer); // 現在のタイマーをクリア
     timer = null; // タイマーをリセット
   }
-  (balls = 3), (score = 0), (elapsedTime = 0); // ゲームの初期設定
+  balls = 3; // 残機をリセット
+  score = 0; // スコアをリセット
+  elapsedTime = 0; // 経過時間をリセット
 
-  // ゲームを再初期化
-  init(); // これにより、初期化関数が呼び出されてゲームが再スタートする
-  // ゲーム開始（ブロック生成とボールの速度・方向設定）
+  // ゲームの初期化と再スタート
+  init();
   start();
 };
 
