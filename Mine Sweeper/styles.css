@@ -12,11 +12,7 @@ body {
   color: white;
 }
 
-
-
-
-
-#title{
+#title {
   text-align: center;
   margin-top: 60px;
 }
@@ -64,59 +60,60 @@ td.open {
   margin-bottom: 20px; /* ゲームエリアとの間隔 */
 }
 
+/* 
+モーダル関連の設定 
+チュートリアルやポップアップの表示に使用
+*/
 .modal {
-  position: fixed;
-  z-index: 10;
+  position: fixed; /* ビューポート全体に固定表示 */
+  z-index: 10; /* モーダルを前面に表示 */
   left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#modal {
-  display: block; /* 初期状態で表示 */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 10;
-  text-align: center;
+  width: 100%; /* 横幅を画面全体に設定 */
+  height: 100%; /* 高さを画面全体に設定 */
+  background-color: rgba(0, 0, 0, 0.8); /* 背景を半透明の黒に設定 */
+  color: white; /* テキストを白色に設定 */
+  display: flex; /* フレックスボックスで中央揃えに */
+  align-items: center; /* 縦方向で中央に揃える */
+  justify-content: center; /* 横方向で中央に揃える */
 }
 
 .modal-content {
-  background-color: #333;
-  border: 2px solid #888;
-  border-radius: 10px;
-  display: inline-block;
-  padding: 20px;
-  margin-top: 300px;
-  text-align: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  color: white;
+  background-color: #333; /* モーダルの背景を暗めのグレーに設定 */
+  padding: 20px; /* 内側に余白を追加 */
+  border: 1px solid #888; /* 外枠をグレーに設定 */
+  width: 300px; /* 幅を指定 */
+  text-align: center; /* テキストを中央揃えに */
+  border-radius: 10px; /* ボックスを角丸に */
+  position: absolute; /* 絶対位置にする */
+  top: 50%; /* 縦中央に配置 */
+  left: 50%; /* 横中央に配置 */
+  transform: translate(-50%, -50%); /* 中央揃えの位置調整 */
 }
 
-#startButton {
-  background-color: white;
-  color: black;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
+/* 
+ボタン関連の設定 
+スタートボタンのスタイル
+*/
+.button-group {
+  display: flex; /* 子要素を横並びに配置 */
+  justify-content: center; /* ボタンを中央揃え */
+  gap: 10px; /* ボタン間のスペースを調整 */
+  margin-top: 20px; /* 必要に応じてモーダル内の上下間隔を調整 */
+}
+
+.common-button {
+  padding: 10px 20px; /* ボタンの余白 */
+  font-size: 16px; /* ボタンのフォントサイズ */
   cursor: pointer;
-  font-size: 18px;
-  transition: background-color 0.3s ease;
+  border: none;
+  background-color: #007bff; /* ボタンの背景色 */
+  color: white; /* ボタンの文字色 */
+  border-radius: 5px; /* ボタンの角を丸く */
 }
 
-#startButton:hover {
-  background-color: #ccc;
+.common-button:hover {
+  background-color: #0056b3; /* ホバー時の背景色 */
 }
 
 .overlay-text {
