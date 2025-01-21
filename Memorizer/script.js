@@ -264,5 +264,6 @@ function loadSounds() {
     (src) => new Audio(src)
   );
 }
-
+// ゲームデータをリアルタイムで表示
+const title = document.title;
 displayDataInHTMLRealtime(title);
