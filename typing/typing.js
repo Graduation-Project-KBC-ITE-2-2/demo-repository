@@ -106,6 +106,15 @@ startBtn.addEventListener("click", () => {
   }
 });
 
+// 初期状態でゲーム画面を非表示
+document.querySelector("#game-container, .main").style.display = "none"; // 適宜調整
+
+// スタートボタンをクリックした時の動作
+document.getElementById("startButton").addEventListener("click", () => {
+  document.getElementById("tutorial").style.display = "none"; // モーダルを非表示
+  document.querySelector("#game-container, .main").style.display = "block"; // ゲーム画面を表示
+});
+
 // リセットボタンの処理
 resetBtn.addEventListener("click", () => {
   score = 0;

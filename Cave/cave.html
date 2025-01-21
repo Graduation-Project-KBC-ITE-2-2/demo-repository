@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html>
+  <!-- ヘッド部分 -->
   <head>
+    <!--ページのタイトル-->
     <title>Cave</title>
+    <!-- ページの文字コード -->
     <meta charset="utf-8" />
+    <!-- 外部CSSファイルを読み込むためのリンク  -->
     <link rel="stylesheet" type="text/css" href="styles.css" />
   </head>
 
   <body>
+    <header id="header"></header>
+    <!-- ゲームコンテナ -->
     <div id="container">
-      <!-- ゲームエリア -->
+      <!-- ゲーム描画用のキャンバス -->
       <div id="game-container">
         <canvas id="field" width="800" height="600"></canvas>
       </div>
@@ -21,6 +27,7 @@
         </div>
       </div>
     </div>
+
     <!-- チュートリアル（ゲーム説明モーダル） -->
     <div class="modal hidden" id="tutorial">
       <div class="modal-content">
@@ -34,6 +41,7 @@
           <span style="font-weight: bold">←↓→</span>　移動<br />
         </p>
         <!-- スタートボタン -->
+
         <button id="startButton" class="common-button">
           スタート<span style="opacity: 0.5"> space</span>
         </button>

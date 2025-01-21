@@ -1,14 +1,20 @@
 ﻿<!DOCTYPE html>
 <html>
+  <!-- ヘッド部分 -->
   <head>
+    <!--ページのタイトル-->
     <title>Bloks Game</title>
+    <!-- ページの文字コード -->
     <meta charset="utf-8" />
+    <!-- 外部CSSファイルを読み込むためのリンク  -->
     <link rel="stylesheet" type="text/css" href="styles.css" />
   </head>
 
   <body>
+    <header id="header"></header>
+    <!-- ゲームコンテナ -->
     <div id="container">
-      <!-- ゲームエリア -->
+      <!-- ゲーム描画用のキャンバス -->
       <div id="game-container">
         <canvas
           id="canvas"
@@ -27,60 +33,84 @@
       </div>
     </div>
 
-    <!-- 統合されたチュートリアルと難易度選択 -->
-    <div id="modal">
+    <!-- チュートリアルモーダル -->
+    <div class="modal hidden" id="tutorial">
       <div class="modal-content">
-        <h1>チュートリアル</h1>
+        <h2>ゲーム説明</h2>
         <p>
           このゲームでは、パドルを操作してボールを弾き、ブロックを全て壊してください。
         </p>
         <p>難易度を選択してください：</p>
-        <button class="startButton" onclick="window.startGame('Easy')">
+        <button
+          class="startButton common-button"
+          onclick="window.startGame('Easy')"
+        >
           Easy
         </button>
-        <button class="startButton" onclick="window.startGame('Normal')">
+        <button
+          class="startButton common-button"
+          onclick="window.startGame('Normal')"
+        >
           Normal
         </button>
-        <button class="startButton" onclick="window.startGame('Hard')">
+        <button
+          class="startButton common-button"
+          onclick="window.startGame('Hard')"
+        >
           Hard
         </button>
       </div>
     </div>
 
-    <!-- ゲーム再開ボタン -->
-    <button id="retryButton" onclick="window.retryGame()" style="display: none">
-      リトライ
-    </button>
+    <!-- リトライモーダル -->
+    <div class="modal hidden" id="retry">
+      <div class="modal-content">
+        <h2>ゲームオーバー</h2>
+        <!-- ゲームの説明テキスト -->
 
-    <!-- ヘッダーを上に固定表示する -->
-    <div id="header"></div>
+        <!-- リトライボタン -->
+        <button
+          id="retryButton"
+          class="common-button"
+          onclick="window.retryGame()"
+        >
+          リトライ<span style="opacity: 0.5"> R</span>
+        </button>
+
+        <!-- 戻るボタン -->
+        <button
+          id="returnButton"
+          class="common-button"
+          onclick="window.location.href='../index.html';"
+        >
+          一覧に戻る
+        </button>
+      </div>
+    </div>
 
     <!-- Firebase Configの読み込み -->
     <script type="module" src="../firebaseConfig.js"></script>
 
-    <!-- ログインチェック用スクリプト -->
     <script type="module">
       import { auth, getCurrentUser } from "../firebaseConfig.js";
 
-      // 認証状態をチェック
       getCurrentUser()
         .then((user) => {
           if (user) {
             // ログインしている場合、ゲーム画面を表示
-            document.getElementById("modal").style.display = "block";
+            document.getElementById("tutorial").style.display = "block";
             document.getElementById("canvas").style.display = "block";
           }
         })
+
         .catch((error) => {
           // ユーザーがログインしていない場合、ログインページにリダイレクト
           console.error("ログインしていません:", error);
-          window.location.href = "../index.html"; // ログインページにリダイレクト
+          window.location.href = "../login.html";
         });
     </script>
 
-    <!-- メインスクリプト -->
     <script type="module" src="script.js" defer></script>
-    <!--header読み込み-->
     <script type="module" src="../header.js"></script>
   </body>
 </html>
