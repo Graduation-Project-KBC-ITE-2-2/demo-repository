@@ -66,23 +66,22 @@ function getNextWord() {
   return words[newIndex];
 }
 
-// ENTERキーでの処理
-inputElement.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    if (normalizeString(inputElement.value) === currentWord) {
-      score++;
-      inputElement.value = ""; // 入力欄をクリア
-      currentWord = getNextWord(); // 次の単語を取得
-      updateDisplay();
+// 入力イベントでの処理（リアルタイム判定）
+inputElement.addEventListener("input", () => {
+  if (normalizeString(inputElement.value) === currentWord) {
+    score++;
+    inputElement.value = ""; // 入力欄をクリア
+    currentWord = getNextWord(); // 次の単語を取得
+    updateDisplay();
 
-      // 視覚的フィードバック（正解時の背景色変更）
-      wordElement.style.backgroundColor = "lightgreen";
-      setTimeout(() => {
-        wordElement.style.backgroundColor = ""; // 元の背景色に戻す
-      }, 300);
-    }
+    // 視覚的フィードバック（正解時の背景色変更）
+    wordElement.style.backgroundColor = "lightgreen";
+    setTimeout(() => {
+      wordElement.style.backgroundColor = ""; // 元の背景色に戻す
+    }, 300);
   }
 });
+
 
 // スタートボタンの処理
 startBtn.addEventListener("click", () => {
