@@ -38,6 +38,10 @@ h1 {
   margin-top: 1em;
 }
 
+#word {
+  user-select: none;
+}
+
 /* モーダル全体のスタイル */
 .modal {
   position: fixed;
