@@ -3,28 +3,33 @@ import {
   saveScoreAndEmail,
   displayDataInHTMLRealtime,
 } from "../firebaseConfig.js";
-import { addKeyListenerForStart } from "../Key.js";
 
-var round = 0;
-var questions = [];
-var qCount = 0;
-var qTimer = NaN;
-var answers = [];
-var sounds = [];
-var currentScore = 0;
-var bestScore =
-  localStorage.getItem("bestScore") !== null
-    ? parseInt(localStorage.getItem("bestScore"))
-    : 0;
-var buttonCount = 4; // デフォルトのボタン数
-var difficultyMultiplier = 1; // 難易度ごとのスコア倍率
-var originalColors = []; // 各ボタンの元の色を保存
+("use strict");
 
-function gobj(id) {
-  return document.getElementById(id);
-}
+// === 定数と変数 ===
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
+canvas.width = 800;
+canvas.height = 800;
+
+let round = 0;
+let questions = [];
+let qCount = 0;
+let answers = [];
+let sounds = [];
+let currentScore = 0;
+let bestScore = localStorage.getItem("bestScore")
+  ? parseInt(localStorage.getItem("bestScore"))
+  : 0;
+let buttonCount = 4;
+let difficultyMultiplier = 1;
+let originalColors = [];
+let buttons = [];
+
+// === 初期化と開始処理 ===
 window.init = function () {
+  gobj("tutorial").classList.remove("hidden");
   document.getElementById("difficultySelection").style.display = "block";
   gobj("bestScore").textContent = "現在のスコア: 0";
   addKeyListenerForStart("tutorial", hideTutorial, 32);
@@ -32,52 +37,29 @@ window.init = function () {
 };
 
 window.startGame = function (count) {
-  buttonCount = count; // 難易度に応じたボタン数を設定
-  difficultyMultiplier = count === 4 ? 1 : count === 9 ? 1.5 : 2; // 難易度によるスコア倍率設定
-  const buttonContainer = document.getElementById("buttonContainer");
-  buttonContainer.innerHTML = ""; // ボタンをリセット
-  buttonContainer.style.display = "grid";
-
-  // ボタン配置を設定
-  if (count === 4) {
-    buttonContainer.style.gridTemplateColumns = "repeat(2, 1fr)";
-  } else if (count === 9) {
-    buttonContainer.style.gridTemplateColumns = "repeat(3, 1fr)";
-  } else if (count === 16) {
-    buttonContainer.style.gridTemplateColumns = "repeat(4, 1fr)";
-  }
-
-  questions = [];
-  answers = [];
-  round = 0;
-  currentScore = 0;
-
-  const colors = generateUniqueColors(buttonCount); // ユニークな色を生成
-  originalColors = colors; // 元の色を保存
-
-  // ボタンを動的に生成
-  for (let i = 0; i < buttonCount; i++) {
-    const button = document.createElement("button");
-    button.id = `b${i}`;
-    button.setAttribute("data-index", i);
-    button.style.backgroundColor = colors[i]; // ユニークな色を適用
-    button.style.width = "100px"; // ボタンサイズの調整
-    button.style.height = "100px";
-    button.style.margin = "5px";
-    button.onclick = function () {
-      if (qTimer) return;
-      blink(i);
-      answer(i);
-    };
-    buttonContainer.appendChild(button);
-  }
-
-  document.getElementById("difficultySelection").style.display = "none";
-  gobj("gameArea").style.display = "block";
+  buttonCount = count;
+  difficultyMultiplier = count === 4 ? 1 : count === 9 ? 1.5 : 2;
+  resetGameData();
+  originalColors = generateUniqueColors(buttonCount);
+  createButtons(buttonCount);
+  drawGame();
   loadSounds();
   startGameLogic();
 };
 
+// === ユーティリティ関数 ===
+function gobj(id) {
+  return document.getElementById(id);
+}
+
+function resetGameData() {
+  questions = [];
+  answers = [];
+  round = 0;
+  currentScore = 0;
+}
+
+// === ゲーム描画関連 ===
 function generateUniqueColors(count) {
   const colorSet = new Set();
   while (colorSet.size < count) {
@@ -89,97 +71,63 @@ function generateUniqueColors(count) {
   return Array.from(colorSet);
 }
 
-function loadSounds() {
-  // 4種類の音をランダムに割り当てる
-  sounds = [
-    new Audio("sound1.mp3"),
-    new Audio("sound2.mp3"),
-    new Audio("sound3.mp3"),
-    new Audio("sound4.mp3"),
-  ];
+function createButtons(count) {
+  buttons = [];
+  const gridSize = Math.sqrt(count); // ボタンの行・列数を計算
+  const buttonMargin = 10; // ボタン間のマージン
+  const buttonWidth = (canvas.width - buttonMargin * (gridSize + 1)) / gridSize; // ボタンの幅
+  const buttonHeight =
+    (canvas.height - buttonMargin * (gridSize + 1)) / gridSize; // ボタンの高さ
+
+  for (let i = 0; i < count; i++) {
+    const row = Math.floor(i / gridSize); // ボタンの行番号
+    const col = i % gridSize; // ボタンの列番号
+    const x = col * (buttonWidth + buttonMargin) + buttonMargin; // X座標を計算
+    const y = row * (buttonHeight + buttonMargin) + buttonMargin; // Y座標を計算
+
+    buttons.push({
+      x,
+      y,
+      width: buttonWidth,
+      height: buttonHeight,
+      color: originalColors[i],
+    });
+  }
 }
 
+function drawGame() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  buttons.forEach((button) => {
+    ctx.fillStyle = button.color;
+    ctx.fillRect(button.x, button.y, button.width, button.height);
+  });
+}
+canvas.addEventListener("click", (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left; // マウスのX座標（Canvas内）
+  const mouseY = e.clientY - rect.top; // マウスのY座標（Canvas内）
+
+  buttons.forEach((button, index) => {
+    if (
+      mouseX >= button.x &&
+      mouseX <= button.x + button.width &&
+      mouseY >= button.y &&
+      mouseY <= button.y + button.height
+    ) {
+      blink(index); // ボタンがクリックされたときの視覚効果
+      answer(index); // ボタンのクリック処理
+    }
+  });
+});
+
+// === ゲームロジック ===
 function startGameLogic() {
   showMessage("ゲーム開始！");
-  gobj("message").style.whiteSpace = "nowrap";
-  gobj("retryButton").style.display = "none";
-  setTimeout(function () {
+  setTimeout(() => showMessage(`ラウンド: ${round}`), 1000);
+  setTimeout(() => {
     round = 0;
     nextRound();
-  }, 1000);
-}
-
-window.hideTutorial = function () {
-  gobj("tutorial").style.display = "none";
-  startGameLogic();
-};
-
-window.retryGame = function () {
-  gobj("retryButton").style.display = "none";
-  window.hideTutorial();
-};
-
-function blink(index) {
-  const buttons = document.querySelectorAll("button[data-index]");
-
-  // 元の色を取得
-  const originalColor = originalColors[index];
-
-  // 光る色を生成
-  const highlightColor = lightenColor(originalColor, 30); // 元の色を30%明るく
-
-  // ボタンの色をハイライト色に変更
-  buttons[index].style.backgroundColor = highlightColor;
-
-  // 音を再生
-  const soundIndex = index % sounds.length; // sounds 配列内のインデックスを取得
-  sounds[soundIndex].currentTime = 0;
-  sounds[soundIndex].play();
-
-  // 元の色に戻す
-  setTimeout(function () {
-    buttons[index].style.backgroundColor = originalColor;
-  }, 400); // ハイライトを400ms後に元に戻す
-}
-
-// 明るい色を生成する関数
-function lightenColor(color, percent) {
-  const num = parseInt(color.slice(1), 16),
-    amt = Math.round(2.55 * percent),
-    R = (num >> 16) + amt,
-    G = ((num >> 8) & 0x00ff) + amt,
-    B = (num & 0x0000ff) + amt;
-
-  return (
-    "#" +
-    (
-      0x1000000 +
-      (R < 255 ? (R < 0 ? 0 : R) : 255) * 0x10000 +
-      (G < 255 ? (G < 0 ? 0 : G) : 255) * 0x100 +
-      (B < 255 ? (B < 0 ? 0 : B) : 255)
-    )
-      .toString(16)
-      .slice(1)
-  );
-}
-
-function showMessage(mess) {
-  const messageElem = gobj("message");
-  messageElem.textContent = mess;
-  messageElem.style.display = "flex";
-  messageElem.style.justifyContent = "center";
-  messageElem.style.alignItems = "center";
-  messageElem.style.position = "absolute";
-  messageElem.style.top = "50%";
-  messageElem.style.left = "50%";
-  messageElem.style.transform = "translate(-50%, -50%)";
-  messageElem.style.fontSize = "48px";
-  messageElem.style.color = "white";
-  messageElem.style.zIndex = "1000";
-
-  setTimeout(function () {
-    messageElem.style.display = "none";
-  }, 2000);
+  }, 3000);
 }
 
 function nextRound() {
@@ -189,71 +137,132 @@ function nextRound() {
     return;
   }
 
-  gobj("bestScore").textContent =
-    "ラウンド: " + round + " | ベストスコア: " + bestScore;
   round++;
-  showMessage("ラウンド: " + round);
-
-  // ラウンド数に応じて覚える数を増やす
-  questions = [];
-  for (let i = 0; i < round; i++) {
-    questions.push(Math.floor(Math.random() * buttonCount));
-  }
-
+  showMessage(`ラウンド: ${round}`);
+  questions = Array.from({ length: round }, () =>
+    Math.floor(Math.random() * buttonCount)
+  );
   answers = [];
   qCount = 0;
-
-  setTimeout(showQuizItem, 1000); // 少し遅らせて表示
+  createButtons(buttonCount);
+  drawGame();
+  setTimeout(showQuizItem, 1000);
 }
 
 function showQuizItem() {
   if (qCount < questions.length) {
+    // 現在の質問を点滅させる
     blink(questions[qCount]);
     qCount++;
-    setTimeout(showQuizItem, 1000); // 次の点滅まで少し遅らせる
+    // 次の質問を一定時間後に表示
+    setTimeout(showQuizItem, 1000);
   } else {
+    // 覚えるフェーズに移行
     setTimeout(() => {
       showMessage("覚えましょう！");
+      setTimeout(() => {
+        drawGame(); // ゲーム画面を再描画（覚える画面をクリア）
+      }, 1000); // 覚えましょう！を1秒間表示後にゲーム画面へ
     }, 1000);
   }
 }
 
 async function answer(val) {
   answers.push(val);
-  var mistake = false;
 
-  for (var i = 0; i < answers.length; i++) {
-    if (answers[i] != questions[i]) {
-      mistake = true;
-      break;
-    }
+  if (answers[answers.length - 1] !== questions[answers.length - 1]) {
+    showMessage("Game Over");
+    showRetryModal();
+    return;
   }
 
-  if (mistake) {
-    showMessage("Game Over: " + Math.floor(round * difficultyMultiplier));
-    if (Math.floor(round * difficultyMultiplier) > bestScore) {
-      bestScore = Math.floor(round * difficultyMultiplier);
-      localStorage.setItem("bestScore", bestScore.toString());
-    }
-    gobj("retryButton").style.display = "block";
-  } else if (answers.length == questions.length) {
-    showMessage("正解です");
-    const currentScore = Math.floor(round * difficultyMultiplier);
-    if (currentScore > bestScore) {
-      bestScore = currentScore;
-      localStorage.setItem("bestScore", bestScore.toString());
-    }
-    gobj("bestScore").textContent = "ベストスコア: " + bestScore;
-    setTimeout(nextRound, 2000);
+  if (answers.length === questions.length) {
+    // スコアをラウンド数で加算
+    currentScore += round * 10; // ラウンドごとに10点加算（例）
+    showMessage("正解！");
+
+    setTimeout(() => {
+      drawGame();
+      nextRound();
+    }, 3000);
   }
+
   const title = document.title;
   const userEmail = await getUserEmail();
-  await saveScoreAndEmail(
-    title,
-    Math.floor(round * difficultyMultiplier),
-    userEmail
+  await saveScoreAndEmail(title, currentScore, userEmail); // currentScoreを使用
+}
+
+// === 視覚効果 ===
+function blink(index) {
+  const button = buttons[index];
+  console.log("Blink function called with index:", index, "Button:", button);
+
+  if (!button) {
+    console.error("Invalid button index:", index);
+    return; // 無効な場合は処理を中断
+  }
+
+  const originalColor = button.color;
+  if (!originalColor) {
+    console.error("Button color is undefined for index:", index);
+    return; // 色が未設定の場合は処理を中断
+  }
+
+  const highlightColor = lightenColor(originalColor, 30);
+  button.color = highlightColor;
+  drawGame();
+
+  const soundIndex = index % sounds.length;
+  sounds[soundIndex].currentTime = 0;
+  sounds[soundIndex].play();
+
+  setTimeout(() => {
+    button.color = originalColor;
+    drawGame();
+  }, 400);
+}
+
+function lightenColor(color, percent) {
+  const num = parseInt(color.slice(1), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.min((num >> 16) + amt, 255);
+  const G = Math.min(((num >> 8) & 0x00ff) + amt, 255);
+  const B = Math.min((num & 0x0000ff) + amt, 255);
+
+  return `#${((R << 16) | (G << 8) | B).toString(16).padStart(6, "0")}`;
+}
+
+// === メッセージ表示 ===
+function showMessage(mess) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+  ctx.font = "32px Arial"; // フォントサイズを調整
+  ctx.textAlign = "center";
+  ctx.fillText(mess, canvas.width / 2, canvas.height / 2); // 中央に表示
+}
+
+// === モーダル操作 ===
+function showRetryModal() {
+  const title = document.title;
+  gobj("retry").classList.remove("hidden");
+}
+
+window.hideTutorial = function () {
+  gobj("tutorial").style.display = "none";
+  startGameLogic();
+};
+
+window.retryGame = function () {
+  gobj("retry").classList.add("hidden");
+  resetGameData();
+  startGame(buttonCount);
+};
+
+// === サウンド関連 ===
+function loadSounds() {
+  sounds = ["sound1.mp3", "sound2.mp3", "sound3.mp3", "sound4.mp3"].map(
+    (src) => new Audio(src)
   );
 }
 
-const title = document.title;
 displayDataInHTMLRealtime(title);

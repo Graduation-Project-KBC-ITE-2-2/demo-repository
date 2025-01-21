@@ -1,34 +1,88 @@
 ﻿<!DOCTYPE html>
-<html lang="jp">
+<html>
+  <!-- ヘッド部分 -->
   <head>
-    <meta charset="utf-8" />
+    <!--ページのタイトル-->
     <title>memorizer</title>
+    <!-- ページの文字コード -->
+    <meta charset="utf-8" />
+    <!-- 外部CSSファイルを読み込むためのリンク  -->
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <style>
-      #buttonContainer {
-        display: grid;
-        gap: 10px;
-      }
-
-      .easy {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .normal {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .hard {
-        grid-template-columns: repeat(4, 1fr);
-      }
-
-      button {
-        width: 100px;
-        height: 100px;
-      }
-    </style>
   </head>
-  <body onload="window.init()">
+
+  <body>
+    <!-- ヘッダーを上に表示する -->
+    <header>
+      <div id="header"></div>
+    </header>
+    <!-- メインコンテナ（ゲーム画面とランキング表示をまとめる） -->
+    <div id="container">
+      <canvas id="canvas"></canvas>
+      <!-- ランキングエリア -->
+      <div id="scoreboard">
+        <h3>ランキング</h3>
+        <div id="scorelist"></div>
+      </div>
+    </div>
+    <div id="gameArea" style="display: none">
+      <div id="buttonContainer"></div>
+    </div>
+
+    <!-- チュートリアル（ゲーム説明モーダル） -->
+    <div class="modal hidden" id="tutorial" onclick="hideTutorial()">
+      <div class="modal-content">
+        <h2>チュートリアル</h2>
+        <p>ボタンが点滅します。それを覚えて、順番に押してください。</p>
+        <div
+          id="difficultySelection"
+          class="button-group"
+          style="display: block; margin-top: 20px"
+        >
+          <h2>難易度を選択してください</h2>
+          <button
+            class="common-button"
+            onclick="window.startGame(4); setGridClass('easy');"
+          >
+            イージー (4ボタン)
+          </button>
+          <button
+            class="common-button"
+            onclick="window.startGame(9); setGridClass('normal');"
+          >
+            ノーマル (9ボタン)
+          </button>
+          <button
+            class="common-button"
+            onclick="window.startGame(16); setGridClass('hard');"
+          >
+            ハード　(16ボタン)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- リトライモーダル -->
+    <div class="modal hidden" id="retry">
+      <div class="modal-content">
+        <h2>ゲームオーバー</h2>
+        <!-- ゲームの説明テキスト -->
+
+        <!-- リトライボタン -->
+        <button id="retryButton" class="common-button" onclick="retryGame()">
+          リトライ<span style="opacity: 0.5"> R</span>
+        </button>
+
+        <!-- 戻るボタン -->
+        <button
+          id="returnButton"
+          class="common-button"
+          onclick="window.location.href='../index.html';"
+        >
+          一覧に戻る
+        </button>
+      </div>
+    </div>
+
     <!-- Firebase Configの読み込み -->
     <script type="module" src="../firebaseConfig.js"></script>
 
@@ -40,7 +94,7 @@
         .then((user) => {
           if (user) {
             document.getElementById("tutorial").style.display = "block";
-            document.getElementById("gameArea").style.display = "block";
+            document.getElementById("canvas").style.display = "block";
           }
         })
         .catch((error) => {
@@ -48,68 +102,6 @@
           window.location.href = "../login.html";
         });
     </script>
-
-    <!-- 難易度選択画面 -->
-    <div id="difficultySelection" style="display: none">
-      <h2>難易度を選択してください</h2>
-      <button onclick="window.startGame(4); setGridClass('easy');">
-        イージー (4ボタン)
-      </button>
-      <button onclick="window.startGame(9); setGridClass('normal');">
-        ノーマル (9ボタン)
-      </button>
-      <button onclick="window.startGame(16); setGridClass('hard');">
-        ハード (16ボタン)
-      </button>
-    </div>
-
-    <!-- ゲームコンテナ -->
-    <div id="container">
-      <div id="gameArea" style="position: relative; display: none">
-        <p id="message"></p>
-        <div id="buttonContainer"></div>
-        <!-- ボタンがここに生成される -->
-        <button
-          id="retryButton"
-          onclick="window.retryGame()"
-          style="display: none"
-        >
-          リトライ
-        </button>
-        <p id="bestScore"></p>
-      </div>
-
-      <div id="scoreboard">
-        <h3>ランキング</h3>
-        <div id="scorelist"></div>
-      </div>
-    </div>
-
-    <!-- チュートリアル -->
-    <div id="tutorial" style="display: none">
-      <div>
-        <h2>チュートリアル</h2>
-        <p>ボタンが点滅します。それを覚えて、順番に押してください。</p>
-        <div id="difficultySelection" style="display: block; margin-top: 20px">
-          <h2>難易度を選択してください</h2>
-          <button
-            onclick="window.hideTutorial(); window.startGame(4); setGridClass('easy');"
-          >
-            イージー (4ボタン)
-          </button>
-          <button
-            onclick="window.hideTutorial(); window.startGame(9); setGridClass('normal');"
-          >
-            ノーマル (9ボタン)
-          </button>
-          <button
-            onclick="window.hideTutorial(); window.startGame(16); setGridClass('hard');"
-          >
-            ハード (16ボタン)
-          </button>
-        </div>
-      </div>
-    </div>
 
     <!-- 必要なスクリプト -->
     <script type="module" src="script.js"></script>
