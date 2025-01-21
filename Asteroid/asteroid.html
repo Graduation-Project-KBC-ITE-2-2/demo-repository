@@ -1,23 +1,22 @@
 ﻿<!DOCTYPE html>
 <html>
+  <!-- ヘッド部分 -->
   <head>
+    <!--ページのタイトル-->
     <title>Asteroid</title>
+    <!-- ページの文字コード -->
     <meta charset="utf-8" />
+    <!-- 外部CSSファイルを読み込むためのリンク  -->
     <link rel="stylesheet" type="text/css" href="styles.css" />
   </head>
 
   <body>
-    <div id="header"></div>
+    <header id="header"></header>
     <!-- メインコンテナ（ゲーム画面とランキング表示をまとめる） -->
     <div id="container">
       <!-- ゲーム描画用のキャンバス -->
       <div id="game-container">
-        <canvas
-          id="canvas"
-          width="800"
-          height="800"
-          style="display: none"
-        ></canvas>
+        <canvas id="canvas" width="800" height="800"></canvas>
         <img id="ship" src="ship.png" style="display: none" />
         <img id="bg" src="bg.png" style="display: none" />
         <img id="rock" src="rock.png" style="display: none" />
@@ -33,9 +32,10 @@
       </div>
     </div>
 
-    <div id="modal">
+    <!-- チュートリアル（ゲーム説明モーダル） -->
+    <div class="modal hidden" id="tutorial">
       <div class="modal-content">
-        <h1>チュートリアル</h1>
+        <h2>チュートリアル</h2>
         <p>
           このゲームでは、宇宙船を操作して、画面上の隕石を避けながら敵を撃退します。
         </p>
@@ -45,47 +45,54 @@
         <p>スペースキーを押すと弾を発射し、隕石を破壊することができます。</p>
         <p>隕石を避けながら、できるだけ高いスコアを目指してください！</p>
         <button id="startButton" class="common-button" onclick="window.init()">
-          ゲームを開始<span style="opacity: 0.5"> space</span>
+          ゲームを開始<span style="opacity: 0.5"> <!--space --></span>
         </button>
       </div>
     </div>
 
-    <!-- Firebase Configの読み込み -->
-    <script type="module" src="../firebaseConfig.js"></script>
+    <!-- リトライモーダル -->
+    <div class="modal hidden" id="retry">
+      <div class="modal-content">
+        <h2>ゲームオーバー</h2>
+        <!-- ゲームの説明テキスト -->
 
-    <!-- ログインチェック用スクリプト -->
+        <!-- リトライボタン -->
+        <button id="retryButton" class="common-button">
+          リトライ<span style="opacity: 0.5"> R</span>
+        </button>
+
+        <!-- 戻るボタン -->
+        <button
+          id="returnButton"
+          class="common-button"
+          onclick="window.location.href='../index.html';"
+        >
+          一覧に戻る
+        </button>
+      </div>
+    </div>
+
+    <!-- Firebaseログインチェック用スクリプト -->
     <script type="module">
       import { auth, getCurrentUser } from "../firebaseConfig.js";
 
-      // 認証状態をチェック
+      // Firebase 認証状態をチェック
       getCurrentUser()
         .then((user) => {
           if (user) {
-            // ログインしている場合、ゲーム画面を表示
-            document.getElementById("modal").style.display = "block";
-            document.getElementById("canvas").style.display = "block";
+            // ログインしている場合、必要な要素を表示
+            document.getElementById("tutorial").style.display = "block";
+            document.getElementById("game-container").style.display = "block";
           }
         })
         .catch((error) => {
-          // ユーザーがログインしていない場合、ログインページにリダイレクト
+          // ログインしていない場合、ログインページにリダイレクト
           console.error("ログインしていません:", error);
           window.location.href = "../index.html"; // ログインページにリダイレクト
         });
     </script>
 
     <script type="module" src="script.js"></script>
-    <script>
-      // スペースキーでゲームを開始できるようにイベントリスナーを追加
-      window.addEventListener("keydown", function (e) {
-        if (e.keyCode === 32) {
-          // スペースキーのキーコードは32
-          // モーダルが表示されているときのみゲーム開始を呼び出し
-          if (document.getElementById("modal").style.display !== "none") {
-            window.init();
-          }
-        }
-      });
-    </script>
     <!--header読み込み-->
     <script type="module" src="../header.js"></script>
   </body>

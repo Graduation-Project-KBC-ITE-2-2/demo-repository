@@ -1,9 +1,3 @@
-/* 
-全体の基本設定 
-背景色やスクロールの非表示設定など、全ページに影響を与えるスタイルを記述
-*/
-
-
 body {
   margin: 0; /* ページ全体の余白を削除 */
   padding: 0; /* ページ全体のパディングを削除 */
@@ -14,22 +8,15 @@ body {
 }
 
 /* 
-  ヘッダーの設定 
-  ページ上部のナビゲーションバーのスタイル
-  */
-
-
-
-
-/* 
-  ゲームエリアの設定 
-  ゲーム画面となるキャンバス要素のデザイン
-  */
+ゲームエリアの設定 
+ゲーム画面となるキャンバス要素のデザイン
+*/
 canvas {
-  width: 100%;
-  height: 100%; /* 親要素に基づいて自動調整 */
+  width: 100%; /* 必要なら固定値に変更: 800px */
+  height: 100%; /* 必要なら固定値に変更: 600px */
   display: block;
-  background-color: black; /* ゲーム背景色 */
+  background-color: black;
+  /*image-rendering: pixelated; /* ピクセル表示を優先 */
 }
 
 #gameArea {
@@ -42,9 +29,9 @@ canvas {
 }
 
 /* 
-  ランキングエリアの設定 
-  スコア表示やタイトルのスタイル
-  */
+ランキングエリアの設定 
+スコア表示やタイトルのスタイル
+*/
 #scoreboard {
   width: 100%;
   max-width: 300px;
@@ -87,13 +74,13 @@ canvas {
   padding: 20px 0;
   gap: 20px;
   box-sizing: border-box;
-  height: 90%;
+  height: 100%;
 }
 
 /* 
-  モーダル関連の設定 
-  チュートリアルやポップアップの表示に使用
-  */
+モーダル関連の設定 
+チュートリアルやポップアップの表示に使用
+*/
 .modal {
   position: fixed; /* ビューポート全体に固定表示 */
   z-index: 10; /* モーダルを前面に表示 */
@@ -122,29 +109,33 @@ canvas {
 }
 
 /* 
-  ボタン関連の設定 
-  スタートボタンのスタイル
-  */
+ボタン関連の設定 
+スタートボタンのスタイル
+*/
+.button-group {
+  display: flex; /* 子要素を横並びに配置 */
+  justify-content: center; /* ボタンを中央揃え */
+  gap: 10px; /* ボタン間のスペースを調整 */
+  margin-top: 20px; /* 必要に応じてモーダル内の上下間隔を調整 */
+}
+
 .common-button {
-  background-color: white; /* ボタンの背景色を白に設定 */
-  color: black; /* ボタンのテキストを黒に設定 */
-  padding: 10px 20px; /* ボタンの内側に余白を追加 */
-  border: none; /* ボーダーを削除 */
-  border-radius: 5px; /* ボタンを角丸に */
-  cursor: pointer; /* ホバー時にカーソルを変更 */
-  font-size: 18px; /* ボタンテキストのフォントサイズを設定 */
-  transition: background-color 0.3s ease; /* 背景色の変化をスムーズに */
-  margin-right: 10px; /* ボタンに適度な余白を設定 */
+  padding: 10px 20px; /* ボタンの余白 */
+  font-size: 16px; /* ボタンのフォントサイズ */
+  cursor: pointer;
+  border: none;
+  background-color: #007bff; /* ボタンの背景色 */
+  color: white; /* ボタンの文字色 */
+  border-radius: 5px; /* ボタンの角を丸く */
 }
 
-#startButton:hover {
-  background-color: #ccc; /* ホバー時に背景を灰色に変更 */
+.common-button:hover {
+  background-color: #0056b3; /* ホバー時の背景色 */
 }
-
 /* 
-    非表示クラス 
-    要素を非表示にするためのクラス
-    */
+  非表示クラス 
+  要素を非表示にするためのクラス
+  */
 .hidden {
   display: none; /* 要素を非表示に設定 */
 }
