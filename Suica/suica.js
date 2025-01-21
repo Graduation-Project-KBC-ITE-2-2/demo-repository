@@ -302,6 +302,15 @@ class BubbeGame {
   }
 }
 
+// 初期状態でゲーム画面を非表示
+document.querySelector(".main").style.display = "none";
+
+// スタートボタンの動作
+document.getElementById("startButton").addEventListener("click", () => {
+  document.getElementById("tutorial").style.display = "none"; // モーダルを非表示
+  document.querySelector(".main").style.display = "block"; // ゲーム画面を表示
+});
+
 window.onload = () => {
   const container = document.querySelector(".container");
   const message = document.querySelector(".message");
