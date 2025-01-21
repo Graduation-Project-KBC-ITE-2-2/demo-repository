@@ -11,6 +11,7 @@
   </head>
   <body>
     <header id="header"></header>
+    <!-- ゲームコンテナ -->
     <div id="container">
       <!-- ゲーム描画用のキャンバス -->
       <div id="game-container">
@@ -78,12 +79,15 @@
       getCurrentUser()
         .then((user) => {
           if (user) {
+            // ログインしている場合、ゲーム画面を表示
             document.getElementById("tutorial").style.display = "block";
             document.getElementById("canvas").style.display = "block";
             window.init(); // ページロード時に init を呼び出す
           }
         })
+
         .catch((error) => {
+          // ユーザーがログインしていない場合、ログインページにリダイレクト
           console.error("ログインしていません:", error);
           window.location.href = "../login.html";
         });
