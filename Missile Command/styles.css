@@ -3,7 +3,6 @@ body {
   padding: 0; /* ページ全体のパディングを削除 */
   background-color: #333; /* 背景を暗めのグレーに設定 */
   position: relative; /* 要素の位置調整を可能にする */
-  overflow: hidden; /* スクロールバーを非表示に */
   height: 100vh;
 }
 

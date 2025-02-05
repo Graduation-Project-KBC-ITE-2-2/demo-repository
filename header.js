@@ -3,6 +3,13 @@
 
 import { auth, toggleModalVisibility, guestLogin, NicknameSave,  nickname, loginUser } from "./firebaseConfig.js"; // Firebase設定をインポート
 
+
+// 新しいdiv要素を作成
+const footerDiv = document.createElement('div');
+// id属性を設定
+footerDiv.id = 'footer';
+// ページの最後に追加
+document.body.appendChild(footerDiv);
 // ヘッダーHTMLをテンプレートリテラルとして定義
 const headerHTML = `
 
@@ -40,6 +47,23 @@ const headerHTML = `
       </div>
 </header>
 `;
+
+document.querySelector('#footer').innerHTML = `
+
+      <div class="footer-content">
+        <p>© 2024 ミニゲーム集. All Rights Reserved.</p>
+        <nav class="footer-nav">
+          <a href="/index.html">TOP</a>
+          <a href="/privacy-policy.html">プライバシーポリシー</a>
+          <a href="/terms-of-service.html">利用規約</a>
+          <a href="/Production/production.html">製作</a>
+          <a href="/Inquiry/inquiry.html">お問い合わせ</a>
+        </nav>
+      </div>
+      `;
+
+
+
 
 // DOMが読み込み終わったらheaderHTMLを挿入する
 document.addEventListener("DOMContentLoaded", () => {
@@ -153,6 +177,14 @@ loadCSS('/header.css');
       
       // ページが読み込まれた後にリンクを更新
       document.addEventListener('DOMContentLoaded', updateLinksWithBaseURL);
+
+      window.addEventListener('keydown', (event) => {
+        const keysToBlock = ['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+        if (keysToBlock.includes(event.code)) {
+          event.preventDefault();
+        }
+      });
+      
 
 window.onload = function () {
   let nicknameValue ="";

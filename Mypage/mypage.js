@@ -186,8 +186,9 @@ window.addEventListener("load", async function () {
                 }
             }
         }
-        
-        
+
+          
+          loadCSS('../header.css');
 
 
     } catch (e) {

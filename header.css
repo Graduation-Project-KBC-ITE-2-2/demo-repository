@@ -38,3 +38,40 @@ header {
   .header a.mypage {
     color: red; /* マイページリンクの文字色を赤にする */
   }
+
+
+  #footer {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
+  }
+  
+  .footer-nav {
+    margin-top: 10px;
+  }
+  
+  .footer-nav a {
+    color: rgb(6, 5, 5);
+    text-decoration: none;
+    margin: 0 10px;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  
+  .footer-nav a:hover {
+    opacity: 1;
+  }
+  
+  footer p {
+    margin: 0;
+    font-size: 14px;
+  }
+  
