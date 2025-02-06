@@ -50,13 +50,13 @@ window.addEventListener("load", async function () {
                 if(col == "user_name"){
                     gameItem.innerHTML = `
                     
-                    <a href="${mainLink}" style="color: blue; text-decoration: underline;">トータル - スコア: ${data[col]} 
-                    - ランク: ${userall}人中 / ${Rank}位</a> 
+                    <a href="${mainLink}" style="color: gold; text-decoration: underline;">トータル - スコア: ${data[col]} 
+                    <br> ランク: ${userall}人中 / ${Rank}位</a> 
                 `;
                 }else{
                     gameItem.innerHTML = `
-                    <a href="${colLink}" style="color: blue; text-decoration: underline;">${col}</a> 
-                    - スコア: ${data[col]} - <a href="${mainLink}" style="color: blue; text-decoration: underline;">
+                    <a href="${colLink}" style="color: black; text-decoration: underline;">${col}</a> 
+                    - スコア: ${data[col]} <br> <a href="${mainLink}" style="color: gold; text-decoration: underline;">
                     ランク: ${userall}人中 / ${Rank}位</a> 
                 `;
                 }
@@ -76,7 +76,7 @@ window.addEventListener("load", async function () {
         
                 // アイコンを gameItem に追加
                 if (crownIcon.src) {
-                    crownIcon.style.width = col === "user_name" ? "80px" : "30px";
+                    crownIcon.style.width = col === "user_name" ? "100px" : "30px";
                     gameItem.appendChild(crownIcon);
                 }
             }
@@ -128,6 +128,9 @@ window.addEventListener("load", async function () {
         //   // ページが読み込まれた後にリンクを更新
         //   document.addEventListener('DOMContentLoaded', updateLinksWithBaseURL);
 
+// ページが読み込まれた後にCSSを追加
+
+  
 
     } catch (e) {
         console.error("エラーが発生しました：", e);

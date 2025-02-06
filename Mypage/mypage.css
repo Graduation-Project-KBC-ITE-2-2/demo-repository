@@ -32,3 +32,45 @@
         transform: rotate(360deg);
     }
 }
+
+/* game-listの全体設定（既存） */
+#game-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: grid;
+  }
+  
+  
+  /* 通常のゲームアイテムの設定 */
+  #game-list h3, #game-list p {
+    background-color: #f4f4f9;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  #game-list #user_name {
+    display: block; /* デフォルトの表示方法に戻す */
+    background-color: #fff6e5;  /* ユーザー名用の特別な背景色 */
+    border-color: #ffcc00;
+    padding: 30px; /* より大きく表示 */
+    font-size: 1.5em; /* フォントサイズを大きく */
+    text-align: left; /* 左寄せ */
+    grid-column: span 2; /* 横幅を2列分に広げる（必要に応じて調整） */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  /* アイコンのサイズ変更 */
+  #game-list #user_name img {
+    width: 100px;  /* 大きなアイコン */
+    height: 80px;
+    margin: 10px;
+  }
+  
