@@ -22,112 +22,7 @@ window.addEventListener("load", async function () {
 
         // 各ゲームのスコアとランクを表示
         const data = await getUserScoresByEmail(email, collections);
-        // for (const col of collections) {
 
-        //     // ゲームのスコアとランク用の DOM 要素を作成
-        //     let gameItem;
-        //     if(col === "user_name"){
-        //         gameItem = document.createElement("h3");
-        //     }else{
-        //         gameItem = document.createElement("p");
-        //     }
-            
-        //     gameItem.id = col;
-        //     gameList.appendChild(gameItem);
-        //     const crownIcon = document.createElement("img");
-
-        //     if (data[col] != null) {
-        //         let Rank = rank.userranks.get(col) || 0; // 該当するランクを取得
-        //         let userall = rank.useralls.get(col) || 0; // 該当する全体ランクを取得
-        //         const link = document.createElement("a");
-        //         link.href = `rankings.html?game=${encodeURIComponent(col)}`;
-        //         if(col == "user_name"){
-        //             gameItem.innerText = `トータル - スコア: ${data[col]} - 総合ランク: ${userall}人中 / ${Rank}位 `;
-        //         }else{
-        //             gameItem.innerText = `${col} - スコア: ${data[col]} - ランク: ${userall}人中 / ${Rank}位`;
-        //         }
-        //         crownIcon.alt = "Crown";
-        //         if (Rank === 1) {
-        //             crownIcon.src = "icon.png";
-        //         }else if(Rank === 2){
-        //             crownIcon.src = "2icon.png";
-        //         }else if(Rank === 3){
-        //             crownIcon.src = "3icon.png";
-        //         }else{
-
-        //             crownIcon.src = "zako.jpg";
-                    
-        //         }
-                
-        //         if(col == "user_name"){
-        //             crownIcon.style.width = "80px";
-        //         }else{
-        //             crownIcon.style.width = "30px"; // 必要に応じてサイズを調整
-        //         }
-                
-        //         gameItem.appendChild(crownIcon);
-                
-        //     }
-        // }
-
-        // for (const col of collections) {
-        //     // ゲームのスコアとランク用の DOM 要素を作成
-        //     let gameItem;
-        //     if (col === "user_name") {
-        //         gameItem = document.createElement("h3");
-        //     } else {
-        //         gameItem = document.createElement("p");
-        //     }
-        
-        //     gameItem.id = col;
-        //     gameList.appendChild(gameItem);
-        
-        //     // スコアとランクが存在する場合のみ処理
-        //     if (data[col] != null) {
-        //         let Rank = rank.userranks.get(col) || 0; // 該当するランクを取得
-        //         let userall = rank.useralls.get(col) || 0; // 該当する全体ランクを取得
-        
-        //         // リンク要素を作成して、ゲーム名を含める
-        //         const link = document.createElement("a");
-        //         link.href = `rankings.html?game=${encodeURIComponent(col)}`;
-        //         link.style.textDecoration = "none"; // リンクのスタイル調整
-        //         link.style.color = "inherit"; // 親の色に合わせる
-        
-        //         if (col === "user_name") {
-        //             link.innerText = `トータル - スコア: ${data[col]} - 総合ランク: ${userall}人中 / ${Rank}位 `;
-        //         } else {
-        //             link.innerText = `${col} - スコア: ${data[col]} - ランク: ${userall}人中 / ${Rank}位`;
-        //         }
-        
-        //         // 王冠アイコンの作成
-        //         const crownIcon = document.createElement("img");
-        //         crownIcon.alt = "Crown";
-        
-        //         // ランクに応じたアイコンを設定
-        //         if (Rank === 1) {
-        //             crownIcon.src = "icon.png";
-        //         } else if (Rank === 2) {
-        //             crownIcon.src = "2icon.png";
-        //         } else if (Rank === 3) {
-        //             crownIcon.src = "3icon.png";
-        //         } else {
-        //             crownIcon.src = "zako.jpg";
-        //         }
-        
-        //         // アイコンのスタイル調整
-        //         if (col === "user_name") {
-        //             crownIcon.style.width = "80px";
-        //         } else {
-        //             crownIcon.style.width = "30px"; // 必要に応じてサイズを調整
-        //         }
-        
-        //         // リンクとアイコンを gameItem に追加
-        //         gameItem.appendChild(link);
-        //         if (crownIcon.src) {
-        //             gameItem.appendChild(crownIcon);
-        //         }
-        //     }
-        // }
 
         for (const col of collections) {
             let gameItem;
@@ -187,8 +82,51 @@ window.addEventListener("load", async function () {
             }
         }
 
+
+        // <div class="footer-content">
+        //   <p>© 2024 ミニゲーム集. All Rights Reserved.</p>
+        //   <nav class="footer-nav">
+        //     <a href="/index.html">TOP</a>
+        //     <a href="/privacy-policy.html">プライバシーポリシー</a>
+        //     <a href="/terms-of-service.html">利用規約</a>
+        //     <a href="/Production/production.html">製作</a>
+        //     <a href="/Inquiry/inquiry.html">お問い合わせ</a>
+        //   </nav>
+        // </div>
+        // `;
+
+        // function loadCSS(href) {
+        //     const baseURL = '/demo-repository/'; // ViteのベースURL
+        //     const link = document.createElement('link');
+        //     link.rel = 'stylesheet';
+        //     link.href = baseURL + href; // ベースURL + 相対パス
+        //     document.head.appendChild(link);
+        //   }
+    
+        //   loadCSS('/../main.css');
+
+
+        //   function updateLinksWithBaseURL() {
+        //     const baseURL = '/demo-repository/'; // Vite のベースURL
+        //     const links = document.querySelectorAll('a'); // すべてのリンクを取得
           
-          loadCSS('../header.css');
+        //     links.forEach((link) => {
+        //       const href = link.getAttribute('href');
+          
+        //       // href が '/' で始まる場合のみベースURLを追加
+        //       if (href && href.startsWith('/')) {
+        //         // もし baseURL の末尾が '/' で、href の先頭も '/' の場合、二重スラッシュを防ぐ
+        //         const updatedHref = baseURL.endsWith('/')
+        //           ? baseURL.slice(0, -1) + href
+        //           : baseURL + href;
+          
+        //         link.setAttribute('href', updatedHref);
+        //       }
+        //     });
+        //   }
+          
+        //   // ページが読み込まれた後にリンクを更新
+        //   document.addEventListener('DOMContentLoaded', updateLinksWithBaseURL);
 
 
     } catch (e) {

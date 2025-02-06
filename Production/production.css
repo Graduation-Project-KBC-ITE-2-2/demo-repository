@@ -3,7 +3,8 @@ body {
     background-color: #f4f4f9;
     color: #333;
     text-align: center;
-    padding: 20px;
+    margin: 0px;
+    padding-top: 20px;
 }
 h1 {
     font-size: 3rem;
