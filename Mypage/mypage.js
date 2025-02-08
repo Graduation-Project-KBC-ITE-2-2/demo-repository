@@ -1,4 +1,5 @@
-import { getUserEmail, nickname, getUserScoresByEmail, getUsertotleScoresByEmail, getScoreRank } from "../firebaseConfig.js";
+import { getUserEmail, nickname, getUserScoresByEmail, getUsertotleScoresByEmail, getScoreRank, sendPasswordReset,auth} from "../firebaseConfig.js";
+
 
 window.addEventListener("load", async function () {
     const collections = ['Asteroid', 'Bloks Game', 'Mine Sweeper', 'Cave', 'Missile Command', 'Quicks', 'SpaceInvader', 'Memorizer', 'SnakeBite', 'Tetris','user_name'];
@@ -8,6 +9,26 @@ window.addEventListener("load", async function () {
     const Myname = document.getElementById("username");
     const Myemail = document.getElementById("email");
     const totlescore = document.getElementById("totleScore");
+    const resetPasswordButton = document.getElementById('reset-password-btn');
+
+    // ログアウトリンクのクリックイベントを設定
+    const logoutLink = document.getElementById("logoutLink");
+
+    logoutLink.addEventListener("click", (event) => {
+    event.preventDefault(); // デフォルトのリンク動作を防止
+
+    auth.signOut()
+        .then(() => {
+        console.log("ユーザーはログアウトしました。");
+        // ログアウト後にトップページにリダイレクト
+        window.location.href = "/index.html"; // トップページのURLにリダイレクト
+        })
+        .catch((error) => {
+        console.error("ログアウトエラー:", error);
+        });
+    });
+
+
 
     try {
         // 非同期で必要なデータを取得
@@ -15,6 +36,7 @@ window.addEventListener("load", async function () {
         const Nickname = await nickname(email);
         const totle = await getUsertotleScoresByEmail(email);
         const rank = await getScoreRank();
+        
 
         // ユーザー情報を表示
         Myname.innerText = Nickname;
@@ -22,6 +44,21 @@ window.addEventListener("load", async function () {
 
         // 各ゲームのスコアとランクを表示
         const data = await getUserScoresByEmail(email, collections);
+
+        resetPasswordButton.onclick = async () => {
+            if (email) {
+                resetPasswordButton.disabled = true;
+                resetPasswordButton.innerText = "処理中...";
+                try {
+                    await sendPasswordReset(email);
+                } finally {
+                    resetPasswordButton.disabled = false;
+                    resetPasswordButton.innerText = "パスワード再設定";
+                }
+            } else {
+                alert("メールアドレスを入力してください。");
+            }
+        };
 
 
         for (const col of collections) {

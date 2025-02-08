@@ -3,7 +3,7 @@
 
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js';
+import { getAuth, signInWithEmailAndPassword, signInAnonymously, onAuthStateChanged, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js';
 import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc, onSnapshot  } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
 //import {totle} from "/Mypage/mypage.js";
 
@@ -22,6 +22,8 @@ const app = initializeApp(firebaseConfig);
 // Firebaseサービスの初期化
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+
 
 export {auth,db};
 
@@ -566,3 +568,33 @@ export function initializeContactFormHandler(formElement, statusMessageElement) 
       }
     });
   }
+
+  export const sendPasswordReset = async (email) => {
+    if (email) {
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert("パスワード再設定メールを送信しました。メールをご確認ください。");
+        } catch (error) {
+            console.error("パスワード再設定エラー:", error);
+            alert("エラーが発生しました。もう一度お試しください。");
+        }
+    } else {
+        alert("ユーザー情報が見つかりません。");
+    }
+};
+
+// 新規登録関数
+export async function registerUser(email, password, confirmPassword) {
+    // パスワード確認
+    if (password !== confirmPassword) {
+      throw new Error("パスワードが一致しません。");
+    }
+  
+    try {
+      // Firebase Authで新規ユーザー登録
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      throw error; // エラーを再度スローして、呼び出し元で処理できるようにする
+    }
+  }
+
